@@ -1,17 +1,19 @@
 <?php
+// CoreProtect Lookup Web Interface created by SimonOrJ.
+// CoreProtect developed by Intellii.
 /* --------------------------------
     Database Settings for conn.php
    --------------------------------*/
 // Hostname
-$dbhost = localhost
+$dbhost = localhost;
 // NySQL username
-$dbuser = username
+$dbuser = username;
 // MySQL password associated with username
-$dbpass = password
+$dbpass = password;
 // Database name
-$dbname = minecraft
+$dbname = minecraft;
 // CoreProtect prefix (if you have custom prefix) Default: co_
-$co_prefix = co_
+$co_prefix = co_;
 
 /* ----------------------------------
     Auxiliary settings for index.php
