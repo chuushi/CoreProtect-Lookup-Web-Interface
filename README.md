@@ -10,4 +10,5 @@ This project consists of three main files:
 - `conn.php`, the page used to connect the webserver to the database for lookup data retrieval,
 - `cachectrl.php`, the code used for cache management, and
 - `index.php`, the page used to make queries.
+
 The webserver must have write permission to the `cache/` folder in order for this web application to work.
