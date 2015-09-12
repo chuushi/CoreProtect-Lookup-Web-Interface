@@ -3,7 +3,11 @@ A flexible lookup web interface for CoreProtect 2.11 and up
 
 This is a _lightweight_ web application that gives you the power to look up anything CoreProtect is capable of logging in the most efficient way.  [CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/) is developed by Intellii.
 
+## Setup
 This web add-on requires a server with PHP 5.4+.  It also requires a connection from the webserver to a MySQL database the CoreProtect plugin is using.  Webserver that can read ".htaccess" file, such as Apache, is recommended for security purposes.
+
+After getting the web app, the *first thing* to do is configure `settings.php` with your MySQL server information.  After that, rest should be automatic.
+
 
 ## Files
 This project consists of three main files:
