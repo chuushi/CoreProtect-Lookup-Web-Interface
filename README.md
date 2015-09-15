@@ -1,7 +1,24 @@
 # CoreProtect-Web-Lookup-Interface
-A flexible lookup web interface for CoreProtect 2.11 and up
+A flexible lookup web interface for CoreProtect 2.
+Tested on CoreProtect 2.11.
+
+**Status:** alpha.  Developing the web interface.
 
 This is a _lightweight_ web application that gives you the power to look up anything CoreProtect is capable of logging in the most efficient way.  [CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/) is developed by Intellii.
+
+**Simon's Todo:**
+- [X] Develop a way to connect to the CP database. [`conn.php`]
+ - [X] Make output readable in JavaScript. (JSON)
+- [X] Develop a way to cache CP variables to make it more efficient. [`cachectrl.php`]
+ - [ ] Make a way to purge the cache.
+- [ ] **Make the lookup interface.** [`index.php`]
+ - [X] Develop JavaScript code to retrieve database information. (in JSON) (might be separated into `res/conn.js`)
+ - [ ] Develop lookup (input) form.
+ - [ ] Develop output lookup table.
+- [ ] Design the interface. [`res/main.css`]
+- [ ] Beta testing!
+
+If you would like to contribute to the code, you should wait until this goes into beta mode.  If there is any issues, please tell me/us about it!
 
 ## Setup
 This web add-on requires a server with PHP 5.4+.  It also requires a connection from the webserver to a MySQL database the CoreProtect plugin is using.  Webserver that can read ".htaccess" file, such as Apache, is recommended for security purposes.
