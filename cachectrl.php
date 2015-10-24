@@ -1,10 +1,11 @@
 <?php
 
 require 'settings.php';
+require 'co2mc.php';
 
 // Function to reset cache
 function clCache() {
-    global $mcsql;
+    global $mcsql,$co_prefix;
 
     // Reset users cache
     $fp = fopen('cache/user.php','w');
@@ -12,19 +13,40 @@ function clCache() {
 )?>'); 
     fclose($fp);
 
-    // List the maps to cache
-    $type = array('art','entity','material');
+    // Make art and entity map cache
+    $type = array('art','entity');
     $content = '<?php ';
-    for ($n = 0; $n <= 2; $n++) {
+    for ($n = 0; $n < 2; $n++) {
         $sql = $mcsql->query('SELECT `id`,`'.$type[$n].'` FROM '.$co_prefix.$type[$n].'_map;');
         $content .= '$'.$type[$n].'=array(';
         while ($row = $sql->fetch_assoc()) $content .= $row['id']."=>'".$row[$type[$n]]."',";
         $content .= ');';
     }
+    
+    // Make world name cache
     $sql = $mcsql->query('SELECT `id`,`world` FROM '.$co_prefix.'world;');
     $content .= '$world=array(';
     while ($row = $sql->fetch_assoc()) $content .= $row['id']."=>'".$row['world']."',";
     $content .= ')';
+    
+    // Make two different cache of material map
+    // material as stored in co
+    $sql = $mcsql->query('SELECT `id`,`material` FROM '.$co_prefix.'material_map;');
+    $content .= '$material=array(';
+    $material_co = [];
+    while ($row = $sql->fetch_assoc()) {
+        $content .= $row['id']."=>'".$row['material']."',";
+        $material_co[$row['id']] = $row['material']; // for later use
+    }
+    $content .= ')';
+    
+    // material as used in mc
+    $content .= '$material=array(';
+    foreach ($key as $value) {
+        $content .= $key."=>'".co2mc($value)."',";
+    }
+    $content .= ')';
+    
     $content .= '?>';
     
     // Write the data fo file
@@ -39,7 +61,7 @@ require 'cache/map.php';
 
 // Function to update username to cache
 function userUpdate($value,$isId) {
-    global $co_user,$mcsql;
+    global $co_user,$mcsql,$co_prefix;
     if ($isId) $key = 'rowid';
     else $key = 'user';
     $sql = $mcsql->query('SELECT `rowid`,`user` FROM '.$co_prefix.'user WHERE '.$key.' = "'.$value.'";')->fetch_assoc();
