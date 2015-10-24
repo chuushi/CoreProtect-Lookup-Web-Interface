@@ -5,7 +5,8 @@
 // Fixed function:
 function co2mc($val) {
     global $co2mc;
-    if (($ret = $co2mc[$val]) === NULL) $ret = $co2mc;
+    if (($ret = $co2mc[preg_replace('/^minecraft:/', '', $val)]) === NULL) $ret = $val;
+    if (strstr($ret,':') == false) $ret = 'minecraft:'.$ret;
     return $ret;
 }
 

@@ -37,7 +37,7 @@ require "settings.php";
 require 'cachectrl.php';
 
 // Record start time
-//$start = microtime(true);
+$timer = microtime(true);
 
 // convert GET data to PHP variables and array
 // Things to convert ot array: a, u, b, keyword, e
@@ -274,7 +274,7 @@ else {
                     }
                 else {
                     if ($r['action'] == 2) $r['dbtable'] = 'click';
-                    $r['type'] = $material[$r['type']];
+                    $r['type'] = [$r['type'],$material[$r['type']],$mcdataval[$r['type']]];
                 }
             }
             if ($r['wid']) $r['wid'] = $world[$r['wid']];
@@ -285,10 +285,9 @@ else {
 }
 
 $status['query'] = $sql;
+$status['duration']= microtime(true) - $timer
 
 echo json_encode([$status,$return]);
-
-//echo '<br><br>Time Taken: '.(microtime(true) - $start);
 
 // Raw around                       0.0085928440093994 seconds
 // After adding username conversion 0.0088789463043213 seconds
