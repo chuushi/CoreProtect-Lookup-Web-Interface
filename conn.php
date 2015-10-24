@@ -285,7 +285,7 @@ else {
 }
 
 $status['query'] = $sql;
-$status['duration']= microtime(true) - $timer
+$status['duration']= microtime(true) - $timer;
 
 echo json_encode([$status,$return]);
 
