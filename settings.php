@@ -15,7 +15,7 @@ $dbpass = "password";
 // Database name
 $dbname = "minecraft";
 // CoreProtect prefix (if you have custom prefix) Default: co_
-$co_prefix = "co_:";
+$co_prefix = "co_";
 
 
 /* ----------------------------------*

@@ -42,7 +42,7 @@ function clCache() {
     
     // material as used in mc
     $content .= '$material=array(';
-    foreach ($key as $value) {
+    foreach ($material_co as $key => $value) {
         $content .= $key."=>'".co2mc($value)."',";
     }
     $content .= ')';
