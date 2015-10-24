@@ -38,7 +38,7 @@ function clCache() {
         $content .= $row['id']."=>'".$row['material']."',";
         $material_co[$row['id']] = $row['material']; // for later use
     }
-    $content .= ')';
+    $content .= ');';
     
     // material as used in mc
     $content .= '$material=array(';
