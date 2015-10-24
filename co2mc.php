@@ -3,9 +3,9 @@
  * For CoreProtect 2. */
 
 // Fixed function:
-function co2mc($thing) {
+function co2mc($val) {
     global $co2mc;
-    if ($ret = $co2mc[$thing] === NULL) $ret = $co2mc;
+    if (($ret = $co2mc[$val]) === NULL) $ret = $co2mc;
     return $ret;
 }
 

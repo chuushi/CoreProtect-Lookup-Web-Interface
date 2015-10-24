@@ -27,7 +27,7 @@ function clCache() {
     $sql = $mcsql->query('SELECT `id`,`world` FROM '.$co_prefix.'world;');
     $content .= '$world=array(';
     while ($row = $sql->fetch_assoc()) $content .= $row['id']."=>'".$row['world']."',";
-    $content .= ')';
+    $content .= ');';
     
     // Make two different cache of material map
     // material as stored in co
@@ -41,7 +41,7 @@ function clCache() {
     $content .= ');';
     
     // material as used in mc
-    $content .= '$material=array(';
+    $content .= '$mcdataval=array(';
     foreach ($material_co as $key => $value) {
         $content .= $key."=>'".co2mc($value)."',";
     }
