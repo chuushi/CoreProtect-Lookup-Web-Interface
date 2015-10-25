@@ -214,12 +214,12 @@ getForm = function(val) {return document.lookup[val]};
  */
 function ready() {
     getId('lookup').className = "json";
+    getId('achid').classList.add('checked')
 }
 
 function checkClick(x) {
     if (x.getElementsByTagName('input')[0].checked) x.classList.add('checked');
     else x.classList.remove('checked');
-    console.log(x);
 }
 
 
@@ -253,7 +253,11 @@ function compile() {
         else req += "&b="+encodeURIComponent(st.replace(/\s/g, ''));
     }
     if (st = getId('kwd').value) req += "&keyword="+encodeURIComponent(st.replace(/,/g, ' '));
-    if (st = getId('date').value) req += "&date="+Math.floor(new Date(st).getTime()/1000);
+    if (st = getId('date').value) {
+        req += "&date="+Math.floor(new Date(st).getTime()/1000);
+        dset = true;
+    }
+    else dset = false;
 //    document.getElementById("debug").innerHTML = getTime(getId('time').value);
 //    if (t == "")
 //    qtime = Date.now() / 1000;
@@ -339,6 +343,10 @@ function phraseReturn(obj) {
     }
     else {
         r = g[1];
+        if (!dset) { // Conditional statement for locking search time into request
+            req += '&date='+r[0]['time'];
+            dset = true;
+        }
         for (var i = 0; i<r.length;i++) {
             if (r[i]['rolled_back'])  {
                 if (r[i]['rolled_back'] == 1) r[i]['rolled_back'] = "Rolled.";
@@ -381,7 +389,7 @@ function phraseReturn(obj) {
 
 ready();
 </script>
-<p>Index last updated  Oct 24, 2015.  Version 0.3.0-alpha</p>
+<p>Index last updated  Oct 24, 2015.  Version 0.3.0.1-alpha</p>
 <p>&copy; SimonOrJ, 2015.  All Rights Reserved.</p>
 </body>
 </html>
