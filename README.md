@@ -8,8 +8,10 @@ Skip to the [setup](#setup) section to see how you can set this up and test this
 This is a _lightweight_ web application that gives you the power to look up anything CoreProtect is capable of logging in the most efficient way.  [CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/) is developed by Intellii.
 
 **Todo:**
-- [X] Develop a way to connect to the CP database. [`conn.php`]
+- [X] Develop a way to connect to the CP MySQL database. [`conn.php`]
  - [X] Make output readable in JavaScript. (JSON)
+ - [X] BONUS: Find out how to read SQLite as if reading it from the database.
+ - [ ] BONUS: Find out how to properly read SQLite as if reading it from the database.
 - [X] Develop a way to cache CP variables to make it more efficient. [`cachectrl.php`]
  - [ ] Make a way to purge the cache.
 - [ ] **Make the lookup interface.** [`index.php`]
