@@ -1,17 +1,21 @@
 <?php
 // PHP code by SimonOrJ.  All Rights Reserved.
+// Requires PHP 5.4+
 /* GET outputs will be:
-- action (a)
-- user (u)
-- radius (r)
-- query limit (lim)
-- time(t) in seconds and t2
-- block(b)
-- chat/command/sign search (keyword)
-- exclude (e) players or blocks.
-- center/first coordinate (xyz)
-- second coordinate (xyz2)
-- Compile in json? (json)
+- array     action (a)
+- array     user (u)
+- int       radius (r)
+- int       query limit (lim)
+- string    time (t) in seconds
+- array     block (b)
+- string    chat/command/sign search (keyword)
+- in_array  exclude (e) - ub in an array to add "NOT" in the injection string.
+- array     center/first coordinate (xyz)
+- array     second coordinate (xyz2)
+- int       wordl (wid)
+- bool      asending time? (asendt) (past-to-present or present-to-past)
+- bool      session
+- in_array  flag - su
 
 Database tables to use:
 block (a: block, click, kill)
@@ -28,268 +32,257 @@ Output object:
 out[0]:
     ['success'] 0 or 1
     ['err'] block, username, username and block, invalid query, and no results
+    0 - Success
+    1 - No Results
+    2 - Early Termination
+    3 - Database Not Found
+    4 - CacheCtrl Value Not Found
+
 */
+
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
-
-require "settings.php";
-require 'cachectrl.php';
-
 // Record start time
-$timer = microtime(true);
+$_timer = microtime(true);
 
-// convert GET data to PHP variables and array
-// Things to convert ot array: a, u, b, keyword, e
-while ($key = key($_GET)) {
-    $get = current($_GET);
-    if (in_array($key,array('a','b','e','eu','u','xyz','xyz2'),true)) $$key = explode(',', $get);
-    elseif (in_array($key,array('r','lim','date','keyword','offset','showqry'),true)) $$key = $get;
-    next($_GET);
+// Code to run right before code terminates
+function _shutdown() {
+    global $out,$co_,$_timer,$searchSession;
+    if(!isset($out[0]["status"])) {
+        $out[0]["status"] = 2;
+        $out[0]["reason"] = "Script error";
+    }
+    $out[0]["duration"] = microtime(true) - $_timer;
+    echo json_encode($out);
 }
+register_shutdown_function("_shutdown");
 
-// If action is empty
-if (empty($a)) $a = array('block');
-elseif ($a[0] == 'all') $a = array('block','chat','click','command','container','kill','session','username');
+// Modules
+require "settings.php";
+require "cachectrl.php";
 
-// If limit is empty
-if (empty($lim)) $lim = 30;
+// Get the requested stuffs: ($q)
+if(!empty($_POST)) $q = $_POST;
+elseif(!empty($_GET)) $q = $_GET;
+else $q = [];
 
-// If offset is empty
-if (empty($offset)) $find = $lim;
-else $find = $lim+$offset;
+// Module Classes
+$cc = new cachectrl($codb,$co_);
 
-// Compile suffix
-$cmsuffix = ' ORDER BY time DESC LIMIT '.$find;
-
-// Coordinate Conversion
-if (isset($xyz) && (isset($r) || isset($xyz2))) {
-    if (isset($r)) {
-        $x = array($xyz[0]-$r,$xyz[0]+$r);
-        $y = array($xyz[1]-$r,$xyz[1]+$r);
-        $z = array($xyz[2]-$r,$xyz[2]+$r);
-    }
-    elseif (isset($xyz2)) {
-        $x = array(min($xyz[0],$xyz2[0]),max($xyz[0],$xyz2[0]));
-        $y = array(min($xyz[1],$xyz2[1]),max($xyz[1],$xyz2[1]));
-        $z = array(min($xyz[2],$xyz2[2]),max($xyz[2],$xyz2[2]));
-    }
-    $coord = '(x BETWEEN '.$x[0].' AND '.$x[1].') AND (y BETWEEN '.$y[0].' AND '.$y[1].') AND (z BETWEEN '.$z[0].' AND '.$z[1].')';
-}
-else $coord = false;
-    
-// Date conversion
-if (isset($date)) {
-    $d = 'time<='.$date;
-}
-else $d = false;
-
-// User conversion
-$erru = [];
-if (isset($u) || isset($eu)) {
-    $uset = isset($u);
-    $euset = isset($eu);
-    if (in_array('username',$a,true)) {
-        if ($uset) $usr = "user IN ('".implode("','",$u)."')";
-        if ($euset) $eusr = "user NOT IN ('".implode("','",$eu)."')";
-    }
-    if ($uset) {
-        foreach ($u as $key => $su) {
-            if (!$u[$key] = user2id($su)) $erru[] = $su;
-        }
-        $uid = "user IN ('".implode("','",$u)."')";
-    }
-    else $uid = false;
-    if ($euset) {
-        foreach ($eu as $key => $su) {
-            if (!$eu[$key] = user2id($su)) $erru[] = $su;
-        }
-        $euid = "user NOT IN ('".implode("','",$eu)."')";
-    }
-    else $euid = false;
-}
-else $uid = $euid = false;
-
-// Block conversion
-$errb = [];
-if (isset($b) || isset($e)) {
-    if (isset($b)) {
-        foreach ($b as $key => $sb) {
-            if (!$b[$key] = map2id('material',$sb)) $errb[] = $sb;
-        }
-        $bid = "type IN ('".implode("','",$b)."')";
-    }
-    else $bid = false;
-    if (isset($e)) {
-        foreach ($e as $key => $sb) {
-            if (!$e[$key] = map2id('material',$sb)) $errb[] = $sb;
-        }
-        $eid = "type NOT IN ('".implode("','",$e)."')";
-    }
-    else $eid = false;
-}
-else $bid = $eid = false;
-
-
-// Keyword into array
-if (isset($keyword)) {
-    $kwd = " REGEXP (REPLACE('".$keyword."',' ','|'))";
-    $cwords = "message".$kwd;
-//    $swords = 'MATCH (line_1,line_2,line_3,line_4)'.$kwd;
-    $wordsearch = true;
-}
-else $wordsearch = false;
-
-
-// SQL WHERE compling function
-function where($vars) {
-	global $bid,$eid,$uid,$euid,$usr,$eusr,$d,$r,$coord,$cwords,$swords,$wordsearch;
-    $pt = array();
-    if ($coord && in_array('coord',$vars,true)) array_push($pt,$coord);
-    if ($d) array_push($pt,$d);
-    if (in_array('block',$vars,true)) {
-        foreach ([$bid,$eid] as $val) {
-            if ($val) array_push($pt,$val);
-        }
-    }
-    if ($uid) {
-        if (in_array('uAsIs',$vars,true)) array_push($pt,$usr);
-        else array_push($pt,$uid);
-    }
-    if ($euid) {
-        if (in_array('uAsIs',$vars,true)) array_push($pt,$eusr);
-        else array_push($pt,$euid);
-    }
-    if (in_array('wsearch',$vars,true) && $wordsearch) array_push($pt,$cwords);
-    
-    if (empty($pt)) $where = '';
-    else {
-        if (!in_array('noWhere',$vars,true)) $where = ' WHERE ';
-        else $where = ' AND ';
-        $where .= implode(' AND ',$pt);
-    }
-	return $where;
-}
-
-// Username or Block error reporting if there is any error
-if ($erru || $errb) {
-    $status['status'] = 1;
-    if ($baddu = !empty($erru)) {
-        $status['err'] = 'username';
-        $status['username'] = $erru;
-    }
-    if (!empty($errb)) {
-        if ($baddu) $status['err'] = 'username and block';
-        else $status['err'] = 'block';
-        $status['block'] = $errb;
-    }
-    echo json_encode([$status,[]]);
-    exit;
-}
-
-
-
-// Assume both + and - state of action is not used (eg) +block and -block
-
-// For block, kill, or click history
-$sql = array();
-if (in_array('block',$a,true) || in_array('kill',$a,true) || in_array('click',$a,true)) {
-	$bla = [];
-    $wherels = [];
-	if ($kill = in_array('kill',$a,true)) {
-        if (!($bid || $eid)) array_push($bla,"action=3");
-    }// selects killing action
-	if (in_array('block',$a,true)) array_push($bla,"action=0 OR action=1"); // selects block history
-	if (in_array('click',$a,true)) array_push($bla,"action=2"); // selects clicking action
-    if (($bid || $eid) && $kill) {
-        if (!empty($bla)) array_push($sql,"SELECT `time`,'block' AS dbtable,`user`,`wid`,`x`,`y`,`z`,`type`,`data`,'1' AS amount,`action`,`rolled_back` FROM ".$co_prefix."block WHERE (".implode(' OR ',$bla).')'.where(['coord','block','noWhere']).$cmsuffix);
-        array_push($sql,"SELECT `time`,'block' AS dbtable,`user`,`wid`,`x`,`y`,`z`,`type`,`data`,'1' AS amount,`action`,`rolled_back` FROM ".$co_prefix."block WHERE action=3".where(['coord','noWhere']).$cmsuffix);
-    }
-    else array_push($sql,"SELECT `time`,'block' AS dbtable,`user`,`wid`,`x`,`y`,`z`,`type`,`data`,'1' AS amount,`action`,`rolled_back` FROM ".$co_prefix."block WHERE (".implode(' OR ',$bla).')'.where(['coord','block','noWhere']).$cmsuffix);
-
-}
-
-// For chat or command history
-$run = array();
-if (in_array('chat',$a,true)) array_push($run,'chat');
-if (in_array('command',$a,true)) array_push($run,'command');
-if (!empty($run)) {
-    foreach ($run as $val) array_push($sql,"SELECT `time`,'".$val."' AS dbtable,`user`,NULL as wid,NULL AS x,NULL AS y,NULL AS z,NULL AS type,`message` AS data,NULL AS amount,NULL AS action,NULL AS rolled_back FROM ".$co_prefix.$val.where(['wsearch']).$cmsuffix);
-}
-
-// For container history
-if (in_array('container',$a,true)) array_push($sql,"SELECT `time`,'container' as dbtable,`user`,`wid`,`x`,`y`,`z`,`type`,`data`,`amount`,`action`,`rolled_back` FROM ".$co_prefix."container".where(['block','coord']).$cmsuffix);
-
-// For session history
-if (in_array('session',$a,true)) array_push($sql,"SELECT `time`,'session' AS dbtable,`user`,`wid`,`x`,`y`,`z`,NULL AS type,NULL AS data,NULL AS amount,`action`,NULL AS rolled_back FROM ".$co_prefix."session".where(['coord']).$cmsuffix);
-
-// For username history
-if (in_array('username',$a,true)) array_push($sql,"SELECT `time`,'username' AS dbtable,`user`,NULL as wid,NULL AS x,NULL AS y,NULL AS z,NULL AS type,`uuid` AS data,NULL AS amount,NULL AS action,NULL AS rolled_back FROM ".$co_prefix."username_log ".where(['uAsIs']).$cmsuffix);
-
-// If offset exists
-if (!empty($offset)) $cmsuffix = ' ORDER BY time DESC LIMIT '.$lim.' OFFSET '.$offset;
-
-if (count($sql) == 1) $sql = substr($sql[0], 0, strpos($sql[0], "ORDER BY time DESC LIMIT ")).$cmsuffix.';';
-else $sql = '('.implode(') UNION ALL (',$sql).')'.$cmsuffix.';';
-
-/* Table columns:
-'time', 'dbtable', 'user', 'wid', 'x', 'y', 'z', 'type', 'data', 'amount', 'action', 'rolled_back'
-
-a inputs:
-'block','chat','click','command','container','kill','session','username'
-
-block, click, kill: time, dbtable, user, wid, x, y, z, type, data, amount, action (always 1), rolled_back
-chat, command: time, dbtalbe, user, data
-container: time, dbtable, user, wid, x, y, z, type, data, amount, action, rolled_back
-session: time, dbtable, user, wid, x, y, z, action
-username: time, dbtable, user, data
-*/
-
-$mcsql->set_charset('utf8');
-$result = $mcsql->query($sql);
-
-
-$return = [];
-
-if ($mcsql->errno) {
-    $status['status'] = 1;
-    $status['err'] = 'invalid query';
-    $status['sqlerr'] = [$mcsql->errno,$mcsql->error];
+if(isset($q["SQL"])) {
+    // Reserved for loading slightly more quickly
+    $lookup = $codb->prepare($out[0]["SQL"] = $q["SQL"]);
 }
 else {
-    if (($numrows = $result->num_rows) === 0) {
-        $status['status'] = 1;
-        $status['err'] = 'no results';
+    foreach ($q as $key => $value) {
+        if (in_array($key,["a","b","e","u","xyz","xyz2"],true)) $$key = explode(',', $value);
+        elseif (in_array($key,["r","t","keyword","wid","rollback"],true)) $$key = $value;
+        elseif (in_array($key,["unixtime","asendt"],true)) $$key = true;
     }
-    else {
-        $status['status'] = 0;
-        $status['rows'] = $numrows;
-        // The Master Code.  Most important if there is a result.
-        while($r = $result->fetch_assoc()) {
-            if ($r['dbtable'] !== 'username') $r['user'] = cou($r['user']);
-            if ($r['dbtable'] == 'block' || $r['dbtable'] == 'container') {
-                if ($r['action'] == 3) {
-                    $r['type'] = $entity[$r['type']];
-                    $r['dbtable'] = 'kill';
-                    }
-                else {
-                    if ($r['action'] == 2) $r['dbtable'] = 'click';
-                    $r['type'] = [$r['type'],$material[$r['type']],$mcdataval[$r['type']]];
+    
+    
+    // Defaults if the query or parts of the query is empty:
+    if(!isset($a)) $a = ["block"];
+    if(!isset($q["lim"])) $q["lim"] = 30;
+    if(!isset($asendt)) $asendt = false;
+    if(!isset($unixtime)) $unixtime = false;
+    
+    // coord xyz, xyz2, r
+    if(isset($xyz) && (isset($r) || isset($xyz2))) {
+        if(isset($r)) {
+            $x = [$xyz[0]-$r,$xyz[0]+$r];
+            $y = [$xyz[1]-$r,$xyz[1]+$r];
+            $z = [$xyz[2]-$r,$xyz[2]+$r];
+        }
+        else {
+            $x = [min($xyz[0],$xyz2[0]),max($xyz[0],$xyz2[0])];
+            $y = [min($xyz[1],$xyz2[1]),max($xyz[1],$xyz2[1])];
+            $z = [min($xyz[2],$xyz2[2]),max($xyz[2],$xyz2[2])];
+        }
+        if(isset($wid)) $coord = "wid=".$cc->getId($wid,"world")." AND ";
+        else $coord = "";
+        $coord .= "(x BETWEEN ".$x[0]." AND ".$x[1].") AND (y BETWEEN ".$y[0]." AND ".$y[1].") AND (z BETWEEN ".$z[0]." AND ".$z[1].")";
+    }
+    else $coord = false;
+    
+    // Time t, unixtime
+    if(isset($t)) {
+        $where[0] = "time";
+        if($asendt) $where[0] .= ">=";
+        else $where[0] .= "<=";
+        if(!$unixtime) {
+            $t = str_replace(",","",$t);
+            $t = preg_split("/(?<=[wdhms])(?=\d)/",$t);
+            $t2 = time();
+            foreach($t as $value) {
+                $value = preg_split("/(?<=\d)(?=[wdhms])/",$value,2);
+                switch($value[1]) {
+                    case "w":
+                        $t2 -= $value[0]*604800;
+                        break;
+                    case "d":
+                        $t2 -= $value[0]*86400;
+                        break;
+                    case "h":
+                        $t2 -= $value[0]*3600;
+                        break;
+                    case "m":
+                        $t2 -= $value[0]*60;
+                        break;
+                    case "s":
+                        $t2 -= $value[0];
                 }
             }
-            if ($r['wid']) $r['wid'] = $world[$r['wid']];
-            $return[] = $r;
+            $t = $t2;
         }
+        $time .= $t;
+    }
+    else $time = "time<=".(time()+$timeOffset);
+    
+    // User u, e
+    if(isset($u)) {
+        $NOT = isset($e)&&in_array("u",$e,true) ? " NOT " : " ";
+        foreach($u as $key => $us) $u[$key] = $cc->getId($us,"user");
+        $userid = "user".$NOT."IN ('".implode("','",$u)."')";
+        if(in_array("username",$a,true)) {
+            foreach($u as $us) $us = $cc->getValue($us,"user");
+            $username = "user".$NOT."IN ('".implode("','",$u)."')";
+        }
+    }
+    else $userid = false;
+    
+    // block, kill, container rolled_back flag
+    if(isset($rollback)) {
+        $rbflag = "rolled_back=";
+        $rbflag .= ($rollback) ? "1" : "0";
+    }
+    else $rbflag = false;
 
+    // Block b, e
+    $action = [[],false,false];
+    if(in_array("block",$a,true) || in_array("click",$a,true)) {
+        if(in_array("block",$a,true)) array_push($action[0],0,1);
+        if(in_array("click",$a,true)) ($rbflag) ? $action[1] = true : $action[0][] = 2;
+        if(isset($b)) {
+            $NOT = isset($e)&&in_array("b",$e,true) ? " NOT " : " ";
+            foreach($b as $key => $bk) $b[$key] = $cc->getId($bk,"material");
+            $block = "type".$NOT."IN ('".implode("','",$b)."')";
+        }
+        else $block = false;
+    }
+    
+    if(!empty($cc->error)) {
+        $out[0]["status"] = 4;
+        $out[0]["reason"] = "The following ID/value does not exist in the CoreProtect database.";
+        $out[1] = $cc->error;
+        exit();
+    }
+    
+    // kill
+    if(in_array("kill",$a,true)) {
+        if(isset($b)) $action[2] = true;
+        else $action[0][] = 3;
+    }
+    
+    
+    // Make query heading
+    function sel($as,$cl) {
+        if($as === 0) return ",NULL AS ".$cl;
+        return ",".$as." AS ".$cl;
+    }
+    
+    function sqlreq($table) {
+        global $co_, $time, $username, $userid, $limit;
+        $where[0] = $time;
+        if($userid) $where[] = ($table == "username")?$username:$userid;
+        switch($table) {
+            case "block":
+            case "session":
+            case "container":
+                global $coords;
+                $ret = ",wid,x,y,z";
+                if($coords) $where[] = $coords;
+                if($table == "session") $ret .= sel(0,"type").sel(0,"data").sel(0,"amount").",action".sel(0,"rolled_back");
+                else {
+                    global $block, $rbflag;
+                    $ret .= ",type,data";
+                    if($table == ("block")) {
+                        global $action;
+                        $ret .= sel(0,"amount");
+                        if($action[0]) $whereB[] = "action IN (".implode(",",$action[0]).")".(($block) ? " AND ".$block : "").(($rbflag) ? " AND ".$rbflag : "");
+                        if($action[1]) $whereB[] = "action=2".(($block) ? " AND ".$block : "");
+                        if($action[2]) $whereB[] = "action=3".(($rbflag) ? " AND ".$rbflag : "");
+                        if(!empty($whereB)) $where[] = "(".implode(") OR (",$whereB).")";
+                    }
+                    else {
+                        $ret .= ",amount";
+                        if($block) $where[] = $block;
+                        if($rbflag) $where[] = $rbflag;
+                    }
+                    $ret .= ",action,rolled_back";
+                }
+                break;
+            case "chat":
+            case "command":
+            case "username_log":
+                $ret = sel(0,"wid").sel(0,"x").sel(0,"y").sel(0,"z").sel(0,"type");
+                $ret .= ($table == "username_log")? sel("uuid","data") : sel("message","data");
+                $ret .= sel(0,"amount").sel(0,"action").sel(0,"rolled_back");
+        }
+        // "SELECT time,'".$table."' AS action,user".$ret." FROM ".$co_.$dt;
+        
+        return "SELECT time,'".$table."' AS 'table',user".$ret." FROM ".$co_.$table.((empty($where)) ? "" : " where ".implode(" AND ",$where));
+    }
+    
+    foreach($a as $pa) {
+        switch($pa) {
+            case "block":
+            case "click":
+            case "kill":
+                if(!isset($bflag)) {
+                    $bflag = true;
+                    $sql[] = sqlreq("block");
+                }
+                break;
+            case "username":
+                $sql[] = sqlreq("username_log");
+                break;
+            default:
+                $sql[] = sqlreq($pa);
+                break;
+        }
+    }
+    
+    $lookup = $codb->prepare($out[0]["SQL"] = ((count($sql) === 1) ? $sql[0] : implode(" UNION ",$sql))." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?,?;");
+}
+//var_dump($lookup);
+//var_dump($codb->errorInfo());
+
+if ($lookup->execute([(isset($q["offset"])?$q["offset"]:"0"),$q["lim"]])) {
+    $out[0]["status"] = 0;
+    $out[0]["reason"] = "Request successful";
+//    $status["rows"] = $numrows;
+    // Code Sanitaizer
+    $json = [];
+    while($r = $lookup->fetch(PDO::FETCH_ASSOC)) {
+        if ($r["table"] !== "username_log") $r["user"] = $cc->getValue($r["user"],"user");
+        if ($r["table"] == "block") {
+            if ($r["action"] == 3) {
+                $r["type"] = $cc->getValue($r["type"],"entity");
+                $r["table"] = "kill";
+                }
+            else {
+                if ($r["action"] == 2) $r["table"] = "click";
+                $r["type"] = $cc->getValue($r["type"],"material");
+            }
+        }
+        if ($r["wid"]) $r["wid"] = $cc->getValue($r["wid"],"world");
+        $out[1][] = $r;
+    }
+    if(empty($out[1])) {
+        $out[0]["status"] = 1;
+        $out[0]["reason"] = "No results";
     }
 }
-
-$status['query'] = $sql;
-$status['duration']= microtime(true) - $timer;
-
-echo json_encode([$status,$return]);
-
-// Raw around                       0.0085928440093994 seconds
-// After adding username conversion 0.0088789463043213 seconds
-// After adding block conversion    0.0090689659118652 seconds
 ?>

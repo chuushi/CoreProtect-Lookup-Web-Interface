@@ -7,108 +7,18 @@
 <head>
 <meta charset="utf-8">
 <title>CorePortect Web Lookup Interface &bull; by SimonOrJ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
 <style>
-* {margin:0;padding:0}
-body {
-    color:#444;
-    background-color:#C2C2BD;
-    font-family:"Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, sans-serif;
+.btn {
+    margin-bottom:0;
 }
-.center {
-    text-align: center;
-}
-
-#lookuptable {
-    max-width:640px;
-}
-
-input[type=text], input[type=number], input[type=datetime-local], label.flexfield, label.stretchfield {
-    background-color: #DBDBD6;
-    font-size: 16px;
-    font-weight: normal;
-    padding: .5em;
-    border-style: none;
-    align-items: center;
-    justify-content: center;
-}
-
-form.json label input[type="checkbox"] { /* json = javascript on */
-    display: none;
-}
-
-form.json label.checked {
-    background-color: #ff6139;
-}
-
-.sectionwrapper{
-    border: 1px solid;
-    margin: 0 4px 4px;
-}
-
-form .head {
-    display: block;
-    text-align: left;
-    font-weight: bold;
-    cursor: default;
-}
-.flexwrapper {
-    display: flex;
-}
-.flexfield {
-    white-space: nowrap;
-    display:inline-flex;
-    flex-grow: 1;
-    width: 0;
-}
-.flexexclude {
-    flex-basis: auto;
-    -webkit-flex-basis: auto;
-    flex-grow: 0;
-    width: 5em;
-}
-.stretchfield {
-    display:block;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.flexfield:hover, .stretchfield:hover {
-    background-color: #EEE;
-}
-label.flexfield:active, label.stretchfield:active {
-background-color: #ff6139;
-}
-
-.tooltip:hover:after { content: attr(data-tooltip); position: absolute; white-space: nowrap; background: rgba(0, 0, 0, 0.85); padding: 3px 7px; color: #FFF; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; margin-left: 7px; margin-top: -3px;}
-
-/* Result Table */
-table {
-    border-collapse: collapse;
-}
-
-td {
-    position: relative;
-}
-
-tr.strikeout td:before {
-    content: " ";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    border-bottom: 1px solid #111;
-    width: 100%;
-}
-
-#output {
-    width: 100%;
-}
-
 </style>
 </head>
 <body>
 
-<h1>CoreProtect Web Lookup Interface</h1>
-<p>by SimonOrJ</p>
+<header><h1>CoreProtect Web Lookup Interface</h1></header>
+<p class="second">by SimonOrJ</p>
 <p>This project is still undergoing alpha testing.  Please report any problems or feedback to the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.</p>
 <p>Thank you for testing with me! ~SimonOrJ</p>
 <div id="test"></div>
@@ -124,78 +34,76 @@ tr.strikeout td:before {
 a inputs:
 'block','chat','click','command','container','kill','session','username'
 -->
-<table id="lookuptable">
-  <tr>
-    <th rowspan="2">
-      <span class="head">Actions</span>
-      <div class="sectionwrapper">
-      <label class="stretchfield" for="abl" onClick="checkClick(this)"><input type="checkbox" id="abl" name="a[]" value="block" checked> Block</label>
-      <label class="stretchfield" for="acl" onClick="checkClick(this)"><input type="checkbox" id="acl" name="a[]" value="click"> Click</label>
-      <label class="stretchfield" for="acn" onClick="checkClick(this)"><input type="checkbox" id="acn" name="a[]" value="container"> Container</label>
-      <label class="stretchfield" for="ach" onClick="checkClick(this)"><input type="checkbox" id="ach" name="a[]" value="chat"> Chat</label>
-      <label class="stretchfield" for="aco" onClick="checkClick(this)"><input type="checkbox" id="aco" name="a[]" value="command"> Command</label>
-      <label class="stretchfield" for="aki" onClick="checkClick(this)"><input type="checkbox" id="aki" name="a[]" value="kill"> Kill</label>
-      <label class="stretchfield" for="ase" onClick="checkClick(this)"><input type="checkbox" id="ase" name="a[]" value="session"> Session</label>
-      <label class="stretchfield" for="aus" onClick="checkClick(this)"><input type="checkbox" id="aus" name="a[]" value="username"> Username</label>
-      </div>
-  </th>
-    <th>
-      <span" class="head">Center / Corner 1</span>
-      <div class="sectionwrapper flexwrapper">
-      <input class="flexfield center" type="number" id="x1" name="xyz[]" placeholder="x"><input class="flexfield center" type="number" id="y1" name="xyz[]" placeholder="y"><input class="flexfield center" type="number" id="z1" name="xyz[]" placeholder="z">
-      </div>
-    </th>
-  </tr>
-  <tr>
-    <td>
-      <span class="head">Radius / Corner 2</span>
-      <div class="sectionwrapper flexwrapper">
-      <input class="flexfield center" type="number" id="x2" name="xyz2[]" placeholder="Radius or x"><input class="flexfield center" type="number" id="y2" name="xyz2[]" placeholder="y"><input class="flexfield center" type="number" id="z2" name="xyz2[]" placeholder="z">
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <label for="usr" class="head">Users to search</label>
-      <div class="sectionwrapper flexwrapper">
-      <label class="flexfield flexexclude" for="eusr" onClick="checkClick(this)"><input type="checkbox" id="eusr" name="eu"> Exclude</label><input class="flexfield" type="text" pattern="((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16}))(,\s?((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16})))*" id="usr" name="u" placeholder="Separate by single comma(,)">
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <label for="blk" class="head">Blocks to search</label>
-      <div class="sectionwrapper flexwrapper"><label class="flexfield flexexclude" for="eblk" onClick="checkClick(this)"><input type="checkbox" id="eblk" name="e"> Exclude</label><input class="flexfield" type="text" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)"></div>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <label for="kwd" class="head">Keyword for chat/command lookup</label>
-      <div class="sectionwrapper"><input class="stretchfield" type="text" id="kwd" name="keyword" placeholder="Separate by single comma(,)"></div>
-</td>
-  </tr>
-  <tr>
-    <td>
-      <label for="date" class="head">Date From</label>
-      <div class="sectionwrapper"><input class="stretchfield" type="datetime-local" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?" placeholder="0000-00-00T00:00:00" id="date" name="date"></div>
-</td>
-    <td>
-      <label for="lim" class="head">Limit query</label>
-      <div class="sectionwrapper"><input class="stretchfield" type="number" id="lim" name="lim" placeholder="30"></div>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <input type="submit" value="Update">
-      <input type="reset" value="Reset">
-    </td>
-  </tr>
-</table>
+<div class="form-group row">
+  <div class="col-sm-2 form-control-label">Actions</div>
+  <div class="btn-group col-sm-10">
+    <label class="btn btn-secondary" for="abl" onClick="checkClick(this)"><input type="checkbox" id="abl" name="a[]" value="block" checked> Block</label>
+    <label class="btn btn-secondary" for="acl" onClick="checkClick(this)"><input type="checkbox" id="acl" name="a[]" value="click"> Click</label>
+    <label class="btn btn-secondary" for="acn" onClick="checkClick(this)"><input type="checkbox" id="acn" name="a[]" value="container"> Container</label>
+    <label class="btn btn-secondary" for="ach" onClick="checkClick(this)"><input type="checkbox" id="ach" name="a[]" value="chat"> Chat</label>
+    <label class="btn btn-secondary" for="aco" onClick="checkClick(this)"><input type="checkbox" id="acm" name="a[]" value="command"> Command</label>
+    <label class="btn btn-secondary" for="aki" onClick="checkClick(this)"><input type="checkbox" id="akl" name="a[]" value="kill"> Kill</label>
+    <label class="btn btn-secondary" for="ase" onClick="checkClick(this)"><input type="checkbox" id="ass" name="a[]" value="session"> Session</label>
+    <label class="btn btn-secondary" for="aus" onClick="checkClick(this)"><input type="checkbox" id="aus" name="a[]" value="username"> Username</label>
+  </div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="x1">Center / Corner 1</label>
+  <div class="input-group col-sm-10">
+    <input class="form-control" type="number" id="x1" name="xyz[]" placeholder="x">
+      <span class="input-group-btn" style="width:0"></span>
+    <input class="form-control" type="number" id="y1" name="xyz[]" placeholder="y" style="margin-left:-1px">
+      <span class="input-group-btn" style="width:0"></span>
+    <input class="form-control" type="number" id="z1" name="xyz[]" placeholder="z" style="margin-left:-2px">
+  </div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="x2">Radius / Corner 2</label>
+  <div class="input-group col-sm-10">
+    <input class="form-control" type="number" id="x2" name="xyz2[]" placeholder="Radius or x">
+    <span class="input-group-btn" style="width:0"></span>
+    <input class="form-control" type="number" id="y2" name="xyz2[]" placeholder="y" style="margin-left:-1px">
+    <span class="input-group-btn" style="width:0"></span>
+    <input class="form-control" type="number" id="z2" name="xyz2[]" placeholder="z" style="margin-left:-2px">
+  </div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="usr">Users to search</label>
+  <div class="input-group col-sm-10">
+    <span class="input-group-btn"><label class="btn btn-secondary" for="eus" onClick="checkClick(this)"><input type="checkbox" id="eus" name="e[]" value="u"> Exclude</label></span>
+    <input class="form-control" type="text" pattern="((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16}))(,\s?((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16})))*" id="usr" name="u" placeholder="Separate by single comma(,)">
+  </div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="blk">Blocks to search</label>
+  <div class="input-group col-sm-10">
+    <span class="input-group-btn"><label class="btn btn-secondary" for="ebl" onClick="checkClick(this)"><input type="checkbox" id="ebl" name="e[]" value="b"> Exclude</label></span>
+    <input class="form-control" type="text" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)">
+  </div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="kwd">Keyword</label>
+  <div class="col-sm-10"><input class="form-control" type="text" id="kwd" name="keyword" placeholder="Coming in v0.6.x-alpha!" disabled></div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="date">Date From</label>
+  <div class="col-sm-10"><input class="form-control" type="datetime-local" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?" placeholder="0000-00-00T00:00:00" id="date" name="date"></div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="lim">Query Limit</label>
+  <div class="col-sm-10"><input class="form-control" type="number" id="lim" name="lim" placeholder="30"></div>
+</div>
+<div class="form-group row">
+  <div class="col-sm-offset-2 col-sm-10">
+    <input class="btn btn-secondary" type="submit" value="Submit">
+    <input class="btn btn-secondary" type="reset" value="Reset">
+  </div>
+</div>
 </form>
 
-<table id="output">
+<table id="output" class="table">
   <thead>
-  <tr><th>Seconds Ago</th><th>User</th><th>Search Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Amount</th><th>Action</th><th>Rolled back?</th></tr>
+  <tr><th>Time ago</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Action</th><th>Rollback</th></tr>
   </thead>
   <tbody id="maintbl"><tr><td colspan="9">Please submit a lookup.</td></tr></tbody>
 </table>
@@ -204,7 +112,8 @@ a inputs:
 <input type="submit" value="Load more">
 </form>
 
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
 <script>
 getId = function(val) {return document.getElementById(val)},
 getForm = function(val) {return document.lookup[val]};
@@ -244,14 +153,9 @@ function compile() {
         else if (getId('x2').value) req += rChecked('xyz2[]','r');
         else req += "&r=0"
     }
-    if (st = getId('usr').value) {
-        if (getId('eusr').checked) req += "&eu="+encodeURIComponent(st.replace(/\s/g, ''));
-        else req += "&u="+encodeURIComponent(st.replace(/\s/g, ''));
-    }
-    if (st = getId('blk').value) {
-        if (getId('eblk').checked) req += "&e="+encodeURIComponent(st.replace(/\s/g, ''));
-        else req += "&b="+encodeURIComponent(st.replace(/\s/g, ''));
-    }
+    if (st = getId('usr').value) req += "&u="+encodeURIComponent(st.replace(/\s/g, ''));
+    if (st = getId('blk').value) req += "&b="+encodeURIComponent(st.replace(/\s/g, ''));
+    if (getId('eus').checked || getId('ebl').checked) req = rChecked('e[]','e',1);
     if (st = getId('kwd').value) req += "&keyword="+encodeURIComponent(st.replace(/,/g, ' '));
     if (st = getId('date').value) {
         req += "&date="+Math.floor(new Date(st).getTime()/1000);
@@ -319,10 +223,9 @@ function qload(request,add) {
 
 // returns data in table format
 function phraseReturn(obj) {
-    var g = JSON.parse(obj),
-        o = '',
-        r;
+    var g = JSON.parse(obj),o,r;
     if (g[0]['status']) { // If failed
+        /*
         o = '<tr><td colspan="8">';
         switch (g[0]['err']) {
             case 'block':
@@ -340,47 +243,37 @@ function phraseReturn(obj) {
             o += '<i>No more results</i>'
         }
         o += '</td></tr>';
+        */
     }
     else {
         r = g[1];
-        if (!dset) { // Conditional statement for locking search time into request
-            req += '&date='+r[0]['time'];
-            dset = true;
-        }
-        for (var i = 0; i<r.length;i++) {
-            if (r[i]['rolled_back'])  {
-                if (r[i]['rolled_back'] == 1) r[i]['rolled_back'] = "Rolled.";
-                else r[i]['rolled_back'] = "Not Rolled.";
-            }
-            
+        o;
+        for (var i = 0; i<r.length; i++) {
             o += '<tr';
-            if (r[i]['rolled_back'] == 'Rolled.') o += ' class="strikeout"';
-            o += '><td title="'+new Date(r[i]['time']*1000)+'">'+timeago(r[i]['time'])+'</td><td>'+r[i]['user']+'</td><td>'+r[i]['dbtable']+'</td><td';
-            if (['block','click','kill','container'].indexOf(r[i]['dbtable'])>=0) {
-                o += '>'+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+'</td><td>'+r[i]['type'][2].replace(/^minecraft:/,"")+':'+r[i]['data']+'</td><td>'+r[i]['amount']+'</td><td>';
-                switch (r[i]['action']) {
-                    case '0':
-                    o += 'removed';
+            if (r[i]['rolled_back'] == '1') o += ' class="strikeout"';
+            // Time, Username, Action
+            o += '><td title="'+new Date(r[i]['time']*1000)+'">'+timeago(r[i]['time'])+'</td><td>'+r[i]['user']+'</td><td>'+r[i]['table']+'</td><td';
+            switch(r[i]["table"]) {
+                case "click":
+                    r[i]['rolled_back'] = "";
+                case "container":
+                case "block":
+                case "kill":
+                    // rolled_back translation
+                    if(r[i]['rolled_back']) {
+                        if(r[i]['rolled_back'] == "0") r[i]['rolled_back'] = "Not rolled.";
+                        else if(r[i]['rolled_back'] == "1") r[i]['rolled_back'] = "Rolled.";
+                    }
+                case "session":
+                    // Coordinates, Type:Data, Amount, Rollback
+                    o += '>'+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+'</td><td>'+r[i]['type']+':'+r[i]['data']+'</td><td>'+((r[i]['action'] == "1")?"+":"-")+((r[i]['table'] == "container") ? r[i]['amount'] : '')+'</td><td>'+r[i]['rolled_back'];
                     break;
-                    case '1':
-                    o += 'placed';
-                    break;
-                    case '2':
-                    o += 'clicked';
-                    break;
-                    case '3':
-                    o += 'killed';
-                }
-                o += '</td><td>'+r[i]['rolled_back'];
+                case "chat":
+                case "command":
+                case "username_log":
+                    // Message/UUID
+                    o += 'colspan="4">'+r[i]['data']
             }
-            else if (['chat','command', 'username'].indexOf(r[i]['dbtable'])>=0) o += ' colspan="5">'+r[i]['data'];
-            else if (r[i]['dbtable'] == 'session') {
-                o += '>'+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+'</td><td colspan="4">';
-                if (r[i]['action'] == 1) o += 'logged in';
-                else o += 'logged out'
-            }
-            else o += ' colspan="5">NULL';
-            
             o +='</td></tr>';
         }
     }
@@ -389,7 +282,7 @@ function phraseReturn(obj) {
 
 ready();
 </script>
-<p>Index last updated  Oct 24, 2015.  Version 0.3.0.1-alpha</p>
-<p>&copy; SimonOrJ, 2015.  All Rights Reserved.</p>
+<p>Index last updated  Oct 24, 2015.  Version 0.5.0-alpha</p>
+<p>&copy; SimonOrJ, 2015-2016.  All Rights Reserved.</p>
 </body>
 </html>

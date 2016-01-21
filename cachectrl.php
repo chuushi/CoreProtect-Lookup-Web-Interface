@@ -1,109 +1,78 @@
 <?php
-
-require 'settings.php';
-require 'co2mc.php';
-
-// Function to reset cache
-function clCache() {
-    global $mcsql,$co_prefix;
-
-    // Reset users cache
-    $fp = fopen('cache/user.php','w');
-    fwrite($fp, '<?php $'.$co_prefix.'user=array(
-)?>'); 
-    fclose($fp);
-
-    // Make art and entity map cache
-    $type = array('art','entity');
-    $content = '<?php ';
-    for ($n = 0; $n < 2; $n++) {
-        $sql = $mcsql->query('SELECT `id`,`'.$type[$n].'` FROM '.$co_prefix.$type[$n].'_map;');
-        $content .= '$'.$type[$n].'=array(';
-        while ($row = $sql->fetch_assoc()) $content .= $row['id']."=>'".$row[$type[$n]]."',";
-        $content .= ');';
+// Code by SimonOrJ
+// Class for things with cache.
+// users, blocks, arts, images, entities,
+// TODO: Make this update usernames somehow.
+class cachectrl {
+    private $ALL = ["art","entity","material","user","world"], $artDb = [], $entityDb = [], $materialDb = [], $userDb = [], $worldDb = [], $art, $artLookup, $entity, $entityLookup, $material, $materialLookup, $user, $userLookup, $world, $worldLookup, $codb, $co_;
+    
+    function __construct($codb,$co_) {
+        foreach($this->ALL as $d) if(file_exists("cache/".$d.".php")) {
+            $e = $d."Db";
+            $this->$e = require("cache/".$d.".php");
+        }
+        $this->codb = $codb;
+        $this->co_ = $co_;
     }
     
-    // Make world name cache
-    $sql = $mcsql->query('SELECT `id`,`world` FROM '.$co_prefix.'world;');
-    $content .= '$world=array(';
-    while ($row = $sql->fetch_assoc()) $content .= $row['id']."=>'".$row['world']."',";
-    $content .= ');';
-    
-    // Make two different cache of material map
-    // material as stored in co
-    $sql = $mcsql->query('SELECT `id`,`material` FROM '.$co_prefix.'material_map;');
-    $content .= '$material=array(';
-    $material_co = [];
-    while ($row = $sql->fetch_assoc()) {
-        $content .= $row['id']."=>'".$row['material']."',";
-        $material_co[$row['id']] = $row['material']; // for later use
+    function __destruct() {
+        foreach($this->ALL as $v) {
+            $e = $v."Lookup";
+            if(!empty($this->$v) || !empty($this->$e)) {
+                // Save $db to file
+                $d = $v."Db";
+                file_put_contents($_SERVER['DOCUMENT_ROOT']."/cache/".$v.".php","<?php return ".var_export($this->$d,true).";?>");
+            }
+        }
     }
-    $content .= ');';
     
-    // material as used in mc
-    $content .= '$mcdataval=array(';
-    foreach ($material_co as $key => $value) {
-        $content .= $key."=>'".co2mc($value)."',";
+    public $error = [];
+    
+    // Function for id to value retrieval
+    function getValue($id,$from) {
+        $lookup = $from."Lookup";
+        $ac = $from."Db";
+        $ac =& $this->$ac;
+        if (array_key_exists($id,$ac)) return $ac[$id];
+        else {
+            if(empty($this->$lookup)) $this->$lookup = $this->codb->prepare("SELECT `".$from."` FROM ".$this->co_.((in_array($from,["user","world"],true)) ? $from : $from."_map")." WHERE ".(($from == "user") ? "rowid" : "id")."=?;");
+            $this->$lookup->execute([$id]);
+            if($u = $this->$lookup->fetch(PDO::FETCH_NUM)) $ac[$id] = $u[0];
+            else {
+                $this->error[] = ["id",$from,$id];
+                return NULL;
+            }
+            return $u[0];
+        }
     }
-    $content .= ')';
     
-    $content .= '?>';
-    
-    // Write the data fo file
-    $fp = fopen('cache/map.php','w');
-    fwrite($fp, $content); 
-    fclose($fp); 
+    // Function for value to id retrieval
+    function getId($value,$from) {
+        $ac = $from."Db";
+        $ac =& $this->$ac;
+        if ($id = array_search(strtolower($value),array_map("strtolower",$ac),true)) return $id;
+        else {
+            if(empty($this->$from)) $this->$from = $this->codb->prepare("SELECT `".(($from == "user") ? "rowid" : "id")."`, `".$from."` FROM ".$this->co_.((in_array($from,["user","world"],true)) ? $from : $from."_map")." WHERE ".$from."=?;");
+            $this->$from->execute([$value]);
+            if($i = $this->$from->fetch(PDO::FETCH_NUM)) $ac[$i[0]] = $i[1];
+            else {
+                $this->error[] = ["value",$from,$value];
+                return NULL;
+            }
+            return $i[0];
+        }
+    }
 }
+    // SELECT `id`,`art` FROM co_art_map;
+    // SELECT `id`,`entity` FROM co_entity_map;
+    // SELECT `id`,`material` FROM co_material_map; (block)
+    // SELECT `rowid`,`user` FROM co_user;
+    // SELECT `id`,`world` FROM co_world;
 
-if (!file_exists('cache/user.php') || !file_exists('cache/map.php')) clCache();
-require 'cache/user.php';
-require 'cache/map.php';
-
-// Function to update username to cache
-function userUpdate($value,$isId) {
-    global $co_user,$mcsql,$co_prefix;
-    if ($isId) $key = 'rowid';
-    else $key = 'user';
-    $sql = $mcsql->query('SELECT `rowid`,`user` FROM '.$co_prefix.'user WHERE '.$key.' = "'.$value.'";')->fetch_assoc();
-    if (empty($sql)) return 1;
-    // Define the missing id
-    $co_user[$sql['rowid']] = $sql['user'];
-    
-    // load the data and delete the line from the array 
-    $lines = file('cache/user.php'); 
-    $last = sizeof($lines) - 1;
-    $lines[$last] = $sql['rowid']." => '".$sql['user']."',\n)?>";
-    
-    // write the new data to the file 
-    $fp = fopen('cache/user.php', 'w');
-    fwrite($fp, implode('', $lines)); 
-    fclose($fp); 
-}
-
-// Function for id to username retrieval
-function cou($id) {
-    global $co_user;
-    if (!array_key_exists($id,$co_user)) userUpdate($id,1);
-    return $co_user[$id];
-}
-
-// Function for username to id retrieval
-function user2id($user) {
-    global $co_user;
-    if (!array_search(strtolower($user),array_map('strtolower',$co_user),true)) if (userUpdate($user,0)) return 0;
-    return array_search(strtolower($user),array_map('strtolower',$co_user),true);
-}
-
-// Function for id to art/entity/material map or world retrieval
-function comap($map,$value) {
-    global $art,$entity,$material,$world;
-    return array_search($value,$$map,true);
-}
-
-// Function for art/entity/material map to id retrieval
-function map2id($map,$value) {
-    global $art,$entity,$material,$world;
-    if (!$ret = array_search(strtolower($value),array_map('strtolower',$$map),true)) return 0;
-    return $ret;
-}
+//Test script
+/*
+$s = new cachectrl(new PDO("sqlite:./database.db"),"co_");
+echo $s->getValue("1","world");
+echo "\ndone"
+/**/
 ?>
