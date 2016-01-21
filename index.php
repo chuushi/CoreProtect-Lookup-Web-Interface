@@ -41,9 +41,9 @@ a inputs:
     <label class="btn btn-secondary" for="acl" onClick="checkClick(this)"><input type="checkbox" id="acl" name="a[]" value="click"> Click</label>
     <label class="btn btn-secondary" for="acn" onClick="checkClick(this)"><input type="checkbox" id="acn" name="a[]" value="container"> Container</label>
     <label class="btn btn-secondary" for="ach" onClick="checkClick(this)"><input type="checkbox" id="ach" name="a[]" value="chat"> Chat</label>
-    <label class="btn btn-secondary" for="aco" onClick="checkClick(this)"><input type="checkbox" id="acm" name="a[]" value="command"> Command</label>
+    <label class="btn btn-secondary" for="acm" onClick="checkClick(this)"><input type="checkbox" id="acm" name="a[]" value="command"> Command</label>
     <label class="btn btn-secondary" for="aki" onClick="checkClick(this)"><input type="checkbox" id="akl" name="a[]" value="kill"> Kill</label>
-    <label class="btn btn-secondary" for="ase" onClick="checkClick(this)"><input type="checkbox" id="ass" name="a[]" value="session"> Session</label>
+    <label class="btn btn-secondary" for="ass" onClick="checkClick(this)"><input type="checkbox" id="ass" name="a[]" value="session"> Session</label>
     <label class="btn btn-secondary" for="aus" onClick="checkClick(this)"><input type="checkbox" id="aus" name="a[]" value="username"> Username</label>
   </div>
 </div>
@@ -52,9 +52,9 @@ a inputs:
   <div class="input-group col-sm-10">
     <input class="form-control" type="number" id="x1" name="xyz[]" placeholder="x">
       <span class="input-group-btn" style="width:0"></span>
-    <input class="form-control" type="number" id="y1" name="xyz[]" placeholder="y" style="margin-left:-1px">
+    <input class="form-control" type="number" id="y1" name="xyz[]" placeholder="y">
       <span class="input-group-btn" style="width:0"></span>
-    <input class="form-control" type="number" id="z1" name="xyz[]" placeholder="z" style="margin-left:-2px">
+    <input class="form-control" type="number" id="z1" name="xyz[]" placeholder="z">
   </div>
 </div>
 <div class="form-group row">
@@ -62,9 +62,9 @@ a inputs:
   <div class="input-group col-sm-10">
     <input class="form-control" type="number" id="x2" name="xyz2[]" placeholder="Radius or x">
     <span class="input-group-btn" style="width:0"></span>
-    <input class="form-control" type="number" id="y2" name="xyz2[]" placeholder="y" style="margin-left:-1px">
+    <input class="form-control" type="number" id="y2" name="xyz2[]" placeholder="y">
     <span class="input-group-btn" style="width:0"></span>
-    <input class="form-control" type="number" id="z2" name="xyz2[]" placeholder="z" style="margin-left:-2px">
+    <input class="form-control" type="number" id="z2" name="xyz2[]" placeholder="z">
   </div>
 </div>
 <div class="form-group row">
@@ -101,7 +101,7 @@ a inputs:
 </div>
 </form>
 
-<table id="output" class="table">
+<table id="output" class="table table-bordered table-striped">
   <thead>
   <tr><th>Time ago</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Action</th><th>Rollback</th></tr>
   </thead>
@@ -138,7 +138,7 @@ function checkClick(x) {
 
 // when submitted
 function compile() {
-//    var a,b,date,e,r,u,lim,xyz,xyz2;
+//    var a,b,t,e,r,u,lim,xyz,xyz2;
     var rChecked = function(val,setv,check) { // This function has a bad name...
             var ls = [],res;
             for (var i=0; i < getForm(val).length; i++) if(getForm(val)[i].checked || !check) ls.push(getForm(val)[i].value);
@@ -158,7 +158,7 @@ function compile() {
     if (getId('eus').checked || getId('ebl').checked) req = rChecked('e[]','e',1);
     if (st = getId('kwd').value) req += "&keyword="+encodeURIComponent(st.replace(/,/g, ' '));
     if (st = getId('date').value) {
-        req += "&date="+Math.floor(new Date(st).getTime()/1000);
+        req += "&unixtime&t="+Math.floor(new Date(st).getTime()/1000);
         dset = true;
     }
     else dset = false;
@@ -247,7 +247,7 @@ function phraseReturn(obj) {
     }
     else {
         r = g[1];
-        o;
+        o = '';
         for (var i = 0; i<r.length; i++) {
             o += '<tr';
             if (r[i]['rolled_back'] == '1') o += ' class="strikeout"';
@@ -272,7 +272,7 @@ function phraseReturn(obj) {
                 case "command":
                 case "username_log":
                     // Message/UUID
-                    o += 'colspan="4">'+r[i]['data']
+                    o += ' colspan="4">'+r[i]['data']
             }
             o +='</td></tr>';
         }
@@ -282,7 +282,7 @@ function phraseReturn(obj) {
 
 ready();
 </script>
-<p>Index last updated  Oct 24, 2015.  Version 0.5.0-alpha</p>
-<p>&copy; SimonOrJ, 2015-2016.  All Rights Reserved.</p>
+<p>Index last updated  Jan 20, 2016.  Version 0.5.0-alpha</p>
+<p>&copy; SimonOrJ, 2015-<?=date("Y")?>.  All Rights Reserved.</p>
 </body>
 </html>

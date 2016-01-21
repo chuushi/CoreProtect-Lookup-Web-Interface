@@ -1,7 +1,11 @@
-# CoreProtect-Web-Lookup-Interface
+CoreProtect Web Lookup Interface (CP WLI)
+=========================================
+
 _Next update v0.5.1-alpha coming by late January of 2016._
+
 A flexible lookup web interface for CoreProtect 2.
-Tested on CoreProtect 2.12.
+
+_Requires CoreProtect 2.11 or above, which runs on Minecraft 1.8.x._
 
 **Status:** alpha.  Squashing bugs and improving the web interface.
 
@@ -27,15 +31,14 @@ Skip to the [setup](#setup) section to see how you can set this up and test this
 If you would like to contribute directly to the code and know how git works, you may do so (and teach me more about collaborating using git, please!).  If there is any issues, please tell me about it!
 
 ## Setup
-This plugin requires a webserver with PHP 5.4+ and a Minecraft server running CoreProtect 2.  If the CoreProtect records data to sqlite, the webserver should be on the same server as the Minecraft server is.  If the CoreProtect is set to log data to a MySQL server, this plugin needs access to the database CoreProtect is using.  Webserver that can read ".htaccess" file, such as Apache, is recommended for security purposes.
+This plugin requires a webserver with PHP 5.4+ and a Minecraft server running CoreProtect 2.11+.  If the CoreProtect records data to sqlite, the webserver should be on the same server as the Minecraft server is.  If the CoreProtect is set to log data to a MySQL server, this plugin needs access to the database CoreProtect is using.  Webserver that can read ".htaccess" file, such as Apache, is recommended for security purposes.
 
 The webserver must have write permission to the `cache/` folder in order for this web application to work.  Do this by running:
 `$ chmod 777 cache`
 from this plugin directory.
 
-After getting the web app, the *first thing* to do is configure `settings.php` with your MySQL server information.  After that, rest should be automatic.
+After getting the web app, the *first thing* to do is configure `settings.php` with your MySQL server or sqlite `database.db` file path information.  After that, rest should be automatic.
 
-If you would like to see if you configured this correctly, you should visit the `last50.php` page and see if it successfully returns last fifty chats, commands, and block history.  The main page, `index.php`, will be released before the end of this month! (If I did not make it by September, probably by early October.)
 
 ## Files
 This project consists of three main files:
