@@ -1,175 +1,174 @@
 <?php
-/* Because CoreProtect still uses legacy item names...
- * For CoreProtect 2. */
+// CoreProtect uses legacy names. For CoreProtect 2.11+
 
 // Fixed function:
-function co2mc($val) {
-    global $co2mc;
-    if (($ret = $co2mc[preg_replace('/^minecraft:/', '', $val)]) === NULL) $ret = $val;
-    if (strstr($ret,':') == false) $ret = 'minecraft:'.$ret;
-    return $ret;
+class co2mc {
+    function getMc($val) {
+        if (array_key_exists($val,$this->conversion)) return $this->conversion[$val];
+        return $val;
+    }
+    function getCo($val) {
+        if ($ret = array_search($val,$this->conversion,true)) return $ret;
+        return $val;
+    }
+    
+    // List of items and block name correction
+    private $conversion = [
+    'minecraft:wood' => 'minecraft:planks',
+    'minecraft:water' => 'minecraft:flowing_water',
+    'minecraft:stationary_water' => 'minecraft:water',
+    'minecraft:lava' => 'minecraft:flowing_lava',
+    'minecraft:stationary_lava' => 'minecraft:lava',
+    'minecraft:note_block' => 'minecraft:noteblock',
+    'minecraft:bed_block' => 'minecraft:bed',
+    'minecraft:piston_sticky_base' => 'minecraft:sticky_piston',
+    'minecraft:piston_base' => 'minecraft:piston',
+    'minecraft:piston_extension' => 'minecraft:piston_head',
+    'minecraft:piston_moving_piece' => 'minecraft:piston_extension',
+    'minecraft:red_rose' => 'minecraft:red_flower',
+    'minecraft:double_step' => 'minecraft:double_stone_slab', //43
+    'minecraft:step' => 'minecraft:stone_slab',
+    'minecraft:wood_stairs' => 'minecraft:oak_stairs',
+    'minecraft:crops' => 'minecraft:wheat',
+    'minecraft:soil' => 'minecraft:farmland', //60
+    'minecraft:burning_furnace' => 'minecraft:lit_furnace',
+    'minecraft:sign_post' => 'minecraft:standing_sign',
+    'minecraft:cobblestone_stairs' => 'minecraft:stone_stairs',
+    'minecraft:stone_plate' => 'minecraft:stone_pressure_plate',
+    'minecraft:iron_door_block' => 'minecraft:iron_door',
+    'minecraft:wood_plate' => 'minecraft:wooden_pressure_plate',
+    'minecraft:glowing_redstone_ore' => 'minecraft:lit_redstone_ore',
+    'minecraft:redstone_torch_off' => 'minecraft:unlit_redstone_torch',
+    'minecraft:redstone_torch_on' => 'minecraft:redstone_torch',
+    'minecraft:snow' => 'minecraft:snow_layer',
+    'minecraft:snow_block' => 'minecraft:snow',
+    'minecraft:sugar_cane_block' => 'minecraft:reeds',
+    'minecraft:jack_o_lantern' => 'minecraft:lit_pumpkin',
+    'minecraft:cake_block' => 'minecraft:cake',
+    'minecraft:diode_block_off' => 'minecraft:unpowered_repeater',
+    'minecraft:diode_block_on' => 'minecraft:powered_repeater', //94
+    'minecraft:trap_door' => 'minecraft:trapdoor',
+    'minecraft:monster_eggs' => 'minecraft:monster_egg',
+    'minecraft:smooth_brick' => 'minecraft:stonebrick',
+    'minecraft:huge_mushroom_1' => 'minecraft:brown_mushroom_block',
+    'minecraft:huge_mushroom_2' => 'minecraft:red_mushroom_block',
+    'minecraft:iron_fence' => 'minecraft:iron_bars',
+    'minecraft:thin_glass' => 'minecraft:glass_pane',
+    'minecraft:smooth_stairs' => 'minecraft:stone_brick_stairs',
+    'minecraft:mycel' => 'minecraft:mycelium',
+    'minecraft:water_lily' => 'minecraft:waterlily',
+    'minecraft:nether_fence' => 'minecraft:nether_brick_fence',
+    'minecraft:nether_warts' => 'minecraft:nether_wart',
+    'minecraft:enchantment_table' => 'minecraft:enchanting_table',
+    'minecraft:ender_portal' => 'minecraft:end_portal',
+    'minecraft:ender_portal_frame' => 'minecraft:end_portal_frame',
+    'minecraft:ender_stone' => 'minecraft:end_stone', // 121
+    'minecraft:redstone_lamp_off' => 'minecraft:redstone_lamp',
+    'minecraft:redstone_lamp_on' => 'minecraft:lit_redstone_lamp',
+    'minecraft:wood_double_step' => 'minecraft:double_wooden_slab',
+    'minecraft:wood_step' => 'minecraft:wooden_slab',
+    'minecraft:spruce_wood_stairs' => 'minecraft:spruce_stairs',
+    'minecraft:birch_wood_stairs' => 'minecraft:birch_stairs',
+    'minecraft:jungle_wood_stairs' => 'minecraft:jungle_stairs',
+    'minecraft:command' => 'minecraft:command_block',
+    'minecraft:cobble_wall' => 'minecraft:cobblestone_wall',
+    'minecraft:carrot' => 'minecraft:carrots',
+    'minecraft:potato' => 'minecraft:potatoes',
+    'minecraft:wood_button' => 'minecraft:wooden_button',
+    'minecraft:gold_plate' => 'minecraft:light_weighted_pressure_plate',
+    'minecraft:iron_plate' => 'minecraft:heavy_weighted_pressure_plate',
+    'minecraft:redstone_comparator_off' => 'minecraft:unpowered_comparator',
+    'minecraft:redstone_comparator_on' => 'minecraft:powered_comparator',
+    'minecraft:stained_clay' => 'minecraft:stained_hardened_clay',
+    'minecraft:leaves_2' => 'minecraft:leaves2',
+    'minecraft:log_2' => 'minecraft:log2',
+    'minecraft:slime_block' => 'minecraft:slime',
+    'minecraft:hard_clay' => 'minecraft:hardened_clay', //172
+    // Begin item/entity-only items
+    
+    'minecraft:iron_spade' => 'minecraft:iron_shovel', //256
+    'minecraft:wood_sword' => 'minecraft:wooden_sword',
+    'minecraft:wood_spade' => 'minecraft:wooden_shovel',
+    'minecraft:wood_pickaxe' => 'minecraft:wooden_pickaxe',
+    'minecraft:wood_axe' => 'minecraft:wooden_axe',
+    'minecraft:stone_spade' => 'minecraft:stone_shovel',
+    'minecraft:diamond_spade' => 'minecraft:diamond_shovel',
+    'minecraft:gold_sword' => 'minecraft:golden_sword',
+    'minecraft:gold_spade' => 'minecraft:golden_shovel',
+    'minecraft:gold_pickaxe' => 'minecraft:golden_pickaxe',
+    'minecraft:gold_axe' => 'minecraft:golden_axe',
+    'minecraft:sulphur' => 'minecraft:gunpowder',
+    'minecraft:wood_hoe' => 'minecraft:wooden_hoe',
+    'minecraft:gold_hoe' => 'minecraft:golden_hoe',
+    'minecraft:seeds' => 'minecraft:wheat_seeds',
+    'minecraft:gold_helmet' => 'minecraft:golden_helmet',
+    'minecraft:gold_chestplate' => 'minecraft:golden_chestplate',
+    'minecraft:gold_leggings' => 'minecraft:golden_leggings',
+    'minecraft:gold_boots' => 'minecraft:golden_boots',
+    'minecraft:pork' => 'minecraft:porkchop',
+    'minecraft:grilled_pork' => 'minecraft:cooked_porkchop',
+    'minecraft:wood_door' => 'minecraft:wooden_door',
+    'minecraft:snow_ball' => 'minecraft:snowball',
+    'minecraft:clay_brick' => 'minecraft:brick',
+    'minecraft:sugar_cane' => 'minecraft:reeds',
+    'minecraft:storage_minecart' => 'minecraft:chest_minecart',
+    'minecraft:powered_minecart' => 'minecraft:furnace_minecart',
+    'minecraft:watch' => 'minecraft:clock',
+    'minecraft:raw_fish' => 'minecraft:fish',
+    'minecraft:ink_sack' => 'minecraft:dye',
+    'minecraft:diode' => 'minecraft:repeater',
+    'minecraft:map' => 'minecraft:filled_map',
+    'minecraft:raw_beef' => 'minecraft:beef',
+    'minecraft:raw_chicken' => 'minecraft:chicken',
+    'minecraft:nether_stalk' => 'minecraft:nether_wart',
+    'minecraft:brewing_stand_item' => 'minecraft:brewing_stand',
+    'minecraft:cauldron_item' => 'minecraft:cauldron',
+    'minecraft:eye_of_ender' => 'minecraft:ender_eye',
+    'minecraft:monster_egg' => 'minecraft:spawn_egg',
+    'minecraft:exp_bottle' => 'minecraft:experience_bottle',
+    'minecraft:fireball' => 'minecraft:fire_charge',
+    'minecraft:book_and_quill' => 'minecraft:writable_book',
+    'minecraft:flower_pot_item' => 'minecraft:flower_pot',
+    'minecraft:carrot_item' => 'minecraft:carrot',
+    'minecraft:potato_item' => 'minecraft:potato',
+    'minecraft:empty_map' => 'minecraft:map',
+    'minecraft:skull_item' => 'minecraft:skull',
+    'minecraft:carrot_stick' => 'minecraft:carrot_on_a_stick',
+    'minecraft:firework' => 'minecraft:fireworks',
+    'minecraft:redstone_Comparator' => 'minecraft:comparator',
+    'minecraft:nether_brick_item' => 'minecraft:netherbrick',
+    'minecraft:explosive_minecart' => 'minecraft:tnt_minecart',
+    'minecraft:iron_barding' => 'minecraft:iron_horse_armor',
+    'minecraft:gold_barding' => 'minecraft:golden_horse_armor',
+    'minecraft:diamond_barding' => 'minecraft:diamond_horse_armor',
+    'minecraft:leash' => 'minecraft:lead',
+    'minecraft:command_minecart' => 'minecraft:command_block_minecart',
+    'minecraft:spruce_door_item' => 'minecraft:spruce_door',
+    'minecraft:birch_door_item' => 'minecraft:birch_door',
+    'minecraft:jungle_door_item' => 'minecraft:jungle_door',
+    'minecraft:acacia_door_item' => 'minecraft:acacia_door',
+    'minecraft:dark_oak_door_item' => 'minecraft:dark_oak_door',
+    'minecraft:gold_record' => 'minecraft:record_13',
+    'minecraft:green_record' => 'minecraft:record_cat',
+    'minecraft:record_3' => 'minecraft:record_blocks',
+    'minecraft:record_4' => 'minecraft:record_chirp',
+    'minecraft:record_5' => 'minecraft:record_far',
+    'minecraft:record_6' => 'minecraft:record_mall',
+    'minecraft:record_7' => 'minecraft:record_mellohi',
+    'minecraft:record_8' => 'minecraft:record_stal',
+    'minecraft:record_9' => 'minecraft:record_strad',
+    'minecraft:record_10' => 'minecraft:record_ward',
+    'minecraft:record_12' => 'minecraft:record_wait',
+    
+    // End item correction list
+    ];
 }
-
-function block2co($block) {
+class keepCo {
+    function getMc($v) {
+        return $v;
+    }
+    function getCo($v) {
+        return $v;
+    }
 }
-
-function item2co($item) {
-}
-
-// List of items and block name correction
-$co2mc = [
-'wood' => 'planks',
-'water' => 'flowing_water',
-'stationary_water' => 'water',
-'lava' => 'flowing_lava',
-'stationary_lava' => 'lava',
-'note_block' => 'noteblock',
-'bed_block' => 'bed',
-'piston_sticky_base' => 'sticky_piston',
-'piston_base' => 'piston',
-'piston_extension' => 'piston_head',
-'piston_moving_piece' => 'piston_extension',
-'red_rose' => 'red_flower',
-'double_step' => 'double_stone_slab', //43
-'step' => 'stone_slab',
-'wood_stairs' => 'oak_stairs',
-'crops' => 'wheat',
-'soil' => 'farmland', //60
-'burning_furnace' => 'lit_furnace',
-'sign_post' => 'standing_sign',
-'cobblestone_stairs' => 'stone_stairs',
-'stone_plate' => 'stone_pressure_plate',
-'iron_door_block' => 'iron_door',
-'wood_plate' => 'wooden_pressure_plate',
-'glowing_redstone_ore' => 'lit_redstone_ore',
-'redstone_torch_off' => 'unlit_redstone_torch',
-'redstone_torch_on' => 'redstone_torch',
-'snow' => 'snow_layer',
-'snow_block' => 'snow',
-'sugar_cane_block' => 'reeds',
-'jack_o_lantern' => 'lit_pumpkin',
-'cake_block' => 'cake',
-'diode_block_off' => 'unpowered_repeater',
-'diode_block_on' => 'powered_repeater', //94
-'trap_door' => 'trapdoor',
-'monster_eggs' => 'monster_egg',
-'smooth_brick' => 'stonebrick',
-'huge_mushroom_1' => 'brown_mushroom_block',
-'huge_mushroom_2' => 'red_mushroom_block',
-'iron_fence' => 'iron_bars',
-'thin_glass' => 'glass_pane',
-'smooth_stairs' => 'stone_brick_stairs',
-'mycel' => 'mycelium',
-'water_lily' => 'waterlily',
-'nether_fence' => 'nether_brick_fence',
-'nether_warts' => 'nether_wart',
-'enchantment_table' => 'enchanting_table',
-'ender_portal' => 'end_portal',
-'ender_portal_frame' => 'end_portal_frame',
-'ender_stone' => 'end_stone', // 121
-'redstone_lamp_off' => 'redstone_lamp',
-'redstone_lamp_on' => 'lit_redstone_lamp',
-'wood_double_step' => 'double_wooden_slab',
-'wood_step' => 'wooden_slab',
-'spruce_wood_stairs' => 'spruce_stairs',
-'birch_wood_stairs' => 'birch_stairs',
-'jungle_wood_stairs' => 'jungle_stairs',
-'command' => 'command_block',
-'cobble_wall' => 'cobblestone_wall',
-'carrot' => 'carrots',
-'potato' => 'potatoes',
-'wood_button' => 'wooden_button',
-'gold_plate' => 'light_weighted_pressure_plate',
-'iron_plate' => 'heavy_weighted_pressure_plate',
-'redstone_comparator_off' => 'unpowered_comparator',
-'redstone_comparator_on' => 'powered_comparator',
-'stained_clay' => 'stained_hardened_clay',
-'leaves_2' => 'leaves2',
-'log_2' => 'log2',
-'slime_block' => 'slime',
-'hard_clay' => 'hardened_clay', //172
-// Begin item/entity-only items
-
-'iron_spade' => 'iron_shovel', //256
-'wood_sword' => 'wooden_sword',
-'wood_spade' => 'wooden_shovel',
-'wood_pickaxe' => 'wooden_pickaxe',
-'wood_axe' => 'wooden_axe',
-'stone_spade' => 'stone_shovel',
-'diamond_spade' => 'diamond_shovel',
-'gold_sword' => 'golden_sword',
-'gold_spade' => 'golden_shovel',
-'gold_pickaxe' => 'golden_pickaxe',
-'gold_axe' => 'golden_axe',
-'sulphur' => 'gunpowder',
-'wood_hoe' => 'wooden_hoe',
-'gold_hoe' => 'golden_hoe',
-'seeds' => 'wheat_seeds',
-'gold_helmet' => 'golden_helmet',
-'gold_chestplate' => 'golden_chestplate',
-'gold_leggings' => 'golden_leggings',
-'gold_boots' => 'golden_boots',
-'pork' => 'porkchop',
-'grilled_pork' => 'cooked_porkchop',
-'wood_door' => 'wooden_door',
-'snow_ball' => 'snowball',
-'clay_brick' => 'brick',
-'sugar_cane' => 'reeds',
-'storage_minecart' => 'chest_minecart',
-'powered_minecart' => 'furnace_minecart',
-'watch' => 'clock',
-'raw_fish' => 'fish',
-'ink_sack' => 'dye',
-'diode' => 'repeater',
-'map' => 'filled_map',
-'raw_beef' => 'beef',
-'raw_chicken' => 'chicken',
-'nether_stalk' => 'nether_wart',
-'brewing_stand_item' => 'brewing_stand',
-'cauldron_item' => 'cauldron',
-'eye_of_ender' => 'ender_eye',
-'monster_egg' => 'spawn_egg',
-'exp_bottle' => 'experience_bottle',
-'fireball' => 'fire_charge',
-'book_and_quill' => 'writable_book',
-'flower_pot_item' => 'flower_pot',
-'carrot_item' => 'carrot',
-'potato_item' => 'potato',
-'empty_map' => 'map',
-'skull_item' => 'skull',
-'carrot_stick' => 'carrot_on_a_stick',
-'firework' => 'fireworks',
-'redstone_Comparator' => 'comparator',
-'nether_brick_item' => 'netherbrick',
-'explosive_minecart' => 'tnt_minecart',
-'iron_barding' => 'iron_horse_armor',
-'gold_barding' => 'golden_horse_armor',
-'diamond_barding' => 'diamond_horse_armor',
-'leash' => 'lead',
-'command_minecart' => 'command_block_minecart',
-'spruce_door_item' => 'spruce_door',
-'birch_door_item' => 'birch_door',
-'jungle_door_item' => 'jungle_door',
-'acacia_door_item' => 'acacia_door',
-'dark_oak_door_item' => 'dark_oak_door',
-'gold_record' => 'record_13',
-'green_record' => 'record_cat',
-'record_3' => 'record_blocks',
-'record_4' => 'record_chirp',
-'record_5' => 'record_far',
-'record_6' => 'record_mall',
-'record_7' => 'record_mellohi',
-'record_8' => 'record_stal',
-'record_9' => 'record_strad',
-'record_10' => 'record_ward',
-'record_12' => 'record_wait',
-
-// End item correction list
-];
-
-/* I'll probably use this to make it possible for cache to save directly as items mentioned in this array.
- * It's going to take some longer time to decode this every time a lookup is initiated.  Everything is
- * based on ID number anyway.
- */
-
 ?>

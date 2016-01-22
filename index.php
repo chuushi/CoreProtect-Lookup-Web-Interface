@@ -5,24 +5,26 @@
 -->
 <html>
 <head>
-<meta charset="utf-8">
-<title>CorePortect Web Lookup Interface &bull; by SimonOrJ</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-<style>
-.btn {
-    margin-bottom:0;
-}
-</style>
+  <meta charset="utf-8">
+  <title>CorePortect Web Lookup Interface &bull; by SimonOrJ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+  <style>
+  .btn {
+      margin-bottom:0;
+  }
+  </style>
 </head>
 <body>
 
-<header><h1>CoreProtect Web Lookup Interface</h1></header>
+<h1>CoreProtect Web Lookup Interface</h1>
 <p class="second">by SimonOrJ</p>
-<p>This project is still undergoing alpha testing.  Please report any problems or feedback to the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.</p>
-<p>Thank you for testing with me! ~SimonOrJ</p>
+<p>This project is still undergoing alpha testing.  Please report any problems or feedback to the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.  Thank you for testing! ~SimonOrJ</p>
 <div id="test"></div>
 <div id="debug"></div>
+<div class="container">
 <form name="lookup" id="lookup" action="javascript:getInformation();">
 
 <!--
@@ -35,21 +37,21 @@ a inputs:
 'block','chat','click','command','container','kill','session','username'
 -->
 <div class="form-group row">
-  <div class="col-sm-2 form-control-label">Actions</div>
-  <div class="btn-group col-sm-10">
-    <label class="btn btn-secondary" for="abl" onClick="checkClick(this)"><input type="checkbox" id="abl" name="a[]" value="block" checked> Block</label>
-    <label class="btn btn-secondary" for="acl" onClick="checkClick(this)"><input type="checkbox" id="acl" name="a[]" value="click"> Click</label>
-    <label class="btn btn-secondary" for="acn" onClick="checkClick(this)"><input type="checkbox" id="acn" name="a[]" value="container"> Container</label>
-    <label class="btn btn-secondary" for="ach" onClick="checkClick(this)"><input type="checkbox" id="ach" name="a[]" value="chat"> Chat</label>
-    <label class="btn btn-secondary" for="acm" onClick="checkClick(this)"><input type="checkbox" id="acm" name="a[]" value="command"> Command</label>
-    <label class="btn btn-secondary" for="aki" onClick="checkClick(this)"><input type="checkbox" id="akl" name="a[]" value="kill"> Kill</label>
-    <label class="btn btn-secondary" for="ass" onClick="checkClick(this)"><input type="checkbox" id="ass" name="a[]" value="session"> Session</label>
-    <label class="btn btn-secondary" for="aus" onClick="checkClick(this)"><input type="checkbox" id="aus" name="a[]" value="username"> Username</label>
+  <div class="col-lg-2 form-control-label">Actions</div>
+  <div class="btn-group col-lg-10" data-toggle="buttons">
+    <label class="btn btn-secondary active" for="abl"><input type="checkbox" id="abl" name="a[]" value="block" checked>Block</label>
+    <label class="btn btn-secondary" for="acl"><input type="checkbox" id="acl" name="a[]" value="click">Click</label>
+    <label class="btn btn-secondary" for="acn"><input type="checkbox" id="acn" name="a[]" value="container">Container</label>
+    <label class="btn btn-secondary" for="ach"><input type="checkbox" id="ach" name="a[]" value="chat">Chat</label>
+    <label class="btn btn-secondary" for="acm"><input type="checkbox" id="acm" name="a[]" value="command">Command</label>
+    <label class="btn btn-secondary" for="aki"><input type="checkbox" id="akl" name="a[]" value="kill">Kill</label>
+    <label class="btn btn-secondary" for="ass"><input type="checkbox" id="ass" name="a[]" value="session">Session</label>
+    <label class="btn btn-secondary" for="aus"><input type="checkbox" id="aus" name="a[]" value="username">Username</label>
   </div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="x1">Center / Corner 1</label>
-  <div class="input-group col-sm-10">
+  <label class="col-md-2 form-control-label" for="x1" id="corner1">Corner 1</label>
+  <div class="input-group col-md-10">
     <input class="form-control" type="number" id="x1" name="xyz[]" placeholder="x">
       <span class="input-group-btn" style="width:0"></span>
     <input class="form-control" type="number" id="y1" name="xyz[]" placeholder="y">
@@ -58,9 +60,9 @@ a inputs:
   </div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="x2">Radius / Corner 2</label>
-  <div class="input-group col-sm-10">
-    <input class="form-control" type="number" id="x2" name="xyz2[]" placeholder="Radius or x">
+  <label class="col-md-2 form-control-label" for="x2" id="corner2">Corner 2</label>
+  <div class="input-group col-md-10">
+    <input class="form-control" type="number" id="x2" name="xyz2[]" placeholder="x">
     <span class="input-group-btn" style="width:0"></span>
     <input class="form-control" type="number" id="y2" name="xyz2[]" placeholder="y">
     <span class="input-group-btn" style="width:0"></span>
@@ -68,17 +70,17 @@ a inputs:
   </div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="usr">Users to search</label>
-  <div class="input-group col-sm-10">
-    <span class="input-group-btn"><label class="btn btn-secondary" for="eus" onClick="checkClick(this)"><input type="checkbox" id="eus" name="e[]" value="u"> Exclude</label></span>
+  <label class="col-lg-2 form-control-label" for="usr">Users to search</label>
+  <div class="input-group col-lg-10" >
+    <span class="input-group-btn" data-toggle="buttons"><label class="btn btn-secondary" for="eus"><input type="checkbox" id="eus" name="e[]" value="u">Exclude</label></span>
     <input class="form-control" type="text" pattern="((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16}))(,\s?((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16})))*" id="usr" name="u" placeholder="Separate by single comma(,)">
   </div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="blk">Blocks to search</label>
-  <div class="input-group col-sm-10">
-    <span class="input-group-btn"><label class="btn btn-secondary" for="ebl" onClick="checkClick(this)"><input type="checkbox" id="ebl" name="e[]" value="b"> Exclude</label></span>
-    <input class="form-control" type="text" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)">
+  <label class="col-lg-2 form-control-label" for="blk">Blocks to search</label>
+  <div class="input-group col-lg-10">
+    <span class="input-group-btn" data-toggle="buttons"><label class="btn btn-secondary" for="ebl"><input type="checkbox" id="ebl" name="e[]" value="b">Exclude</label></span>
+    <input class="form-control" type="text" pattern="([^:]+:[^:,]+)+" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)">
   </div>
 </div>
 <div class="form-group row">
@@ -87,7 +89,10 @@ a inputs:
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="date">Date From</label>
-  <div class="col-sm-10"><input class="form-control" type="datetime-local" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?" placeholder="0000-00-00T00:00:00" id="date" name="date"></div>
+  <div class="input-group col-sm-10">
+    <span class="input-group-btn" data-toggle="buttons"><label class="btn btn-secondary" for="trv"><input type="checkbox" id="trv" name="asendt">Reverse</label></span>
+    <input class="form-control" type="text" id="date" name="date" placeholder="--/--/---- --:-- --">
+  </div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="lim">Query Limit</label>
@@ -100,7 +105,7 @@ a inputs:
   </div>
 </div>
 </form>
-
+</div>
 <table id="output" class="table table-bordered table-striped">
   <thead>
   <tr><th>Time ago</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Action</th><th>Rollback</th></tr>
@@ -114,6 +119,8 @@ a inputs:
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 <script>
 getId = function(val) {return document.getElementById(val)},
 getForm = function(val) {return document.lookup[val]};
@@ -122,8 +129,8 @@ getForm = function(val) {return document.lookup[val]};
  * Styling
  */
 function ready() {
+  $('#date').datetimepicker();
     getId('lookup').className = "json";
-    getId('achid').classList.add('checked')
 }
 
 function checkClick(x) {
@@ -155,16 +162,14 @@ function compile() {
     }
     if (st = getId('usr').value) req += "&u="+encodeURIComponent(st.replace(/\s/g, ''));
     if (st = getId('blk').value) req += "&b="+encodeURIComponent(st.replace(/\s/g, ''));
-    if (getId('eus').checked || getId('ebl').checked) req = rChecked('e[]','e',1);
+    if (getId('eus').checked || getId('ebl').checked) req += rChecked('e[]','e',1);
     if (st = getId('kwd').value) req += "&keyword="+encodeURIComponent(st.replace(/,/g, ' '));
     if (st = getId('date').value) {
         req += "&unixtime&t="+Math.floor(new Date(st).getTime()/1000);
         dset = true;
+        if (getId('trv').checked) req += "&asendt";
     }
     else dset = false;
-//    document.getElementById("debug").innerHTML = getTime(getId('time').value);
-//    if (t == "")
-//    qtime = Date.now() / 1000;
     getId("test").innerHTML = req;
 }
 
@@ -282,7 +287,7 @@ function phraseReturn(obj) {
 
 ready();
 </script>
-<p>Index last updated  Jan 20, 2016.  Version 0.5.0-alpha</p>
+<p>Index last updated  Jan 22, 2016.  Version 0.5.2-alpha</p>
 <p>&copy; SimonOrJ, 2015-<?=date("Y")?>.  All Rights Reserved.</p>
 </body>
 </html>

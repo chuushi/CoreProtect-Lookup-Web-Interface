@@ -15,7 +15,7 @@ if($onMySQL == false) {
     // Provide the path to the database.sql file.
     $dbpath = "./database.db";
 }
-else { #if $sqlServer == true:
+elseif ($onMySQL == true) {
     // Fill out the following:
     // Hostname[:port]
     $dbhost = "localhost";
@@ -31,7 +31,21 @@ else { #if $sqlServer == true:
 $co_ = "co_"; // Default: "co_"
 
 // Minecraft Server-Webserver Time Offset in seconds
-$timeOffset = 0;
+$timeOffset = 0; // accepts negative values, Default: 0
+
+// CoreProtect Block Name Conversion
+/* CoreProtect likes to use legacy Minecraft block names,
+ * making it confusing for some people to make a proper
+ * block lookup query when they want to look up changes
+ * made to, for example, a wooden plank.  Current
+ * Minecraft name for a wooden plank is "minecraft:plank",
+ * but CoreProtect likes to use "minecraft:wood" instead.
+ 
+ * If you want to see search results or make search query
+ * by the Minecraft name, leave below as "true".
+ * Otherwise, toggle it "false". */
+$translateCo2Mc = true;
+
 
 /* ================================================== *\
  *          Auxiliary settings for index.php          *
@@ -53,4 +67,5 @@ $texture = "default"; //In Progress!
 \* ================================================== */
 if($onMySQL) $codb = new PDO("mysql:host=".$dbhost.";dbname=".$dbname,$dbuser,$dbpass);
 else $codb = new PDO("sqlite:./database.db");
+$legacySupport = true;
 ?>

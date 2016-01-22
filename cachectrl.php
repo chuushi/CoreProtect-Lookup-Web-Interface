@@ -4,15 +4,16 @@
 // users, blocks, arts, images, entities,
 // TODO: Make this update usernames somehow.
 class cachectrl {
-    private $ALL = ["art","entity","material","user","world"], $artDb = [], $entityDb = [], $materialDb = [], $userDb = [], $worldDb = [], $art, $artLookup, $entity, $entityLookup, $material, $materialLookup, $user, $userLookup, $world, $worldLookup, $codb, $co_;
+    private $ALL = ["art","entity","material","user","world"], $artDb = [], $entityDb = [], $materialDb = [], $userDb = [], $worldDb = [], $art, $artLookup, $entity, $entityLookup, $material, $materialLookup, $user, $userLookup, $world, $worldLookup, $codb, $co_, $legacy;
     
-    function __construct($codb,$co_) {
-        foreach($this->ALL as $d) if(file_exists("cache/".$d.".php")) {
+    function __construct($codb,$co_,$legacySupport) {
+        foreach($this->ALL as $d) if(file_exists(__DIR__."/cache/".$d.".php")) {
             $e = $d."Db";
             $this->$e = require("cache/".$d.".php");
         }
         $this->codb = $codb;
         $this->co_ = $co_;
+        $this->legacy = $legacySupport;
     }
     
     function __destruct() {
@@ -21,7 +22,7 @@ class cachectrl {
             if(!empty($this->$v) || !empty($this->$e)) {
                 // Save $db to file
                 $d = $v."Db";
-                file_put_contents($_SERVER['DOCUMENT_ROOT']."/cache/".$v.".php","<?php return ".var_export($this->$d,true).";?>");
+                file_put_contents(__DIR__."/cache/".$v.".php","<?php return ".var_export($this->$d,true).";?>");
             }
         }
     }
@@ -33,7 +34,7 @@ class cachectrl {
         $lookup = $from."Lookup";
         $ac = $from."Db";
         $ac =& $this->$ac;
-        if (array_key_exists($id,$ac)) return $ac[$id];
+        if (array_key_exists($id,$ac)) $ret = $ac[$id];
         else {
             if(empty($this->$lookup)) $this->$lookup = $this->codb->prepare("SELECT `".$from."` FROM ".$this->co_.((in_array($from,["user","world"],true)) ? $from : $from."_map")." WHERE ".(($from == "user") ? "rowid" : "id")."=?;");
             $this->$lookup->execute([$id]);
@@ -42,8 +43,9 @@ class cachectrl {
                 $this->error[] = ["id",$from,$id];
                 return NULL;
             }
-            return $u[0];
+            $ret = $u[0];
         }
+        return (($from == "material") && (!preg_match("/:/",$ret)) ? "minecraft:".$ret : $ret);
     }
     
     // Function for value to id retrieval
@@ -62,17 +64,4 @@ class cachectrl {
             return $i[0];
         }
     }
-}
-    // SELECT `id`,`art` FROM co_art_map;
-    // SELECT `id`,`entity` FROM co_entity_map;
-    // SELECT `id`,`material` FROM co_material_map; (block)
-    // SELECT `rowid`,`user` FROM co_user;
-    // SELECT `id`,`world` FROM co_world;
-
-//Test script
-/*
-$s = new cachectrl(new PDO("sqlite:./database.db"),"co_");
-echo $s->getValue("1","world");
-echo "\ndone"
-/**/
-?>
+}?>

@@ -34,8 +34,8 @@ out[0]:
     ['err'] block, username, username and block, invalid query, and no results
     0 - Success
     1 - No Results
-    2 - Early Termination
-    3 - Database Not Found
+    2 - SQL Query Unsuccessful
+    3 - Settings Not Configured
     4 - CacheCtrl Value Not Found
 
 */
@@ -50,8 +50,8 @@ $_timer = microtime(true);
 function _shutdown() {
     global $out,$co_,$_timer,$searchSession;
     if(!isset($out[0]["status"])) {
-        $out[0]["status"] = 2;
-        $out[0]["reason"] = "Script error";
+        $out[0]["status"] = 5;
+        $out[0]["reason"] = "Script Terminated Too Early";
     }
     $out[0]["duration"] = microtime(true) - $_timer;
     echo json_encode($out);
@@ -59,8 +59,15 @@ function _shutdown() {
 register_shutdown_function("_shutdown");
 
 // Modules
+/*if(file_exists("cache/setup.php")) require "cache/config.php";
+else {
+    $out[0]["status"] = 3;
+    $out[0]["reason"] = "Settings not configured; please visit config.php first.";
+    exit();
+}*/
 require "settings.php";
 require "cachectrl.php";
+require "co2mc.php";
 
 // Get the requested stuffs: ($q)
 if(!empty($_POST)) $q = $_POST;
@@ -68,7 +75,8 @@ elseif(!empty($_GET)) $q = $_GET;
 else $q = [];
 
 // Module Classes
-$cc = new cachectrl($codb,$co_);
+$cc = new cachectrl($codb,$co_,$legacySupport);
+$cm = ($translateCo2Mc) ? new co2mc() : new keepCo();
 
 if(isset($q["SQL"])) {
     // Reserved for loading slightly more quickly
@@ -108,9 +116,9 @@ else {
     
     // Time t, unixtime
     if(isset($t)) {
-        $where[0] = "time";
-        if($asendt) $where[0] .= ">=";
-        else $where[0] .= "<=";
+        $time = "time";
+        if($asendt) $time .= ">=";
+        else $time .= "<=";
         if(!$unixtime) {
             $t = str_replace(",","",$t);
             $t = preg_split("/(?<=[wdhms])(?=\d)/",$t);
@@ -161,11 +169,12 @@ else {
 
     // Block b, e
     $action = [[],false,false];
-    if(in_array("block",$a,true) || in_array("click",$a,true)) {
+    if(in_array("block",$a,true) || in_array("click",$a,true) || in_array("container",$a,true)) {
         if(in_array("block",$a,true)) array_push($action[0],0,1);
         if(in_array("click",$a,true)) ($rbflag) ? $action[1] = true : $action[0][] = 2;
         if(isset($b)) {
             $NOT = isset($e)&&in_array("b",$e,true) ? " NOT " : " ";
+            if($legacySupport) foreach($b as $bk) if($bk !== ($bk2=preg_replace("/^minecraft:/","",$bk))) $b[] = $bk2;
             foreach($b as $key => $bk) $b[$key] = $cc->getId($bk,"material");
             $block = "type".$NOT."IN ('".implode("','",$b)."')";
         }
@@ -256,10 +265,11 @@ else {
     
     $lookup = $codb->prepare($out[0]["SQL"] = ((count($sql) === 1) ? $sql[0] : implode(" UNION ",$sql))." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?,?;");
 }
-//var_dump($lookup);
-//var_dump($codb->errorInfo());
 
-if ($lookup->execute([(isset($q["offset"])?$q["offset"]:"0"),$q["lim"]])) {
+$lookup->bindValue(1,(isset($q["offset"])?intval($q["offset"]):0),PDO::PARAM_INT);
+$lookup->bindValue(2,intval($q["lim"]),PDO::PARAM_INT);
+
+if ($lookup->execute()) {
     $out[0]["status"] = 0;
     $out[0]["reason"] = "Request successful";
 //    $status["rows"] = $numrows;
@@ -274,7 +284,7 @@ if ($lookup->execute([(isset($q["offset"])?$q["offset"]:"0"),$q["lim"]])) {
                 }
             else {
                 if ($r["action"] == 2) $r["table"] = "click";
-                $r["type"] = $cc->getValue($r["type"],"material");
+                $r["type"] = $cm->getMc($cc->getValue($r["type"],"material"));
             }
         }
         if ($r["wid"]) $r["wid"] = $cc->getValue($r["wid"],"world");
@@ -284,5 +294,10 @@ if ($lookup->execute([(isset($q["offset"])?$q["offset"]:"0"),$q["lim"]])) {
         $out[0]["status"] = 1;
         $out[0]["reason"] = "No results";
     }
+}
+else {
+    $out[0]["status"] = 2;
+    $out[0]["reason"] = "SQL Execution Unsuccessful.";
+    $out[1] = $lookup->errorInfo();
 }
 ?>
