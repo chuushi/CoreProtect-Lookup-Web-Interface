@@ -1,7 +1,7 @@
 CoreProtect Web Lookup Interface (CP WLI)
 =========================================
 
-_Next update v0.5.1-alpha coming by late January of 2016._
+_Nightly Update will continue throughout the rest of the January of 2016._
 
 A flexible lookup web interface for CoreProtect 2.
 
@@ -41,9 +41,11 @@ After getting the web app, the *first thing* to do is configure `settings.php` w
 
 
 ## Files
-This project consists of three main files:
+This project consists of five main files:
 - `conn.php`, the page used to connect the webserver to the database for lookup data retrieval,
-- `cachectrl.php`, the code used for cache management, and
-- `index.php`, the web page used to make queries and get results.
+- `cachectrl.php`, the class used for cache management, 
+- `co2mc.php`, the class used for legacy Minecraft name conversion,
+- `index.php`, the web page used to make queries and get results, and
+- `settings.php`, the file made to make all configuration.
 
 ~Simon
