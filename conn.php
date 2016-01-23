@@ -209,9 +209,9 @@ else {
             case "block":
             case "session":
             case "container":
-                global $coords;
+                global $coord;
                 $ret = ",wid,x,y,z";
-                if($coords) $where[] = $coords;
+                if($coord) $where[] = $coord;
                 if($table == "session") $ret .= sel(0,"type").sel(0,"data").sel(0,"amount").",action".sel(0,"rolled_back");
                 else {
                     global $block, $rbflag;
@@ -239,8 +239,6 @@ else {
                 $ret .= ($table == "username_log")? sel("uuid","data") : sel("message","data");
                 $ret .= sel(0,"amount").sel(0,"action").sel(0,"rolled_back");
         }
-        // "SELECT time,'".$table."' AS action,user".$ret." FROM ".$co_.$dt;
-        
         return "SELECT time,'".$table."' AS 'table',user".$ret." FROM ".$co_.$table.((empty($where)) ? "" : " where ".implode(" AND ",$where));
     }
     
@@ -284,7 +282,6 @@ if ($lookup->execute()) {
     $out[0]["reason"] = "Request successful";
 //    $status["rows"] = $numrows;
     // Code Sanitaizer
-    $json = [];
     while($r = $lookup->fetch(PDO::FETCH_ASSOC)) {
         if ($r["table"] !== "username_log") $r["user"] = $cc->getValue($r["user"],"user");
         if ($r["table"] == "block") {

@@ -3,7 +3,15 @@ Changes:
 v0.5.3 - January 22, 2016
 =========================
 - `conn.php`:
- - Fixed SQL query taking exceptionally long when using MySQL to get result from more than two tables (e.g. container and chat)
+ - **Fixed coordinate search not working** (xyz, xyz2/r)
+ - Fixed SQL query taking exceptionally long when using extremely large database to get result from more than two tables (e.g. container and chat)
+ - Improved table formatting
+- `index.php`:
+ - Added rollback search
+ - Added colors for Amount column
+ - Changed second "action" column name to "amount"
+ - Added clearer coordinate search
+ - Added toggle to visually toggle coordinate/radius search
 
 
 v0.5.2 - January 21, 2016

@@ -48,4 +48,6 @@ This project consists of five main files:
 - `index.php`, the web page used to make queries and get results, and
 - `settings.php`, the file made to make all configuration.
 
+# [Changelog](changelog.md)
+
 ~Simon
