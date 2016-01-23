@@ -31,6 +31,11 @@
 .table-striped tbody tr:nth-of-type(odd) .bg-info {
   background-color:#d2e9f5 !important;
 }
+@media(max-width:991px) {
+#c1 {
+    margin-bottom: 1rem;
+}
+}
   </style>
 </head>
 <body>
@@ -40,7 +45,6 @@
 <div id="test"></div>
 <div id="debug"></div>
 <div class="container">
-<form name="lookup" id="lookup" action="javascript:getInformation();">
 
 <!--
 - time(t) in seconds and t2
@@ -51,6 +55,7 @@
 a inputs:
 'block','chat','click','command','container','kill','session','username'
 -->
+<form name="lookup" id="lookup" action="javascript:getInformation();">
 <div class="form-group row">
   <div class="col-lg-2 form-control-label">Actions</div>
   <div class="btn-group col-lg-10" data-toggle="buttons">
@@ -67,7 +72,7 @@ a inputs:
 <div class="form-group row">
   <div class="col-lg-2 form-control-label">Toggle</div>
   <div class="col-lg-10">
-    <button class="btn btn-secondary" type="button" onClick="radius()">Radius/Corner</button>
+    <button class="btn btn-secondary" type="button" id="rcToggle" onClick="radius()">Radius/Corners</button>
     <span class="btn-group" data-toggle="buttons">
     <label class="btn btn-info-outline" for="rbt"><input type="radio" id="rbt" name="rb" value="1"><span class="glyphicon glyphicon-ok"></span></label>
     <label class="btn btn-secondary active" for="rb"><input type="radio" id="rb" name="rb" value="" checked>Rollback</label>
@@ -75,25 +80,23 @@ a inputs:
     </span>
   </div>
 </div>
-<div class="form-group row">
-  <label class="col-md-2 form-control-label" for="x1" id="corner1">Center / Corner 1</label>
-  <div class="input-group col-md-10">
-    <input class="form-control" type="number" id="x1" name="xyz[]" placeholder="x">
-      <span class="input-group-btn" style="width:0"></span>
-    <input class="form-control" type="number" id="y1" name="xyz[]" placeholder="y">
-      <span class="input-group-btn" style="width:0"></span>
-    <input class="form-control" type="number" id="z1" name="xyz[]" placeholder="z">
-  </div>
-</div>
-<div class="form-group row">
-  <label class="col-md-2 form-control-label" for="x2" id="corner2">Radius / Corner 2</label>
-  <div class="input-group col-md-10" id="c2">
-    <input class="form-control" type="number" id="x2" name="xyz2[]" placeholder="Radius or x">
-    <span class="input-group-btn c2" style="width:0"></span>
-    <input class="form-control c2" type="number" id="y2" name="xyz2[]" placeholder="y">
-    <span class="input-group-btn c2" style="width:0"></span>
-    <input class="form-control c2" type="number" id="z2" name="xyz2[]" placeholder="z">
-  </div>
+<div class="row form-group">
+    <label class="col-sm-2 form-control-label" for="x1" id="corner1">Center / Corner 1</label>
+    <div class="input-group col-lg-4 col-sm-10" id="c1">
+      <input class="form-control" type="number" id="x1" name="xyz[]" placeholder="x">
+        <span class="input-group-btn" style="width:0"></span>
+      <input class="form-control" type="number" id="y1" name="xyz[]" placeholder="y">
+        <span class="input-group-btn" style="width:0"></span>
+      <input class="form-control" type="number" id="z1" name="xyz[]" placeholder="z">
+    </div>
+    <label class="col-sm-2 form-control-label" for="x2" id="corner2">Radius / Corner 2</label>
+    <div class="input-group col-lg-4 col-sm-10" id="c2">
+      <input class="form-control" type="number" id="x2" name="xyz2[]" placeholder="Radius or x">
+      <span class="input-group-btn c2" style="width:0"></span>
+      <input class="form-control c2" type="number" id="y2" name="xyz2[]" placeholder="y">
+      <span class="input-group-btn c2" style="width:0"></span>
+      <input class="form-control c2" type="number" id="z2" name="xyz2[]" placeholder="z">
+    </div>
 </div>
 <div class="form-group row">
   <label class="col-lg-2 form-control-label" for="usr">Users</label>
@@ -132,8 +135,8 @@ a inputs:
 </div>
 </form>
 </div>
-<table id="output" class="table table-bordered table-striped">
-  <thead>
+<table id="output" class="table table-sm table-striped">
+  <thead class="thead-default">
   <tr><th>Time ago</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Amount</th><th>Rollback</th></tr>
   </thead>
   <tbody id="maintbl"><tr><td colspan="9">Please submit a lookup.</td></tr></tbody>
@@ -147,7 +150,7 @@ a inputs:
 // Quick Styles
 document.getElementById("corner1").innerHTML = "Center";
 document.getElementById("corner2").innerHTML = "Radius";
-document.getElementById("c2").className = "col-md-10";
+document.getElementById("c2").className = "col-lg-4 col-sm-10";
 c2 = document.getElementsByClassName("c2");
 for(var i = 0; i < c2.length; i++) c2[i].style.display = "none";
 document.getElementById("x2").setAttribute("placeholder","Radius");

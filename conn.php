@@ -174,7 +174,11 @@ else {
         if(in_array("click",$a,true)) ($rbflag) ? $action[1] = true : $action[0][] = 2;
         if(isset($b)) {
             $NOT = isset($e)&&in_array("b",$e,true) ? " NOT " : " ";
-            if($legacySupport) foreach($b as $bk) if($bk !== ($bk2=preg_replace("/^minecraft:/","",$bk))) $b[] = $bk2;
+            foreach($b as $key => $bk) {
+                $bk = $cm->getCo($bk);
+                $b[$key] = $bk;
+                if($legacySupport) if($bk !== ($bk2=preg_replace("/^minecraft:/","",$bk))) $b[] = $bk2;
+            }
             foreach($b as $key => $bk) $b[$key] = $cc->getId($bk,"material");
             $block = "type".$NOT."IN ('".implode("','",$b)."')";
         }
@@ -284,7 +288,7 @@ if ($lookup->execute()) {
     // Code Sanitaizer
     while($r = $lookup->fetch(PDO::FETCH_ASSOC)) {
         if ($r["table"] !== "username_log") $r["user"] = $cc->getValue($r["user"],"user");
-        if ($r["table"] == "block") {
+        if ($r["table"] == "block" || $r["table"] == "container") {
             if ($r["action"] == 3) {
                 $r["type"] = $cc->getValue($r["type"],"entity");
                 $r["table"] = "kill";
