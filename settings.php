@@ -65,7 +65,7 @@ $texture = "default"; //In Progress!
 /* ================================================== *\
  *             End of user configuration              *
 \* ================================================== */
-if($onMySQL) $codb = new PDO("mysql:host=".$dbhost.";dbname=".$dbname,$dbuser,$dbpass);
+if($onMySQL) $codb = new PDO("mysql:charset=utf8host=".$dbhost.";dbname=".$dbname,$dbuser,$dbpass);
 else $codb = new PDO("sqlite:./database.db");
 $legacySupport = true;
 ?>
