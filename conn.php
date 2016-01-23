@@ -263,11 +263,21 @@ else {
         }
     }
     
-    $lookup = $codb->prepare($out[0]["SQL"] = ((count($sql) === 1) ? $sql[0] : implode(" UNION ",$sql))." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?,?;");
+    $tables = "";
+    if(($out[0]["SQLqs"]=count($sql)) > 1) foreach($sql as $key => $value) {
+        if($key) $tables .= " UNION ALL ";
+        $tables .= "SELECT * FROM (".$value." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?) AS T".$key;
+    }
+    $lookup = $codb->prepare($out[0]["SQL"] = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?,?;");
 }
 
-$lookup->bindValue(1,(isset($q["offset"])?intval($q["offset"]):0),PDO::PARAM_INT);
-$lookup->bindValue(2,intval($q["lim"]),PDO::PARAM_INT);
+if($out[0]["SQLqs"] > 1) for($i = 1; $i <= $out[0]["SQLqs"]; $i++) {
+    $lookup->bindValue($i,(isset($q["offset"])?intval($q["offset"]):0)+intval($q["lim"]),PDO::PARAM_INT);
+}
+else $out[0]["SQLqs"] = 0;
+
+$lookup->bindValue($out[0]["SQLqs"]+1,(isset($q["offset"])?intval($q["offset"]):0),PDO::PARAM_INT);
+$lookup->bindValue($out[0]["SQLqs"]+2,intval($q["lim"]),PDO::PARAM_INT);
 
 if ($lookup->execute()) {
     $out[0]["status"] = 0;
