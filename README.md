@@ -1,5 +1,6 @@
-CoreProtect Web Lookup Interface (CP WLI)
+CoreProtect Lookup Web Interface v0.6 (CP LWI)
 =========================================
+_Previously "CP WLI" by name mixup..._
 
 _Nightly Update will continue throughout the rest of the January of 2016._
 
@@ -7,7 +8,7 @@ A flexible lookup web interface for CoreProtect 2.
 
 _Requires CoreProtect 2.11 or above, which runs on Minecraft 1.8.x._
 
-**Status:** alpha.  Squashing bugs and improving the web interface.
+**Status:** alpha-going-to-beta.  Squashing bugs and improving the web interface.
 
 This is a _lightweight_ web application that gives you the power to look up anything CoreProtect is capable of logging in the most efficient way.  [CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/) is developed by Intellii.
 

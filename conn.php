@@ -70,9 +70,7 @@ require "cachectrl.php";
 require "co2mc.php";
 
 // Get the requested stuffs: ($q)
-if(!empty($_POST)) $q = $_POST;
-elseif(!empty($_GET)) $q = $_GET;
-else $q = [];
+$q = $_REQUEST;
 
 // Module Classes
 $cc = new cachectrl($codb,$co_,$legacySupport);
@@ -84,15 +82,15 @@ if(isset($q["SQL"])) {
 }
 else {
     foreach ($q as $key => $value) {
-        if (in_array($key,["a","b","e","u","xyz","xyz2"],true)) $$key = explode(',', $value);
-        elseif (in_array($key,["r","t","keyword","wid","rollback"],true)) $$key = $value;
-        elseif (in_array($key,["unixtime","asendt"],true)) $$key = true;
+        if (in_array($key,["a","b","e","u","xyz","xyz2"],true)) {if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!==""))) $$key = (is_array($value))?$value:explode(',', $value);}
+        elseif (in_array($key,["r","t","keyword","wid","rollback"],true)) {if($value!=="") $$key = $value;}
+        elseif (in_array($key,["unixtime","asendt"],true)) {if($value!=="") $$key = true;}
     }
     
     
     // Defaults if the query or parts of the query is empty:
-    if(!isset($a)) $a = ["block"];
-    if(!isset($q["lim"])) $q["lim"] = 30;
+    if(empty($a)) $a = ["block"];
+    if(empty($q["lim"])) $q["lim"] = 30;
     if(!isset($asendt)) $asendt = false;
     if(!isset($unixtime)) $unixtime = false;
     
