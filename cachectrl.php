@@ -45,7 +45,7 @@ class cachectrl {
             }
             $ret = $u[0];
         }
-        return (($from == "material") && (!preg_match("/:/",$ret)) ? "minecraft:".$ret : $ret);
+        return (($from == "material") && ((strpos(":",$ret) !== false)) ? "minecraft:".$ret : $ret);
     }
     
     // Function for value to id retrieval
