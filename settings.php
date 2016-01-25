@@ -64,6 +64,11 @@ $translateCo2Mc = true;
 /* ================================================== *\
  *          Auxiliary settings for index.php          *
 \* ================================================== */
+/* Datetime Picker Format to use.
+/* This uses moment's date display option.  Refer to 
+   http://momentjs.com/docs/#/displaying/format/
+ * for formatting help. */
+$datetimeFormat = "YYYY-MM-DD h:mm:ss a";
 
 // texturepack to use. Use _EXACT_ folder/directory name.
 //$texture = "default"; //In Progress!
@@ -79,5 +84,4 @@ $translateCo2Mc = true;
 /* ================================================== *\
  *             End of user configuration              *
 \* ================================================== */
-$codb = ($onMySQL)?new PDO("mysql:charset=utf8;host=".$dbhost.";dbname=".$dbname,$dbuser,$dbpass):new PDO("sqlite:./database.db");
 ?>

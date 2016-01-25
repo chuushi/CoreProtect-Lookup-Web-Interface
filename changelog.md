@@ -1,20 +1,28 @@
 Changes:
 ================================================================================
 
-v0.5.4 - January 23, 2016
+v0.6.0 - January 23, 2016
 -------------------------
-- `settings.php`:
- - Set PDO mysql charset to UTF-8 for special character compatibility
-- `conn.php`:
- - Added container block number translation
- - Added support for searching with current Minecraft block/item names
-  - Searching with legacy names work as long as it isn't overriden by new names.
-- `index.php`:
- - Smaller table to fit more data
- - Coordinate defining fields are combined to safe vertical room when window is
-   large enough
- - "Load more" has been styled to bootstrap.
-- Made returns to this file so to make it readable especially in small window.
+- No Javascript Update - The v0.6 will focus on making the lookup UI
+  no-Javascript friendly for those who doesn't like using JavaScript.
+- Feature/bug fixes:
+ - `settings.php`:
+  - Separated PDO part to another file `PDO.php` in order to make `index.php`
+    load faster.
+  - Set PDO mysql charset to UTF-8 for special character compatibility
+  - Added Datetime Picker date formatting option
+ - `conn.php`:
+  - Modified the way requests are handled.
+  - Added support for searching with current Minecraft block/item names
+   - Searching with legacy names work as long as it isn't overriden by new names.
+ - `index.php`:
+  - Smaller table to fit more data
+  - Coordinate defining fields are combined to save room when the window is
+    large enough
+  - "Load more" has been styled to bootstrap.
+  - Form submitting now uses browser's built-in handling rather than by
+    javascript.
+  - Now submits request with POST rather than GET.
 
 
 v0.5.3 - January 22, 2016

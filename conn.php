@@ -65,7 +65,7 @@ else {
     $out[0]["reason"] = "Settings not configured; please visit config.php first.";
     exit();
 }*/
-require "settings.php";
+require "PDO.php";
 require "cachectrl.php";
 require "co2mc.php";
 
@@ -79,6 +79,10 @@ $cm = ($translateCo2Mc) ? new co2mc() : new keepCo();
 if(isset($q["SQL"])) {
     // Reserved for loading slightly more quickly
     $lookup = $codb->prepare($out[0]["SQL"] = $q["SQL"]);
+    $out[0]["SQLqs"] = $q["SQLqs"];
+    
+    // Defaults if the query or parts of the query is empty:
+    if(empty($q["lim"])) $q["lim"] = 10;
 }
 else {
     foreach ($q as $key => $value) {
