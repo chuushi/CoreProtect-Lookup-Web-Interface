@@ -12,39 +12,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
-  <style> /* Default Style Overrides */
-.btn {
-  margin-bottom:0;
-}
-.table-striped tbody tr:nth-of-type(odd) .table-warning {
-  background-color:#fbf6dd;
-}
-.table-striped tbody tr:nth-of-type(odd) .table-info {
-  background-color:#d2e9f5;
-}
-.table-striped tbody tr:nth-of-type(odd).table-success>td {
-  background-color:#d9edd1;
-}
-.table-striped tbody tr.table-success>td.table-warning{
-  background-color:#edf6e6;
-}
-.table-striped tbody tr:nth-of-type(odd).table-success>td.table-warning {
-  background-color:#eaf5e2;
-}
-.table-striped tbody tr.table-success>td.table-info{
-  background-color:#e9f6e9;
-}
-.table-striped tbody tr:nth-of-type(odd).table-success>td.table-info {
-  background-color:#e5f4e5;
-}
-@media(max-width:991px) {
-#c1 {
-  margin-bottom: 1rem;
-}
-}
-tr.strikeout td {
-}
-  </style>
+  <link rel="stylesheet" href="res/bootstrap-v4.0.0-alpha.2-overstyles.css">
 </head>
 <body>
 <div class="container">
