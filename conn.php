@@ -1,23 +1,7 @@
 <?php
-// PHP code by SimonOrJ.  All Rights Reserved.
-// Requires PHP 5.4+
-/* GET outputs will be:
-- array     action (a)
-- array     user (u)
-- int       radius (r)
-- int       query limit (lim)
-- string    time (t) in seconds
-- array     block (b)
-- string    chat/command/sign search (keyword)
-- in_array  exclude (e) - ub in an array to add "NOT" in the injection string.
-- array     center/first coordinate (xyz)
-- array     second coordinate (xyz2)
-- int       wordl (wid)
-- bool      asending time? (asendt) (past-to-present or present-to-past)
-- bool      session
-- in_array  flag - su
-
-Database tables to use:
+/* PHP code by SimonOrJ.  All Rights Reserved.
+ * Requires PHP 5.4+
+ * Database tables to use:
 block (a: block, click, kill)
 entity (for mob kills) (use with block table)
 sign (with block>data minecraft:sign and minecraft:wall_sign)
@@ -28,10 +12,7 @@ command (a: command)
 session (a:session)
 username_log (a:username)
 
-Output object:
-out[0]:
-    ['success'] 0 or 1
-    ['err'] block, username, username and block, invalid query, and no results
+Output status codes:
     0 - Success
     1 - No Results
     2 - SQL Query Unsuccessful
@@ -298,6 +279,10 @@ if ($lookup->execute()) {
             else {
                 if ($r["action"] == 2) $r["table"] = "click";
                 $r["type"] = $cm->getMc($cc->getValue($r["type"],"material"));
+                if(in_array($r["type"],["minecraft:standing_sign","minecraft:wall_sign"],true)) {
+                    $sign = $codb->query($r["signSQL"]="SELECT `line_1`,`line_2`,`line_3`,`line_4` FROM ".$co_."sign WHERE x=".$r["x"]." AND y=".$r["y"]." AND z=".$r["z"]." AND time".(($r["action"]=="0")?"<":">=").$r["time"]." ORDER BY time ".(($r["action"]=="0")?"DESC":"ASC")." LIMIT 1;");
+                    $r["signdata"]=$sign->fetch(PDO::FETCH_NUM);
+                }
             }
         }
         if ($r["wid"]) $r["wid"] = $cc->getValue($r["wid"],"world");

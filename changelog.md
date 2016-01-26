@@ -20,6 +20,7 @@ v0.6.0 - January 25, 2016
   - Set PDO mysql charset to UTF-8 for special character compatibility
   - Added global date and time formatting option
  - `conn.php`:
+  - Added a way to get sign data!
   - Modified the way requests are handled.
   - Added support for searching with current Minecraft block/item names
    - Searching with legacy names work as long as it isn't overriden by new names.
@@ -33,6 +34,7 @@ v0.6.0 - January 25, 2016
     feel like Google!
   - Coordinate defining and date/limit fields are combined to save room when the
     window is large enough.
+  - Added sign results. It's not working properly yet.
   - "Load more" has been styled to bootstrap.
   - Form submitting now uses browser's built-in handling rather than by
     unnecessary javascript.

@@ -235,7 +235,7 @@ function putInQ(element,type,flag) {
     return false;
 }
 
-<?
+<?php
 // TODO: Add "top" button that follows as you scroll and put this code:
 //$("html, body").animate({ scrollTop: $('#title1').offset().top }, 1000);
 ?>
@@ -328,7 +328,7 @@ function phraseReturn(obj,more) {
                         else if(r[i]['rolled_back'] == "1") r[i]['rolled_back'] = "Rolled.";
                     }
                     // Coordinates, Type:Data, Amount, Rollback
-                    o += '>'+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+'</td><td>'+((r[i]["table"] == "session")?"":r[i]['type']+':'+r[i]['data'])+'</td><td'+((r[i]['action'] == "0")?' class="table-warning">-':((r[i]['action'] == "1")?' class="table-info">+':'>'))+((r[i]['table'] == "container") ? r[i]['amount'] : '')+'</td><td>'+r[i]['rolled_back'];
+                    o += '>'+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+"</td><td>"+((r[i]["table"] == "session")?"":((r[i]["signdata"])?'<span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">':"")+r[i]['type']+':'+r[i]['data']+((r[i]["signdata"])?'</span><div class="dropdown-menu"><span class="dropdown-item">'+r[i]["signdata"][0]+'</span><span class="dropdown-item">'+r[i]["signdata"][1]+'</span><span class="dropdown-item">'+r[i]["signdata"][2]+'</span><span class="dropdown-item">'+r[i]["signdata"][3]+'</span></div>':""))+'</td><td'+((r[i]['action'] == "0")?' class="table-warning">-':((r[i]['action'] == "1")?' class="table-info">+':'>'))+((r[i]['table'] == "container") ? r[i]['amount'] : '')+'</td><td>'+r[i]['rolled_back'];
                     break;
                 case "chat":
                 case "command":
@@ -344,7 +344,7 @@ function phraseReturn(obj,more) {
 }
 </script>
       <div class="input-group-btn">
-        <span class="btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Action
         </span>
         <div class="dropdown-menu">
