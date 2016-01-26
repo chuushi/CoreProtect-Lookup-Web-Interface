@@ -56,9 +56,9 @@ a inputs:
     </span>
   </div>
 </div>
-<div class="row form-group">
+<div class="form-group row">
     <label class="col-sm-2 form-control-label" for="x1" id="corner1">Center / Corner 1</label>
-    <div class="input-group col-lg-4 col-sm-10" id="c1">
+    <div class="input-group col-lg-4 col-sm-10 groups-line" id="c1">
       <input class="form-control" type="number" id="x1" name="xyz[]" placeholder="x">
         <span class="input-group-btn" style="width:0"></span>
       <input class="form-control" type="number" id="y1" name="xyz[]" placeholder="y">
@@ -93,16 +93,18 @@ a inputs:
   <div class="col-sm-10"><input class="form-control" type="text" id="kwd" name="keyword" placeholder="Coming in v0.6.x-alpha!" disabled></div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="date">Date From</label>
-  <div class="input-group col-sm-10">
-    <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="trv"><input type="checkbox" id="trv" name="asendt">Reverse</label></span>
+  <label class="col-sm-2 form-control-label" for="date">Date</label>
+  <div class="input-group col-lg-4 col-sm-10 groups-line">
+    <span class="dtButtons input-group-btn">
+      <label class="btn btn-secondary" for="trv"><input type="checkbox" id="trv" name="asendt">Reverse</label>
+    </span>
     <input class="form-control" type="datetime-local" id="date" name="t" placeholder="--/--/---- --:-- --">
   </div>
-</div>
-<input type="hidden" name="unixtime" value="on">
-<div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="lim">Query Limit</label>
-  <div class="col-sm-10"><input class="form-control" type="number" id="lim" name="lim" min="1" placeholder="30"></div>
+  <input type="hidden" name="unixtime" value="on">
+  <label class="col-sm-2 form-control-label" for="lim">Limit</label>
+  <div class="col-lg-4 col-sm-10">
+    <input class="form-control" type="number" id="lim" name="lim" min="1" placeholder="30">
+  </div>
 </div>
 <div class="form-group row">
   <div class="col-sm-offset-2 col-sm-10">
@@ -113,12 +115,13 @@ a inputs:
 </form>
 </div>
 <table id="output" class="table table-sm table-striped">
+  <caption id="genTime"></caption>
   <thead class="thead-default">
   <tr><th>Time ago</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Amount</th><th>Rollback</th></tr>
   </thead>
-  <tbody id="mainTbl"><tr><td colspan="9">Please submit a lookup.</td></tr></tbody>
+  <tbody id="mainTbl"><tr><td colspan="7">Please submit a lookup.</td></tr></tbody>
 </table>
-<form class="container" id="loadMore" action="javascript:getMoreInformation();">
+<form class="container" id="loadMore" action="">
 <div class="row">
   <div class="col-sm-offset-2 col-sm-8 form-group input-group">
     <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="10">
@@ -129,7 +132,7 @@ a inputs:
 <input type="hidden" id="offset" name="offset">
 <div class="form-group row">
   <div class="col-sm-offset-2 col-sm-8">
-    <input class="btn btn-secondary" type="submit" value="Load more">
+    <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more">
   </div>
 </div>
 </form>
@@ -145,6 +148,7 @@ for(var i = 0; i < a.length; i++) a[i].setAttribute("data-toggle","buttons");
 document.getElementById("x2").setAttribute("placeholder","Radius");
 document.getElementById("date").setAttribute("type","text");
 document.getElementById("date").removeAttribute("name");
+document.getElementById("loadMoreBtn").setAttribute("disabled","");
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js"></script>
@@ -155,7 +159,7 @@ document.getElementById("date").removeAttribute("name");
 // TODO: Transition this to jquery
 getId = function(val) {return document.getElementById(val)},
 getForm = function(val) {return document.lookup[val]};
-$("#date").datetimepicker({format:"<?=$datetimeFormat?>"});
+$("#date").datetimepicker({format:"<?=$dateFormat.' '.$timeFormat?>"});
 $("[for=abl]").addClass("active");
 
 /*
@@ -185,12 +189,12 @@ function radius() {
 $("#lookup").submit(function($thislookup) {
     $thislookup.preventDefault();
     $.ajax("conn.php",{
-        beforeSend:function(xhr,s){if($("#date").val()!=="")req=s.data+="&t="+$("#date").data("DateTimePicker").date().unix();unixNow = Date.now()/1000|0;},
+        beforeSend:function(xhr,s){if($("#date").val()!=="")req=s.data+="&t="+moment($("#date").val(),"<?=$dateFormat.' '.$timeFormat?>").format("X");unixNow = Date.now()/1000|0;},
         data:$("#lookup").serialize(),
         dataType:"json",
         method:"POST",
         complete:function(){},
-        success:function(data){phraseReturn(data)},
+        success:function(data){reachedLimit(false);$lastDataTime = Date.now();phraseReturn(data)},
     })
 });
 
@@ -206,67 +210,111 @@ $("#loadMore").submit(function($thislookup) {
     })
 });
 
-// for displaying time
-function timeago(t) {
-    var d,h,m,s,r;
-    t = unixNow-t;
-    d = Math.floor(t/86400);
-    h = Math.floor(t/3600%24);
-    m = Math.floor(t/60%60);
-    s = Math.floor(t%60);
-    
-    if (d > 0) r=d+"d "+h+"h "+m+"m "+s+"s";
-    else if (h > 0) r=h+"h "+m+"m "+s+"s";
-    else if (m > 0) r=m+"m "+s+"s";
-    else if (s > 0) r=s+"s";
-    else r="0ms";
-    
-    return r;
+function reachedLimit(toggle) {
+  $("#loadMoreBtn").prop("disabled",toggle);
+  if(toggle) {
+      return '<i>No more results</i>'
+  }
 }
+
+// Select value from table into query
+function putInQ(element,type,flag) {
+    switch(type) {
+        case "time":
+            $("#date").val(moment(parseInt($(element).parent().attr("data-time"))).format("<?=$dateFormat.' '.$timeFormat?>"));
+            if(flag=="desc") {
+                $("[for=trv]").removeClass("active");
+                $("#trv").prop("checked",false);
+            }
+            else {
+                $("[for=trv]").addClass("active");
+                $("#trv").prop("checked",true);
+            }
+            break;
+    }
+    return false;
+}
+
+<?
+// TODO: Add "top" button that follows as you scroll and put this code:
+//$("html, body").animate({ scrollTop: $('#title1').offset().top }, 1000);
+?>
 
 // Simple exist function
 function if_exist(value,if_not) {
-    if(value==="")return if_not;
+    if(value==="") return if_not;
     else return value;
 }
 
 // returns data in table format
 function phraseReturn(obj,more) {
-    if (obj[0]['status']) { // If failed
-        /*
-        o = '<tr><td colspan="8">';
-        switch (obj[0]['err']) {
-            case 'block':
-            o += 'Invalid blocks: '+obj[0]['block'].join(', ');
+    $("#genTime").text("Request generated in "+Math.round(obj[0]["duration"]*1000)+"ms");
+    if (obj[0]["status"]) { // If failed
+        o = '<tr><td colspan="7"';
+        switch(obj[0]["status"]) {
+            case 1:
+                o += ' class="text-xs-center">'+reachedLimit(true);
             break;
-            case 'username and block':
-            o += 'Invalid blocks: '+obj[0]['block'].join(', ')+'<br>';
-            case 'username':
-            o += 'Invalid IGNs: '+obj[0]['username'].join(', ');
+            case 2:
+                o += "><b>The request did not go through properly.</b></td></tr><tr><td>"+obj[1][0]+"</td><td>"+obj[1][1]+'</td><td colspan="7">Error '+obj[1][2];
+                reachedLimit(true);
             break;
-            case 'invalid query':
-            o += 'The request did not go through properly.  <br>Error '+obj[0]['sqlerror'][0]+': '+obj[0]['sqlerror'][1]+'<br>MySQL request: '+obj[0]['query'];
+            case 3:
+                o += '><b>The webserver could not establish a connection to the database.</b> Please check your settings.</td></tr><tr><td colspan="7">PDO Exception: '+obj[1];
+                
             break;
-            case 'no results':
-            o += '<i>No more results</i>'
+            case 4:
+                o += "><b>The following value does not exist in the CoreProtect's database:</b></td></tr>"
+                for(var i=0; i<obj[1].length;i++) {
+                    o += "<tr><td></td><td>";
+                    switch(obj[1][i][0]) {
+                        // [material,id or value, thing that has weird stuff]
+                        case "material":
+                            o += 'Block</td><td colspan="5">'+obj[1][i][2];
+                            break;
+                        case "user":
+                            o += 'Username</td><td colspan="5">'+obj[1][i][2];
+                            break;
+                        default:
+                            o += e[i][0]+'</td><td colspan="5">'+obj[1][i][2];
+                    }
+                    o += "</td></tr>"
+                }
+                reachedLimit(true);
+                break;
+            default:
+                o += "><b>Unexpected Error "+obj[0]["status"]+":</b> "+obj[0]["reason"];
+                break;
         }
         o += '</td></tr>';
-        */
     }
-    else {
+    else { // Success
         if(more) $("#offset").val(parseInt($("#offset").val())+parseInt(if_exist($("#moreLim").val(),10)));
-        else {
+        else { // Set form values for offset lookup
             $("#SQL").val(obj[0]["SQL"]);
             $("#SQLqs").val(obj[0]["SQLqs"]);
             $("#offset").val(parseInt(if_exist($("#lim").val(),30)));
         }
         var r = obj[1];
-        o = '';
-        for (var i = 0; i<r.length; i++) {
-            o += '<tr';
+        o = "";
+        var i;
+        for (i = 0; i<r.length; i++) {
+            // UNIX to JS Date
+            r[i]["time"] *= 1000;
+            if(<?=$timeDividor?> < Math.abs($lastDataTime-r[i]["time"])||!moment($lastDataTime).isSame(r[i]["time"],"day")) o += '<tr class="table-section"><th colspan="7">'+moment(r[i]["time"]).calendar(null,{
+                sameDay: '[Today at] <?=$timeFormat?>',
+                nextDay: '[Please Configure Correct Minecraft Server Time]',
+                nextWeek: '[Please Configure Correct Minecraft Server Time]',
+                lastDay: '[Yesterday at] <?=$timeFormat?>',
+                lastWeek: '[Last] dddd, <?=$dateFormat?>',
+                sameElse: "<?=$dateFormat?>"
+            })+"</th></tr>";
+            $lastDataTime = r[i]["time"];
+            o += "<tr";
             if (r[i]['rolled_back'] == '1') o += ' class="table-success"';
             // Time, Username, Action
-            o += '><td title="'+new Date(r[i]['time']*1000)+'">'+timeago(r[i]['time'])+'</td><td>'+r[i]['user']+'</td><td>'+r[i]['table']+'</td><td';
+            
+            o += '><td title="'+new Date(r[i]['time'])+'"><span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+moment(r[i]["time"]).format("LTS")+'</span><div class="dropdown-menu" data-time="'+r[i]["time"]+'"><span class="dropdown-item cPointer" onClick="putInQ(this,\'time\',\'desc\')">Search Descending</span><span class="dropdown-item cPointer" onClick="putInQ(this,\'time\',\'asc\')">Search Ascending</span></div></td><td>'+r[i]['user']+'</td><td>'+r[i]['table']+'</td><td';
             switch(r[i]["table"]) {
                 case "click":
                 case "session":
@@ -295,6 +343,16 @@ function phraseReturn(obj,more) {
     else $("#mainTbl").html(o);
 }
 </script>
+      <div class="input-group-btn">
+        <span class="btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Action
+        </span>
+        <div class="dropdown-menu">
+          <span class="dropdown-item searchAsc">Search Descending</span>
+          <span class="dropdown-item searchDesc">Search Ascending</span>
+        </div>
+      </div>
+
 <p>Index last updated  Jan 25, 2016.  Version 0.6.0-alpha</p>
 <p>This web app utilizes <a href="http://v4-alpha.getbootstrap.com/">Bootstrap v4</a> and <a href="https://eonasdan.github.io/bootstrap-datetimepicker/"> Bootstrap Datepicker v4</a>.<br>COLWI &copy; SimonOrJ, 2015-<?=date("Y")?>.  All Rights Reserved.</p>
 </body>

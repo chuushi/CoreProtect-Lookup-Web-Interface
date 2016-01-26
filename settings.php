@@ -62,13 +62,20 @@ $translateCo2Mc = true;
 
 
 /* ================================================== *\
- *          Auxiliary settings for index.php          *
+ *               Settings for index.php               *
 \* ================================================== */
-/* Datetime Picker Format to use.
-/* This uses moment's date display option.  Refer to 
+
+/* Datetime Picker and Date/Time Display format to use.
+ * This uses moment's date display option.  Refer to 
    http://momentjs.com/docs/#/displaying/format/
  * for formatting help. */
-$datetimeFormat = "YYYY-MM-DD h:mm:ss a";
+$dateFormat = "ll";
+$timeFormat = "LTS";
+
+/* Dividor Time - How far apart should the time be until
+ * a table time dividor kicks in? 
+ * Time in milliseconds.*/
+$timeDividor = 1200000; // Default: 20 minutes (1200000)
 
 // texturepack to use. Use _EXACT_ folder/directory name.
 //$texture = "default"; //In Progress!

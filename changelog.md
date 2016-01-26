@@ -3,25 +3,35 @@ Changes:
 
 v0.6.0 - January 23, 2016
 -------------------------
-- No Javascript Update - The v0.6 will focus on making the lookup UI
-  no-Javascript friendly for those who doesn't like using JavaScript.
+- No Javascript Update - The v0.6 will focus on improving the lookup UI's look
+  and usability.
+ - It will focus on making the lookups possible without JavaScript friendly for
+   those who doesn't like using JavaScript.
+   - However, those using this with JavaScript turned on will benefit much more
+     from this update!
 - Feature/bug fixes:
  - `settings.php`:
   - Separated PDO part to another file `PDO.php` in order to make `index.php`
     load faster.
   - Set PDO mysql charset to UTF-8 for special character compatibility
-  - Added Datetime Picker date formatting option
+  - Added global date and time formatting option
  - `conn.php`:
   - Modified the way requests are handled.
   - Added support for searching with current Minecraft block/item names
    - Searching with legacy names work as long as it isn't overriden by new names.
  - `index.php`:
-  - Smaller table to fit more data
-  - Coordinate defining fields are combined to save room when the window is
-    large enough
+  - An error will be thrown for unconfigured or badly configured database
+    connect settings.
+  - Table size has been decreased and colors has been added.
+  - Time/date display method has been overhauled into using moment.js.
+  - Time can be selected from the table list to put it in the search form.
+  - Request duration time has been added on the bottom of the table so you can
+    feel like Google!
+  - Coordinate defining and date/limit fields are combined to save room when the
+    window is large enough.
   - "Load more" has been styled to bootstrap.
   - Form submitting now uses browser's built-in handling rather than by
-    javascript.
+    unnecessary javascript.
   - Now submits request with POST rather than GET.
 
 

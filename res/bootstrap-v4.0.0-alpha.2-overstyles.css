@@ -1,6 +1,15 @@
 /* Style Overwrites */
+.center {
+  text-align:center;
+}
 .btn {
   margin-bottom:0;
+}
+.cPointer {
+  cursor:pointer;
+}
+.dropdown-menu {
+  top:auto;
 }
 .table-striped tbody tr:nth-of-type(odd) .table-warning {
   background-color:#fbf6dd;
@@ -14,17 +23,21 @@
 .table-striped tbody tr.table-success>td.table-warning{
   background-color:#edf6e6;
 }
-.table-striped tbody tr:nth-of-type(odd).table-success>td.table-warning {
+.table-striped tbody tr:nth-of-type(odd).table-success>.table-warning {
   background-color:#eaf5e2;
 }
 .table-striped tbody tr.table-success>td.table-info{
   background-color:#e9f6e9;
 }
-.table-striped tbody tr:nth-of-type(odd).table-success>td.table-info {
+.table-striped tbody tr:nth-of-type(odd).table-success>.table-info {
   background-color:#e5f4e5;
 }
+.table-section th{
+  color: #55595c;
+  background-color: #eceeef;
+}
 @media(max-width:991px) {
-#c1 {
+.groups-line {
   margin-bottom: 1rem;
 }
 }

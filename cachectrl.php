@@ -40,7 +40,7 @@ class cachectrl {
             $this->$lookup->execute([$id]);
             if($u = $this->$lookup->fetch(PDO::FETCH_NUM)) $ac[$id] = $u[0];
             else {
-                $this->error[] = ["id",$from,$id];
+                $this->error[] = [$from,"id",$id];
                 return NULL;
             }
             $ret = $u[0];
@@ -58,7 +58,7 @@ class cachectrl {
             $this->$from->execute([$value]);
             if($i = $this->$from->fetch(PDO::FETCH_NUM)) $ac[$i[0]] = $i[1];
             else {
-                $this->error[] = ["value",$from,$value];
+                $this->error[] = [$from,"value",$value];
                 return NULL;
             }
             return $i[0];

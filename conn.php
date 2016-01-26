@@ -35,9 +35,9 @@ out[0]:
     0 - Success
     1 - No Results
     2 - SQL Query Unsuccessful
-    3 - Settings Not Configured
-    4 - CacheCtrl Value Not Found
-
+    3 - Database Connection Failed
+    4 - Values from cachectrl Not Found
+    7 - No status code
 */
 
 error_reporting(-1);
@@ -50,8 +50,8 @@ $_timer = microtime(true);
 function _shutdown() {
     global $out,$co_,$_timer,$searchSession;
     if(!isset($out[0]["status"])) {
-        $out[0]["status"] = 5;
-        $out[0]["reason"] = "Script Terminated Too Early";
+        $out[0]["status"] = 7;
+        $out[0]["reason"] = "Script terminated too early";
     }
     $out[0]["duration"] = microtime(true) - $_timer;
     echo json_encode($out);
@@ -189,7 +189,7 @@ else {
     
     if(!empty($cc->error)) {
         $out[0]["status"] = 4;
-        $out[0]["reason"] = "The following ID/value does not exist in the CoreProtect database.";
+        $out[0]["reason"] = "Username/Block Input not found";
         $out[1] = $cc->error;
         exit();
     }
