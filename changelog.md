@@ -1,7 +1,11 @@
 Changes:
 ================================================================================
 
-v0.6.0 - January 23, 2016
+v0.6.1 - January 26, 2016
+-------------------------
+
+
+v0.6.0 - January 25, 2016
 -------------------------
 - No Javascript Update - The v0.6 will focus on improving the lookup UI's look
   and usability.
