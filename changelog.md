@@ -1,16 +1,21 @@
 Changes:
 ================================================================================
 
-v0.6.1 - January 26, 2016
+v0.6.1 - January 27, 2016
 -------------------------
 - `conn.php`
  - Searching by world alone is possible.
+ - Coordinate search has been fixed (if it was broken before).
 - `index.php`
- - Time, username, coordinate, and block terms can now be picked from the
-   results and placed directly into the search fields in a few clicks from the
-   result table!
+ - Table header color has been changed.
+ - Time, username, coordinate, and block terms can now be picked directly from
+   the results and placed directly into the search field in a few clicks!
   - The four fields specified has a dropdown menu that allows such.
- - You can now look at what was written on the sign!
+  - Block and user fields will get some modification.
+ - You can now lookup what was written on the sign!
+  - This feature is valid only if the blocks "minecraft:wall_sign" or
+    "minecraft:standing_sign" has a valid sign history.  Signs generated using,
+    for example, worldedit might not come out correctly. (untested)
  - World field has been added.
 
 

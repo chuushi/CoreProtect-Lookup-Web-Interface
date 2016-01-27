@@ -176,21 +176,21 @@ $("[for=abl]").addClass("active");
  */
 
 // Radius/Corners toggle
-function radius() {
-    if($("#corner1").text() == "Corner 1") {
+function radius(boolCorner) {
+    if(($("#corner1").text() == "Center")||boolCorner) {
+        $("#corner1").text("Corner 1");
+        $("#corner2").text("Corner 2");
+        $("#c2").addClass("input-group");
+        $(".c2").show();
+        $("#x2").attr("placeholder","x");
+    }
+    else {
         $("#corner1").text("Center");
         $("#corner2").text("Radius");
         $("#c2").removeClass("input-group");
         $(".c2").val("");
         $(".c2").hide();
         $("#x2").attr("placeholder","Radius");
-    }
-    else {
-        $("#corner1").text("Corner 1");
-        $("#corner2").text("Corner 2");
-        $("#c2").addClass("input-group");
-        $(".c2").show();
-        $("#x2").attr("placeholder","x");
     }
 }
 
@@ -268,13 +268,74 @@ function if_exist(value,if_not) {
 $("#output").on("show.bs.dropdown",".rDrop",function(){
     if(!$(this).hasClass("dropdown")) {
         $(this).addClass("dropdown");
-        ($(this).hasClass("t"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer tAsc">Search ascending</span><span class="dropdown-item cPointer tDesc">Search descending</span></div>')
-        :($(this).hasClass("u"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer uSch">Search block</span><span class="dropdown-item cPointer uESch">Exclusive Search</span></div>')
-        :($(this).hasClass("c"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer cFl1">Center/Corner 1</span><span class="dropdown-item cPointer cFl2">Corner 2</span></div>')
-        :($(this).hasClass("b"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer bSch">Search block</span><span class="dropdown-item cPointer bESch">Exclusive Search</span></div>')
+        ($(this).hasClass("t"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer t Asc">Search ascending</span><span class="dropdown-item cPointer t Desc">Search descending</span></div>')
+        :($(this).hasClass("u"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>')
+        :($(this).hasClass("c"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span></div>')
+        :($(this).hasClass("b"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>')
         :$(this).append('<div class="dropdown-menu"><span class="dropdown-header">wat</span></div>');
     }
 });
+// Dropdown Menu Listener
+$("#output").on("click",".rDrop .cPointer",function(){
+    var $par = $(this).parent();
+    if($(this).hasClass("t")) {
+        console.log($par.parent().attr("data-time"));
+        var value = moment($par.parent().attr("data-time"),["x"]).format("<?=$dateFormat.' '.$timeFormat?>");
+        if($(this).hasClass("Asc")) {
+            $("#trv").prop("checked",true);
+            $("[for=trv]").addClass("active");
+            $("#date").val(value);
+        }
+        else if($(this).hasClass("Desc")) {
+            $("#trv").prop("checked",false);
+            $("[for=trv]").removeClass("active");
+            $("#date").val(value);
+        }
+    }
+    if($(this).hasClass("u")) {
+        var value = $par.prev().text();
+        if($(this).hasClass("Sch")) {
+            $("#eus").prop("checked",false);
+            $("[for=eus]").removeClass("active");
+            $("#usr").val(value);
+        }
+        else if($(this).hasClass("ESch")) {
+            $("#eus").prop("checked",true);
+            $("[for=eus]").addClass("active");
+            $("#usr").val(value);
+        }
+    }
+    if($(this).hasClass("c")) {
+        var vals = $par.prev().text().split(" ");
+        if($(this).hasClass("Fl1")) {
+            $("#x1").val(vals[0]);
+            $("#y1").val(vals[1]);
+            $("#z1").val(vals[2]);
+            $("#wid").val(vals[3]);
+        }
+        else if($(this).hasClass("Fl2")) {
+            radius(true);
+            $("#x2").val(vals[0]);
+            $("#y2").val(vals[1]);
+            $("#z2").val(vals[2]);
+            $("#wid").val(vals[3]);
+        }
+    }
+    if($(this).hasClass("b")) {
+        var value = $par.parent().attr("data-block");
+        if($(this).hasClass("Sch")) {
+            $("#ebl").prop("checked",false);
+            $("[for=ebl]").removeClass("active");
+            $("#blk").val(value);
+        }
+        else if($(this).hasClass("ESch")) {
+            $("#ebl").prop("checked",true);
+            $("[for=ebl]").addClass("active");
+            $("#blk").val(value);
+        }
+    }
+});
+
 // Displaying sign data function
 $("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){$(this).next().collapse("toggle")});
 
@@ -348,7 +409,7 @@ function phraseReturn(obj,more) {
             if (r[i]['rolled_back'] == '1') o += ' class="table-success"';
 
             // Time, Username, Action
-            o += '><td class="rDrop t" title="'+moment(r[i]["time"]).format("<?=$dateFormat?>")+'">'+spanDToggle+moment(r[i]["time"]).format("<?=$timeFormat?>")+'</span></td><td class="rDrop u">'+spanDToggle+r[i]['user']+'</span></td><td>'+r[i]['table']+'</td><td';
+            o += '><td class="rDrop t" title="'+moment(r[i]["time"]).format("<?=$dateFormat?>")+'" data-time="'+r[i]["time"]+'">'+spanDToggle+moment(r[i]["time"]).format("<?=$timeFormat?>")+'</span></td><td class="rDrop u">'+spanDToggle+r[i]['user']+'</span></td><td>'+r[i]['table']+'</td><td';
             $lastDataTime = r[i]["time"];
             switch(r[i]["table"]) {
                 case "click":
@@ -365,7 +426,7 @@ function phraseReturn(obj,more) {
                     // Coordinates, Type:Data, Amount, Rollback
                     o += ' class="rDrop c">'+spanDToggle+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+"</span></td><td"+((r[i]["table"] == "session")?">"
                     :((r[i]["signdata"])?' class="rColl">'+spanSign
-                    :' class="rDrop b">'+spanDToggle)+r[i]['type']+':'+r[i]['data']+"</span>"+((r[i]["signdata"])? '<div class="rDrop b collapse">'+divSignData(r[i]["signdata"])+"<br>"+spanDToggle+r[i]['type']+':'+r[i]['data']+"</span></div>"
+                    :' class="rDrop b" data-block="'+r[i]["type"]+'">'+spanDToggle)+r[i]['type']+':'+r[i]['data']+"</span>"+((r[i]["signdata"])? '<div class="rDrop b collapse" data-block="'+r[i]["type"]+'">'+divSignData(r[i]["signdata"])+"<br>"+spanDToggle+r[i]['type']+':'+r[i]['data']+"</span></div>"
                     :""))+'</td><td'+((r[i]['action'] == "0")?' class="table-warning">-'
                     :((r[i]['action'] == "1")?' class="table-info">+'
                     :'>'))+((r[i]['table'] == "container") ? r[i]['amount'] 

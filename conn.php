@@ -20,7 +20,7 @@ Output status codes:
     4 - Values from cachectrl Not Found
     7 - No status code
 */
-
+// TODO: Figure out why coordinate search is not working.
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
@@ -67,11 +67,15 @@ if(isset($q["SQL"])) {
 }
 else {
     foreach ($q as $key => $value) {
-        if (in_array($key,["a","b","e","u","xyz","xyz2"],true)) {if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!==""))) $$key = (is_array($value))?$value:explode(',', $value);}
+        if (in_array($key,["a","b","e","u","xyz"],true)) {if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!==""))) $$key = (is_array($value))?$value:explode(',', $value);}
         elseif (in_array($key,["r","t","keyword","wid","rollback"],true)) {if($value!=="") $$key = $value;}
         elseif (in_array($key,["unixtime","asendt"],true)) {if($value!=="") $$key = true;}
+        elseif ($key == "xyz2") {
+            if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!=="")))$$key = (is_array($value))?$value:explode(',', $value);
+            elseif(isset($value[0])&&$value[0]!=="") $r = $value[0];
+        }
     }
-    
+    if(isset($xyz2) && !isset($xyz2[2])) $r = $xyz2[0];
     
     // Defaults if the query or parts of the query is empty:
     if(empty($a)) $a = ["block"];
@@ -87,7 +91,7 @@ else {
             $z = [$xyz[2]-$r,$xyz[2]+$r];
             $coord = "(x BETWEEN ".$x[0]." AND ".$x[1].") AND (y BETWEEN ".$y[0]." AND ".$y[1].") AND (z BETWEEN ".$z[0]." AND ".$z[1].")";
         }
-        elseif(isset($xyz) && isset($xys2)) {
+        elseif(isset($xyz) && isset($xyz2)) {
             $x = [min($xyz[0],$xyz2[0]),max($xyz[0],$xyz2[0])];
             $y = [min($xyz[1],$xyz2[1]),max($xyz[1],$xyz2[1])];
             $z = [min($xyz[2],$xyz2[2]),max($xyz[2],$xyz2[2])];
