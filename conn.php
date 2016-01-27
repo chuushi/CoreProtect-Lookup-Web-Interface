@@ -80,20 +80,24 @@ else {
     if(!isset($unixtime)) $unixtime = false;
     
     // coord xyz, xyz2, r
-    if(isset($xyz) && (isset($r) || isset($xyz2))) {
-        if(isset($r)) {
+    if((isset($xyz) && (isset($r) || isset($xyz2)))||isset($wid)) {
+        if(isset($xyz) && isset($r)) {
             $x = [$xyz[0]-$r,$xyz[0]+$r];
             $y = [$xyz[1]-$r,$xyz[1]+$r];
             $z = [$xyz[2]-$r,$xyz[2]+$r];
+            $coord = "(x BETWEEN ".$x[0]." AND ".$x[1].") AND (y BETWEEN ".$y[0]." AND ".$y[1].") AND (z BETWEEN ".$z[0]." AND ".$z[1].")";
         }
-        else {
+        elseif(isset($xyz) && isset($xys2)) {
             $x = [min($xyz[0],$xyz2[0]),max($xyz[0],$xyz2[0])];
             $y = [min($xyz[1],$xyz2[1]),max($xyz[1],$xyz2[1])];
             $z = [min($xyz[2],$xyz2[2]),max($xyz[2],$xyz2[2])];
+            $coord = "(x BETWEEN ".$x[0]." AND ".$x[1].") AND (y BETWEEN ".$y[0]." AND ".$y[1].") AND (z BETWEEN ".$z[0]." AND ".$z[1].")";
         }
-        if(isset($wid)) $coord = "wid=".$cc->getId($wid,"world")." AND ";
-        else $coord = "";
-        $coord .= "(x BETWEEN ".$x[0]." AND ".$x[1].") AND (y BETWEEN ".$y[0]." AND ".$y[1].") AND (z BETWEEN ".$z[0]." AND ".$z[1].")";
+        if(isset($wid)) {
+            if(isset($coord)) $coord .= " AND ";
+            else $coord = "";
+            $coord .= "wid=".$cc->getId($wid,"world");
+        }
     }
     else $coord = false;
     

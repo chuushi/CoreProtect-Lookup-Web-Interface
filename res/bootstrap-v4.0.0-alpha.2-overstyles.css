@@ -1,4 +1,7 @@
 /* Style Overwrites */
+html {
+  overflow-y:scroll;
+}
 .center {
   text-align:center;
 }
@@ -8,9 +11,9 @@
 .cPointer {
   cursor:pointer;
 }
-.dropdown-menu {
+/*.dropdown-menu {
   top:auto;
-}
+}*/
 .table-striped tbody tr:nth-of-type(odd) .table-warning {
   background-color:#fbf6dd;
 }
@@ -35,6 +38,40 @@
 .table-section th{
   color: #55595c;
   background-color: #eceeef;
+}
+.rColl>.collapse-toggle,.rDrop>.dropdown-toggle {
+    border-radius:.25rem;
+    cursor:pointer;
+    display:inline-block;
+}
+.rColl>.collapse-toggle:hover,.rDrop>.dropdown-toggle:hover {
+  background:rgba(0,0,0,.1);
+  color:#373A3C
+}
+.rColl>.collapse-toggle.active,.rColl>.collapse-toggle.fosuc,.rColl>.collapse-toggle:active,.rColl>.collapse-toggle:focus,.rDrop>.dropdown-toggle.active,.rDrop>.dropdown-toggle.focus,.rDrop>.dropdown-toggle:active,.rDrop>.dropdown-toggle:focus,.open.rDrop>.dropdown-toggle {
+  background:rgba(0,0,0,.32);
+}
+.rDrop>.dropdown-toggle::after {
+  display:none;
+}
+.collapse-toggle::after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: .25rem;
+  margin-left: .25rem;
+  vertical-align: middle;
+  content: "";
+  border-top: .3em solid;
+  border-right: .3em solid transparent;
+  border-left: .3em solid transparent;
+}
+.mcSign{
+  display:inline-block;
+  border:1px solid #ccc;
+  border-radius:.25rem;
+  min-width:11rem;
+  text-align:center;
 }
 @media(max-width:991px) {
 .groups-line {

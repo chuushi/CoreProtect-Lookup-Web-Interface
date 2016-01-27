@@ -31,7 +31,9 @@
 a inputs:
 'block','chat','click','command','container','kill','session','username'
 -->
-<form id="lookup" method="get" action="./">
+<div id="lookupForm" class="card">
+<div class="card-header"><span class="h4 card-title">Make a Lookup</span></div>
+<form id="lookup" class="card-block" role="form" method="get" action="./">
 <div class="form-group row">
   <div class="col-lg-2 form-control-label">Actions</div>
   <div class="dtButtons btn-group col-lg-10">
@@ -75,6 +77,10 @@ a inputs:
     </div>
 </div>
 <div class="form-group row">
+  <label class="col-xs-2 form-control-label" for="wid">World</label>
+  <div class="col-xs-10"><input class="form-control" type="text" id="wid" name="wid" placeholder="world"></div>
+</div>
+<div class="form-group row">
   <label class="col-lg-2 form-control-label" for="usr">Users</label>
   <div class="input-group col-lg-10" >
     <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="eus"><input type="checkbox" id="eus" name="e[]" value="u">Exclude</label></span>
@@ -93,7 +99,7 @@ a inputs:
   <div class="col-sm-10"><input class="form-control" type="text" id="kwd" name="keyword" placeholder="Coming in v0.6.x-alpha!" disabled></div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="date">Date</label>
+  <label class="col-sm-2 form-control-label" for="date">Date/Time</label>
   <div class="input-group col-lg-4 col-sm-10 groups-line">
     <span class="dtButtons input-group-btn">
       <label class="btn btn-secondary" for="trv"><input type="checkbox" id="trv" name="asendt">Reverse</label>
@@ -106,7 +112,7 @@ a inputs:
     <input class="form-control" type="number" id="lim" name="lim" min="1" placeholder="30">
   </div>
 </div>
-<div class="form-group row">
+<div class="row">
   <div class="col-sm-offset-2 col-sm-10">
     <input class="btn btn-secondary" type="submit" value="Submit">
     <input class="btn btn-secondary" type="reset" value="Reset">
@@ -114,13 +120,16 @@ a inputs:
 </div>
 </form>
 </div>
+</div>
+<div class="container-fluid">
 <table id="output" class="table table-sm table-striped">
   <caption id="genTime"></caption>
-  <thead class="thead-default">
-  <tr><th>Time ago</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Amount</th><th>Rollback</th></tr>
+  <thead class="thead-inverse">
+  <tr><th>Time</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Amount</th><th>Rollback</th></tr>
   </thead>
   <tbody id="mainTbl"><tr><td colspan="7">Please submit a lookup.</td></tr></tbody>
 </table>
+</div>
 <form class="container" id="loadMore" action="">
 <div class="row">
   <div class="col-sm-offset-2 col-sm-8 form-group input-group">
@@ -246,7 +255,33 @@ function if_exist(value,if_not) {
     else return value;
 }
 
+
+/* class data:
+  rDrop
+  t
+  u
+  xyz
+  b
+*/
+
+// Dropdown menu creation function
+$("#output").on("show.bs.dropdown",".rDrop",function(){
+    if(!$(this).hasClass("dropdown")) {
+        $(this).addClass("dropdown");
+        ($(this).hasClass("t"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer tAsc">Search ascending</span><span class="dropdown-item cPointer tDesc">Search descending</span></div>')
+        :($(this).hasClass("u"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer uSch">Search block</span><span class="dropdown-item cPointer uESch">Exclusive Search</span></div>')
+        :($(this).hasClass("c"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer cFl1">Center/Corner 1</span><span class="dropdown-item cPointer cFl2">Corner 2</span></div>')
+        :($(this).hasClass("b"))?$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer bSch">Search block</span><span class="dropdown-item cPointer bESch">Exclusive Search</span></div>')
+        :$(this).append('<div class="dropdown-menu"><span class="dropdown-header">wat</span></div>');
+    }
+});
+// Displaying sign data function
+$("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){$(this).next().collapse("toggle")});
+
 // returns data in table format
+spanSign = '<span class="collapse-toggle" data-toggle="collapse-next" aria-expanded="false">'
+divSignData = function(Lines) {return '<div class="mcSign">'+Lines[0]+'<br>'+Lines[1]+'<br>'+Lines[2]+'<br>'+Lines[3]+"</div>";}
+spanDToggle =  '<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
 function phraseReturn(obj,more) {
     $("#genTime").text("Request generated in "+Math.round(obj[0]["duration"]*1000)+"ms");
     if (obj[0]["status"]) { // If failed
@@ -309,12 +344,12 @@ function phraseReturn(obj,more) {
                 lastWeek: '[Last] dddd, <?=$dateFormat?>',
                 sameElse: "<?=$dateFormat?>"
             })+"</th></tr>";
-            $lastDataTime = r[i]["time"];
             o += "<tr";
             if (r[i]['rolled_back'] == '1') o += ' class="table-success"';
+
             // Time, Username, Action
-            
-            o += '><td title="'+new Date(r[i]['time'])+'"><span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+moment(r[i]["time"]).format("LTS")+'</span><div class="dropdown-menu" data-time="'+r[i]["time"]+'"><span class="dropdown-item cPointer" onClick="putInQ(this,\'time\',\'desc\')">Search Descending</span><span class="dropdown-item cPointer" onClick="putInQ(this,\'time\',\'asc\')">Search Ascending</span></div></td><td>'+r[i]['user']+'</td><td>'+r[i]['table']+'</td><td';
+            o += '><td class="rDrop t" title="'+moment(r[i]["time"]).format("<?=$dateFormat?>")+'">'+spanDToggle+moment(r[i]["time"]).format("<?=$timeFormat?>")+'</span></td><td class="rDrop u">'+spanDToggle+r[i]['user']+'</span></td><td>'+r[i]['table']+'</td><td';
+            $lastDataTime = r[i]["time"];
             switch(r[i]["table"]) {
                 case "click":
                 case "session":
@@ -328,7 +363,13 @@ function phraseReturn(obj,more) {
                         else if(r[i]['rolled_back'] == "1") r[i]['rolled_back'] = "Rolled.";
                     }
                     // Coordinates, Type:Data, Amount, Rollback
-                    o += '>'+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+"</td><td>"+((r[i]["table"] == "session")?"":((r[i]["signdata"])?'<span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">':"")+r[i]['type']+':'+r[i]['data']+((r[i]["signdata"])?'</span><div class="dropdown-menu"><span class="dropdown-item">'+r[i]["signdata"][0]+'</span><span class="dropdown-item">'+r[i]["signdata"][1]+'</span><span class="dropdown-item">'+r[i]["signdata"][2]+'</span><span class="dropdown-item">'+r[i]["signdata"][3]+'</span></div>':""))+'</td><td'+((r[i]['action'] == "0")?' class="table-warning">-':((r[i]['action'] == "1")?' class="table-info">+':'>'))+((r[i]['table'] == "container") ? r[i]['amount'] : '')+'</td><td>'+r[i]['rolled_back'];
+                    o += ' class="rDrop c">'+spanDToggle+r[i]['x']+' '+r[i]['y']+' '+r[i]['z']+' '+r[i]['wid']+"</span></td><td"+((r[i]["table"] == "session")?">"
+                    :((r[i]["signdata"])?' class="rColl">'+spanSign
+                    :' class="rDrop b">'+spanDToggle)+r[i]['type']+':'+r[i]['data']+"</span>"+((r[i]["signdata"])? '<div class="rDrop b collapse">'+divSignData(r[i]["signdata"])+"<br>"+spanDToggle+r[i]['type']+':'+r[i]['data']+"</span></div>"
+                    :""))+'</td><td'+((r[i]['action'] == "0")?' class="table-warning">-'
+                    :((r[i]['action'] == "1")?' class="table-info">+'
+                    :'>'))+((r[i]['table'] == "container") ? r[i]['amount'] 
+                    : '')+'</td><td>'+r[i]['rolled_back'];
                     break;
                 case "chat":
                 case "command":
@@ -343,17 +384,9 @@ function phraseReturn(obj,more) {
     else $("#mainTbl").html(o);
 }
 </script>
-      <div class="input-group-btn">
-        <span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Action
-        </span>
-        <div class="dropdown-menu">
-          <span class="dropdown-item searchAsc">Search Descending</span>
-          <span class="dropdown-item searchDesc">Search Ascending</span>
-        </div>
-      </div>
-
+<div class="container">
 <p>Index last updated  Jan 25, 2016.  Version 0.6.0-alpha</p>
 <p>This web app utilizes <a href="http://v4-alpha.getbootstrap.com/">Bootstrap v4</a> and <a href="https://eonasdan.github.io/bootstrap-datetimepicker/"> Bootstrap Datepicker v4</a>.<br>COLWI &copy; SimonOrJ, 2015-<?=date("Y")?>.  All Rights Reserved.</p>
+</div>
 </body>
 </html>

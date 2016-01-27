@@ -3,6 +3,15 @@ Changes:
 
 v0.6.1 - January 26, 2016
 -------------------------
+- `conn.php`
+ - Searching by world alone is possible.
+- `index.php`
+ - Time, username, coordinate, and block terms can now be picked from the
+   results and placed directly into the search fields in a few clicks from the
+   result table!
+  - The four fields specified has a dropdown menu that allows such.
+ - You can now look at what was written on the sign!
+ - World field has been added.
 
 
 v0.6.0 - January 25, 2016
