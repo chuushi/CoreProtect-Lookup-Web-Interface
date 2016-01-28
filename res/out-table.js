@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 function outTable(){
 "use strict";
 // TODO: Transition this to jquery
@@ -26,6 +29,7 @@ function radius(boolCorner) {
         $("#x2").attr("placeholder","Radius");
     }
 }
+$("#rcToggle").click(function(){radius();});
 
 // Main Submit
 $("#lookup").submit(function($thislookup) {
@@ -87,61 +91,79 @@ $("#output").on("show.bs.dropdown",".rDrop",function(){
 });
 // Dropdown Menu Listener
 $("#output").on("click",".rDrop .cPointer",function(){
-    var $par = $(this).parent(),val;
+    var $par = $(this).parent(),val,nVal;
     if($(this).hasClass("t")) {
         console.log($par.parent().attr("data-time"));
-        var value = moment($par.parent().attr("data-time"),["x"]).format($dateFormat+" "+$timeFormat);
+        nVal = moment($par.parent().attr("data-time"),["x"]).format($dateFormat+" "+$timeFormat);
         if($(this).hasClass("Asc")) {
             $("#trv").prop("checked",true);
             $("[for=trv]").addClass("active");
-            $("#date").val(value);
+            $("#date").val(nVal);
         }
         else if($(this).hasClass("Desc")) {
             $("#trv").prop("checked",false);
             $("[for=trv]").removeClass("active");
-            $("#date").val(value);
+            $("#date").val(nVal);
         }
     }
     else if($(this).hasClass("u")) {
-        val = $par.prev().text();
+        val = $("#usr").val();
+        nVal = $par.prev().text();
         if($(this).hasClass("Sch")) {
-            $("#eus").prop("checked",false);
-            $("[for=eus]").removeClass("active");
-            $("#usr").val(val);
+            if($("#eus").prop("checked")){
+                $("#eus").prop("checked",false);
+                $("[for=eus]").removeClass("active");
+                $("#usr").val(nVal);
+            }
+            else if(val === ""){$("#usr").val(nVal);}
+            else {$("#usr").val(val+","+nVal);}
         }
         else if($(this).hasClass("ESch")) {
-            $("#eus").prop("checked",true);
-            $("[for=eus]").addClass("active");
-            $("#usr").val(val);
+            if(!$("#eus").prop("checked")){
+                $("#eus").prop("checked",true);
+                $("[for=eus]").addClass("active");
+                $("#usr").val(nVal);
+            }
+            else if(val === ""){$("#usr").val(nVal);}
+            else {$("#usr").val(val+","+nVal);}
         }
     }
     else if($(this).hasClass("c")) {
-        var vals = $par.prev().text().split(" ");
+        nVal = $par.prev().text().split(" ");
         if($(this).hasClass("Fl1")) {
-            $("#x1").val(vals[0]);
-            $("#y1").val(vals[1]);
-            $("#z1").val(vals[2]);
-            $("#wid").val(vals[3]);
+            $("#x1").val(nVal[0]);
+            $("#y1").val(nVal[1]);
+            $("#z1").val(nVal[2]);
+            $("#wid").val(nVal[3]);
         }
         else if($(this).hasClass("Fl2")) {
             radius(true);
-            $("#x2").val(vals[0]);
-            $("#y2").val(vals[1]);
-            $("#z2").val(vals[2]);
-            $("#wid").val(vals[3]);
+            $("#x2").val(nVal[0]);
+            $("#y2").val(nVal[1]);
+            $("#z2").val(nVal[2]);
+            $("#wid").val(nVal[3]);
         }
     }
     else if($(this).hasClass("b")) {
-        val = $par.parent().attr("data-block");
+        val = $("#blk").val();
+        nVal = $par.parent().attr("data-block");
         if($(this).hasClass("Sch")) {
-            $("#ebl").prop("checked",false);
-            $("[for=ebl]").removeClass("active");
-            $("#blk").val(val);
+            if($("#ebl").prop("checked")){
+                $("#ebl").prop("checked",false);
+                $("[for=ebl]").removeClass("active");
+                $("#blk").val(nVal);
+            }
+            else if(val === ""){$("#blk").val(nVal);}
+            else {$("#blk").val(val+","+nVal);}
         }
         else if($(this).hasClass("ESch")) {
-            $("#ebl").prop("checked",true);
-            $("[for=ebl]").addClass("active");
-            $("#blk").val(val);
+            if(!$("#ebl").prop("checked")){
+                $("#ebl").prop("checked",true);
+                $("[for=ebl]").addClass("active");
+                $("#blk").val(nVal);
+            }
+            else if(val === ""){$("#blk").val(nVal);}
+            else {$("#blk").val(val+","+nVal);}
         }
     }
 });

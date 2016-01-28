@@ -6,9 +6,12 @@ v0.6.2 - January 28, 2016
 - `index.php`
  - Separated JavaScript from index.php to res/out-table.js.
   - Modified JavaScript to strict format.
- - TODO: Make a dynmap link.
+ - Adding to user or block from dropdown menu now appends to the lookup form.
+ - TODO: Dropdown menu for coordinates now comes with optional Dynmap link.
+ - TODO: Most, if not all, fields comes with autocomplete.
+ - TODO: Keyword search has been re-enabled.
 - `conn.php`
- - TODO: Add keyword search
+ - TODO: Code for keyword search is now added.
 - The plugin is now available on the
   [Bukkit Dev page](http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/). (It
   is awaiting approval at this time of writing.)

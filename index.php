@@ -1,8 +1,4 @@
 <?php include "settings.php"?><!DOCTYPE html>
-<!--
-// Developed by SimonOrJ.
-// Alpha stage
--->
 <html>
 <head>
   <meta charset="utf-8">
@@ -50,7 +46,7 @@ a inputs:
 <div class="form-group row">
   <div class="col-lg-2 form-control-label">Toggle</div>
   <div class="col-lg-10">
-    <button class="btn btn-secondary" type="button" id="rcToggle" onClick="radius()">Radius/Corners</button>
+    <button class="btn btn-secondary" type="button" id="rcToggle">Radius/Corners</button>
     <span class="dtButtons btn-group">
     <label class="btn btn-success-outline" for="rbt"><input type="radio" id="rbt" name="rollback" value="1"><span class="glyphicon glyphicon-ok"></span></label>
     <label class="btn btn-secondary active" for="rb"><input type="radio" id="rb" name="rollback" value="" checked>Rollback</label>
@@ -145,7 +141,7 @@ a inputs:
 </div>
 </form>
 <script>
-// Quick Styles for JS-enabled browser
+// Quick Styling for JS-enabled browser
 document.getElementById("corner1").innerHTML = "Center";
 document.getElementById("corner2").innerHTML = "Radius";
 document.getElementById("c2").className = "col-lg-4 col-sm-10";
@@ -160,6 +156,7 @@ document.getElementById("loadMoreBtn").setAttribute("disabled","");
 $dateFormat = "<?=$dateFormat?>";
 $timeFormat = "<?=$timeFormat?>";
 $timeDividor = "<?=$timeDividor?>";
+$dynmapURL = "<?=$dynmapURL?>";
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js"></script>
