@@ -26,12 +26,13 @@ elseif ($onMySQL == true) {
     // Database name
     $dbname = "minecraft";
 }
-
 // CoreProtect prefix (if you are using a custom prefix)
 $co_ = "co_"; // Default: "co_"
 
+
 // Minecraft Server-Webserver Time Offset in seconds
 $timeOffset = 0; // accepts negative values, Default: 0
+
 
 /* Legacy Database Block Search Support
  * Is your database upgraded from CoreProtect verson 2.10?
@@ -46,6 +47,7 @@ $timeOffset = 0; // accepts negative values, Default: 0
  * database was setup by CoreProtect 2.11 or above, or if 
  * you don't care about the old data, toggle it false. */
 $legacySupport = false;
+
 
 /* Block Name Conversion
  * CoreProtect likes to use legacy Minecraft block names,
@@ -72,18 +74,28 @@ $translateCo2Mc = true;
 $dateFormat = "ll";
 $timeFormat = "LTS";
 
+
 /* Dividor Time - How far apart should the time be until
  * a table time dividor kicks in? 
  * Time in milliseconds.*/
 $timeDividor = 1200000; // Default: 20 minutes (1200000)
 
+
+/* MC Dynamic Map link and settings
+ * If there is no dynmap, leave it as false.
+ * If you want to use dynmap to assist in block lookup,
+ * toggle it true.*/
+$useDynmap = false;
+// URL to the dynmap
+$dynmapURL = "http://127.0.0.1:8123/";
+// Zoom Level
+$dynmapZoom = 5; // Higher is closer.
+// Map type
+$dynmapMapName = "flat"; //flat, surface, or cave
+
+
 // texturepack to use. Use _EXACT_ folder/directory name.
 //$texture = "default"; //In Progress!
-
-// Dynamic Map link for coordinates 
-// (remove the # to activate)
-#$dynmapURL = "http://localhost:8123/"
-
 
 // More features to come...
 

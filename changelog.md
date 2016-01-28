@@ -6,8 +6,8 @@ v0.6.2 - January 28, 2016
 - `index.php`
  - Separated JavaScript from index.php to res/out-table.js.
   - Modified JavaScript to strict format.
+ - Dropdown menu for coordinates now comes with optional Dynmap link.
  - Adding to user or block from dropdown menu now appends to the lookup form.
- - TODO: Dropdown menu for coordinates now comes with optional Dynmap link.
  - TODO: Most, if not all, fields comes with autocomplete.
  - TODO: Keyword search has been re-enabled.
 - `conn.php`

@@ -84,12 +84,15 @@ $("#output").on("show.bs.dropdown",".rDrop",function(){
         $(this).addClass("dropdown");
         if($(this).hasClass("t")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer t Asc">Search ascending</span><span class="dropdown-item cPointer t Desc">Search descending</span></div>');}
         else if($(this).hasClass("u")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>');}
-        else if($(this).hasClass("c")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span></div>');}
+        else if($(this).hasClass("c")){
+            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+($dynmapURL?'<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>':"")+'</div>');
+        }
         else if($(this).hasClass("b")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');}
         else{$(this).append('<div class="dropdown-menu"><span class="dropdown-header">wat</span></div>');}
     }
 });
 // Dropdown Menu Listener
+var dmapWin;
 $("#output").on("click",".rDrop .cPointer",function(){
     var $par = $(this).parent(),val,nVal;
     if($(this).hasClass("t")) {
@@ -142,6 +145,9 @@ $("#output").on("click",".rDrop .cPointer",function(){
             $("#y2").val(nVal[1]);
             $("#z2").val(nVal[2]);
             $("#wid").val(nVal[3]);
+        }
+        else if($(this).hasClass("DMap")) {
+            dmapWin = window.open($dynmapURL+"?worldname="+nVal[3]+"&mapname="+$dynmapMapName+"&zoom="+$dynmapZoom+"&x="+nVal[0]+"&y="+nVal[1]+"&z="+nVal[2],"CoLWI-dmap");
         }
     }
     else if($(this).hasClass("b")) {
@@ -258,12 +264,12 @@ function phraseReturn(obj,more) {
                         else if(r[i].rolled_back === "1"){r[i].rolled_back = "Rolled.";}
                     }
                     // Coordinates, Type:Data, Amount, Rollback
-                    o += ' class="rDrop c">'+spanDToggle+r[i].x+' '+r[i].y+' '+r[i].z+' '+r[i].wid+"</span></td><td"+((r[i].table === "session")?">"
-                    :((r[i].signdata)?' class="rColl">'+spanSign
-                    :' class="rDrop b" data-block="'+r[i].type+'">'+spanDToggle)+r[i].type+':'+r[i].data+"</span>"+((r[i].signdata)? '<div class="rDrop b collapse" data-block="'+r[i].type+'">'+divSignData(r[i].signdata)+"<br>"+spanDToggle+r[i].type+':'+r[i].data+"</span></div>"
-                    :""))+'</td><td'+((r[i].action === "0")?' class="table-warning">-'
-                    :((r[i].action === "1")?' class="table-info">+'
-                    :'>'))+((r[i].table === "container") ? r[i].amount
+                    o += ' class="rDrop c">'+spanDToggle+r[i].x+' '+r[i].y+' '+r[i].z+' '+r[i].wid+"</span></td><td"+(r[i].table === "session"?">"
+                    :(r[i].signdata?' class="rColl">'+spanSign
+                    :' class="rDrop b" data-block="'+r[i].type+'">'+spanDToggle)+r[i].type+':'+r[i].data+"</span>"+(r[i].signdata? '<div class="rDrop b collapse" data-block="'+r[i].type+'">'+divSignData(r[i].signdata)+"<br>"+spanDToggle+r[i].type+':'+r[i].data+"</span></div>"
+                    :""))+'</td><td'+(r[i].action === "0"?' class="table-warning">-'
+                    :(r[i].action === "1"?' class="table-info">+'
+                    :'>'))+(r[i].table === "container" ? r[i].amount
                     : '')+'</td><td>'+r[i].rolled_back;
                     break;
                 case "chat":
