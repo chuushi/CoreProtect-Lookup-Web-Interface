@@ -18,7 +18,7 @@ if($onMySQL == false) {
 elseif ($onMySQL == true) {
     // Fill out the following:
     // Hostname[:port]
-    $dbhost = "localhost";
+    $dbhost = "127.0.0.1";
     // NySQL username
     $dbuser = "username";
     // MySQL password associated with username
@@ -89,7 +89,7 @@ $useDynmap = false;
 // URL to the dynmap
 $dynmapURL = "http://127.0.0.1:8123/";
 // Zoom Level
-$dynmapZoom = 5; // Higher is closer.
+$dynmapZoom = 6; // Higher is closer.
 // Map type
 $dynmapMapName = "flat"; //flat, surface, or cave
 

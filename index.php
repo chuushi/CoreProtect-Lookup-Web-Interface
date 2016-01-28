@@ -158,7 +158,7 @@ $timeFormat = "<?=$timeFormat?>";
 $timeDividor = "<?=$timeDividor?>";
 $dynmapURL = "<?=$dynmapURL?>";
 $dynmapZoom = "<?=$dynmapZoom?>";
-$dynmapMapName = "<?=$dynmapMapName?>";
+$dynmapMapName = <?=$useDynmap?>?"<?=$dynmapMapName?>":false;
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js"></script>
