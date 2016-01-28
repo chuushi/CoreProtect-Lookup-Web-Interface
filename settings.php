@@ -103,5 +103,5 @@ $dynmapMapName = "flat"; //flat, surface, or cave
 /* ================================================== *\
  *             End of user configuration              *
 \* ================================================== */
-if(!$useDynmap) $dynmapURL = "false";
+if(!$useDynmap) $dynmapURL = false;
 ?>
