@@ -1,6 +1,19 @@
 Changes:
 ================================================================================
 
+v0.6.2 - January 28, 2016
+-------------------------
+- `index.php`
+ - Separated JavaScript from index.php to res/out-table.js.
+  - Modified JavaScript to strict format.
+ - TODO: Make a dynmap link.
+- `conn.php`
+ - TODO: Add keyword search
+- The plugin is now available on the
+  [Bukkit Dev page](http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/). (It
+  is awaiting approval at this time of writing.)
+
+
 v0.6.1 - January 27, 2016
 -------------------------
 - `conn.php`
