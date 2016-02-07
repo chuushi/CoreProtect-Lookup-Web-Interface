@@ -6,10 +6,12 @@
  * world
  * ... entity?
  */
-$_GET["a"]; // what to look up
-$search_text = $_GET["b"]; // word to look up
-$data = include "cache/".$_GET["a"].".php";
-if($_GET["a"] === "material") $data = array_filter($data, function($v) {return((strpos($v,":") !== false));});
-$data = array_filter($data, function($v) use ($search_text) {return(stripos($v,$search_text) !== false);});
+$search_text = $_REQUEST["b"]; // word to look up
+$data = include "cache/".$_REQUEST["a"].".php";
+if($_REQUEST["a"] === "material") $data = array_filter($data, function($v) {return((strpos($v,":") !== false));});
+foreach($_REQUEST["e"] as $value) if(($key = array_search($value, $data)) !== false) {
+    unset($data[$key]);
+}
+$data = array_slice(array_filter($data, function($v) use ($search_text) {return(stripos($v,$search_text) !== false);}),0,$_REQUEST["l"]);
 echo json_encode($data);
 ?>
