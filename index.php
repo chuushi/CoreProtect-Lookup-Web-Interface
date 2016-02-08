@@ -1,4 +1,4 @@
-<?php include "settings.php";$fm=!empty($_GET);?><!DOCTYPE html>
+<?php include "settings.php";$fm=!empty($_GET);//CoreProtect LWI by SimonOrJ. All Rights Reserved.?><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -11,11 +11,15 @@
   <link rel="stylesheet" href="res/main.css">
   <link rel="stylesheet" href="res/jquery-autocomplete.css">
 </head>
-<body>
+<body data-spy="scroll" data-target="#row-pages" style="position:relative">
+<nav class="navbar navbar-dark bg-inverse navbar-fixed-top">
+  <a href="#top" class="navbar-brand hidden-xs-down">CoreProtect Lookup Web Interface</a>
+  <ul id="row-pages" class="nav navbar-nav">
+  </ul>
+  <?=$loginRequired?'<a href="index.php?action=clear_login" class="btn btn-secondary-outline pull-xs-right">logout</a>':""?>
+</nav>
+<div id="top" style="height:4rem;"></div>
 <div class="container">
-<h1>CoreProtect Lookup Web Interface</h1>
-<p class="second">by SimonOrJ</p>
-<p>This project is still undergoing alpha testing.  Please report any problems or feedback to the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.  Thank you for testing! ~SimonOrJ</p>
 <div id="lookupForm" class="card">
 <div class="card-header"><span class="h4 card-title">Make a Lookup</span></div>
 <form id="lookup" class="card-block" role="form" method="get" action="./">
@@ -148,6 +152,7 @@ $timeDividor = "<?=$timeDividor?>";
 $dynmapURL = "<?=$dynmapURL?>";
 $dynmapZoom = "<?=$dynmapZoom?>";
 $dynmapMapName = "<?=$dynmapMapName?>";
+$pageInterval = <?=$pageInteval?>;
 </script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -158,8 +163,8 @@ $dynmapMapName = "<?=$dynmapMapName?>";
 <script src="res/out-table.js"></script>
 <script src="res/form-handler.js"></script>
 <div class="container">
-<p>Index last updated  February 7, 2016.  Version 0.7.0-beta</p>
-<p>This web app utilizes <a href="http://v4-alpha.getbootstrap.com/">Bootstrap v4</a> and <a href="https://eonasdan.github.io/bootstrap-datetimepicker/"> Bootstrap Datepicker v4</a>.<br>CoreProtect LWI &copy; SimonOrJ, 2015-<?=date("Y")?>.  All Rights Reserved.</p>
+<p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a> or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.</p>
+<p>&copy; <?=$copyright?> &mdash; CoreProtect LWI version 0.7.0-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
 </div>
 </body>
 </html>

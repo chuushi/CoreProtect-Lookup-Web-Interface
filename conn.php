@@ -22,9 +22,8 @@ Output status codes:
     6 - No status code
     7 - (JS-side) Invalid response
 */
-
-error_reporting(-1);
-ini_set('display_errors', 'On');
+// Testing script
+//error_reporting(-1);ini_set('display_errors', 'On');
 
 // Record start time
 $_timer = microtime(true);

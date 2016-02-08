@@ -4,6 +4,10 @@ Changes:
 v0.7.0 - February 7, 2016
 -------------------------
 - `index.php`
+ - The page now has a Navigation bar!  When you go over certain number of pages,
+   the page link will pop up dynamically on the navbar!
+ - Added optional logon screen (created by
+   [richcheting](http://www.ricocheting.com/code/php/simple-login)).
  - Separated JavaScript from index.php to res/out-table.js.
   - Modified JavaScript to strict format.
  - Dropdown menu for coordinates now comes with optional Dynmap link.

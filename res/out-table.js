@@ -4,17 +4,17 @@
  */
 function outTable(){
 "use strict";
-
+var resCt,intCt;
 // Main Submit
 $("#lookup").submit(function($thislookup) {
     $thislookup.preventDefault();
     $.ajax("conn.php",{
-      beforeSend:function(xhr,s){$("#submitBtn").prop("disabled",true);if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
+      beforeSend:function(xhr,s){$("#row-pages").html("");$("#submitBtn").prop("disabled",true);if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
       data:$("#lookup").serialize(),
       dataType:"json",
       method:"POST",
       complete:function(){$("#submitBtn").prop("disabled",false);},
-      success:function(data){reachedLimit(false);$lastDataTime = Date.now();phraseReturn(data);},
+      success:function(data){reachedLimit(false);$lastDataTime = Date.now();resCt=1;intCt=$pageInterval;phraseReturn(data);},
       error: function(){phraseReturn([{
         status:7,
         reason:"The lookup script was unable to send a proper response."
@@ -220,7 +220,7 @@ function phraseReturn(obj,more) {
                 lastWeek: "[Last] dddd, "+$dateFormat+" "+$timeFormat,
                 sameElse: $dateFormat+" "+$timeFormat
             })+"</th></tr>";}
-            o += "<tr";
+            o += '<tr id="row-'+resCt+'"';
             if (r[i].rolled_back === "1"){o += ' class="table-success"';}
 
             // Time, Username, Action
@@ -254,10 +254,14 @@ function phraseReturn(obj,more) {
                     o += ' colspan="4">'+r[i].data;
             }
             o +='</td></tr>';
+            resCt++;
         }
     }
     if(more){$("#mainTbl").append(o);}
     else{$("#mainTbl").html(o);}
+    for(intCt;intCt<resCt;intCt=intCt+$pageInterval){
+      $("#row-pages").append('<li class="nav-item"><a class="nav-link" href="#row-'+intCt+'">'+intCt+'</a></li>');
+    }
 }
 }
 outTable();

@@ -1,54 +1,61 @@
-CoreProtect Lookup Web Interface v0.6 (CP LWI)
-=========================================
-_Previously "CP WLI" by name mixup..._
-
-_Nightly Update will continue throughout the rest of the January of 2016._
-
+CoreProtect Lookup Web Interface (CoLWI)
+========================================
 A flexible lookup web interface for CoreProtect 2.
 
-_Requires CoreProtect 2.11 or above, which runs on Minecraft 1.8.x._
-
-**Status:** alpha-going-to-beta.  Squashing bugs and improving the web interface.
+**Status:** Beta!
 
 This is a _lightweight_ web application that gives you the power to look up anything CoreProtect is capable of logging in the most efficient way.  [CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/) is developed by Intellii.
 
-This plugin requires a Minecraft server running CoreProtect plugin.  It can fetch data logged by CoreProtect through the MySQL server or the sqlite (database.db) file.
+This plugin is capable of looking up logged data as if doing it from the game. Some filters are ported to this plugin, such as:
 
-Skip to the [setup](#setup) section to see how you can set this up and test this web application.
+* Lookup by action
+* Lookup by username
+* Lookup by block name
+* Lookup by time
 
-**Todo:**
-- [X] Develop a way to connect to the CP MySQL database. [`conn.php`]
- - [X] Rewrite the entire code. (v0.5.0-alpha)
-- [X] Develop a way to cache CP variables to make it more efficient. [`cachectrl.php`]
- - [X] Turn this into a class to minimize conflict.
-- [X] **Make the lookup interface.** [`index.php`]
- - [X] Develop JavaScript code to retrieve database information. (in JSON) (might be separated into `res/conn.js`)
- - [X] Develop lookup (input) form.
- - [X] Develop output lookup table.
- - [ ] Add more features and catch some bugs.
- - [ ] Improve the website design.
-- [ ] **Beta testing!**
+In addition, this plugin makes it possible to:
 
-If you would like to contribute directly to the code and know how git works, you may do so (and teach me more about collaborating using git, please!).  If there is any issues, please tell me about it!
+* Lookup data by coordinates and world
+* View more than four results per page
+* Filter out rolled back data
+* View what was written on the signs
+* Search by keywords
+
+This plugin requires a Minecraft server running CoreProtect 2.11+ and a webserver running PHP 5.4+.  It can fetch data logged by CoreProtect through the MySQL server or the sqlite (database.db) file.
+
+If you would like to contribute directly to the code and know how git works, you may do so (and maybe teach me more about collaborating using git, if you will).  If there is any issues, please tell me about it!
 
 ## Setup
-This plugin requires a webserver with PHP 5.4+ and a Minecraft server running CoreProtect 2.11+.  If the CoreProtect records data to sqlite, the webserver should be on the same server as the Minecraft server is.  If the CoreProtect is set to log data to a MySQL server, this plugin needs access to the database CoreProtect is using.  Webserver that can read ".htaccess" file, such as Apache, is recommended for security purposes.
+*Prerequisites:*
+
+- Webserver running PHP 5.4 or above
+- Minecraft server running CoreProtect 2.11 or above.
+- A MySQL or SQLite database.
+ - If using SQLite, you're advised to have the webserver run on the same machine as the Minecraft server.
+
+Download one of the releases from the releases tab or from the plugin page in dev.bukkit.org, and extract the zipped file into the directory accessible by the webserver.
 
 The webserver must have write permission to the `cache/` folder in order for this web application to work.  Do this by running:
 `$ chmod 777 cache`
-from this plugin directory.
+or any equivalent of this from other machines from this plugin directory.
 
-After getting the web app, the *first thing* to do is configure `settings.php` with your MySQL server or sqlite `database.db` file path information.  After that, rest should be automatic.
+After the initial setup, configure your MySQL server or sqlite `database.db` file path information and other auxiliary settings by editing the `settings.php` file.  After that, rest should be automatic.
 
 
 ## Files
 This project consists of five main files:
-- `conn.php`, the page used to connect the webserver to the database for lookup data retrieval,
-- `cachectrl.php`, the class used for cache management, 
-- `co2mc.php`, the class used for legacy Minecraft name conversion,
-- `index.php`, the web page used to make queries and get results, and
-- `settings.php`, the file made to make all configuration.
+
+- `settings.php` - The file made to make all configuration
+ - `res/login.php` - PHP script used to open up login page for the php files that includes `settings.php`
+- `index.php` - The web page used to make queries and get results
+ - `res/out-table.js` - JS script used to populate the result table
+ - `res/form-handler.js` - JS script used to modify form data
+- `conn.php` - PHP script used to connect the webserver to the database for lookup data retrieval
+ - `cachectrl.php` - PHP class used for cache management
+ - `co2mc.php` - PHP class used for legacy Minecraft name conversion
 
 # [Changelog](changelog.md)
+
+# [Plugin Page on Bukkit](http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/)
 
 ~Simon

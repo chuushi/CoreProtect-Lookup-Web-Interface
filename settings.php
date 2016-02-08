@@ -2,6 +2,18 @@
 /* CoreProtect LWI - v0.7.0-beta coded by SimonOrJ.
  * CoreProtect developed by Intellii.
 /* ================================================== *\
+ *                   Login Settings                   *
+\* ================================================== */
+// Require logon? true if yes, false if no.
+$loginRequired = true;
+// Username
+$loginUsername = "admin";
+// Password
+$loginPassword = "password";
+// Login was made possible through richcheting's script.
+
+
+/* ================================================== *\
  *     Database and Related Settings for conn.php     *
 \* ================================================== */
 
@@ -65,6 +77,13 @@ $translateCo2Mc = true;
  *               Settings for index.php               *
 \* ================================================== */
 
+/* Copyright notice thing on the bottom of the page; I
+ * dunno o.o
+ * You can use "." to append to strings, and 'date("Y")'
+ * to set current year.
+ */
+$copyright = "SimonOrJ, 2015-".date("Y");
+
 /* Datetime Picker and Date/Time Display format to use.
  * This uses moment's date display option.  Refer to 
    http://momentjs.com/docs/#/displaying/format/
@@ -77,6 +96,9 @@ $timeFormat = "LTS";
  * a table time dividor kicks in? 
  * Time in milliseconds.*/
 $timeDividor = 1200000; // Default: 20 minutes (1200000)
+
+// Intervals on which to create page links on navbar.
+$pageInteval = 50;
 
 
 /* MC Dynamic Map link and settings
@@ -102,4 +124,5 @@ $dynmapMapName = "flat"; //flat, surface, or cave
  *             End of user configuration              *
 \* ================================================== */
 if(!$useDynmap) $dynmapURL = false;
+if($loginRequired){session_start();require"res/login.php";$login = new Login;$login->authorize();}
 ?>
