@@ -1,17 +1,17 @@
 <?php
-// COLWI Version v0.6.0 - AutoComplete Module
-/* This uses the data from cache to bring up suggestions for
- * user
- * material
- * world
- * ... entity?
- */
-$search_text = $_REQUEST["b"]; // word to look up
-$data = include "cache/".$_REQUEST["a"].".php";
-if($_REQUEST["a"] === "material") $data = array_filter($data, function($v) {return((strpos($v,":") !== false));});
-foreach($_REQUEST["e"] as $value) if(($key = array_search($value, $data)) !== false) {
-    unset($data[$key]);
+// COLWI v0.7.0-beta - AutoComplete Module
+$sVal = $_REQUEST["b"];//Keyword
+$data = include "cache/".$_REQUEST["a"].".php"; //Data source
+if($_REQUEST["a"] === "material"){
+    $data = array_filter($data, function($v) {return((strpos($v,":") !== false));});//Remove non-colon words
+    include "settings.php";
+    require "co2mc.php";
+    $cc = $translateCo2Mc?new co2mc():new keepCo();
+    foreach($data as $k=>$v)$data[$k]=$cc->getMc($v);
 }
-$data = array_slice(array_filter($data, function($v) use ($search_text) {return(stripos($v,$search_text) !== false);}),0,$_REQUEST["l"]);
-echo json_encode($data);
+$data=array_filter($data, function($v) use ($sVal) {return(stripos($v,$sVal) !== false);});//Keyword Filter
+foreach($_REQUEST["e"] as $value) if(($key = array_search($value,$data)) !== false) unset($data[$key]);//Remove already listed words
+function match($a,$b){global $sVal;return levenshtein($a,$sVal)>levenshtein($b,$sVal) ? 1 : -1;};//Sorting function
+usort($data,"match");//Sort
+echo json_encode(array_slice($data,0,$_REQUEST["l"]));
 ?>

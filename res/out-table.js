@@ -1,46 +1,20 @@
-/*
- * 
+/* CoreProtect LWI - v0.7.0-beta
+ * Javascript code by SimonOrJ.
+ * this uses jQuery.
  */
 function outTable(){
 "use strict";
-// TODO: Transition this to jquery
-$("#date").datetimepicker({format:$dateFormat+" "+$timeFormat});
-$("[for=abl]").addClass("active");
-
-/*
- * Styling
- */
-
-// Radius/Corners toggle
-function radius(boolCorner) {
-    if(($("#corner1").text() === "Center")||boolCorner) {
-        $("#corner1").text("Corner 1");
-        $("#corner2").text("Corner 2");
-        $("#c2").addClass("input-group");
-        $(".c2").show();
-        $("#x2").attr("placeholder","x");
-    }
-    else {
-        $("#corner1").text("Center");
-        $("#corner2").text("Radius");
-        $("#c2").removeClass("input-group");
-        $(".c2").val("");
-        $(".c2").hide();
-        $("#x2").attr("placeholder","Radius");
-    }
-}
-$("#rcToggle").click(function(){radius();});
 
 // Main Submit
 $("#lookup").submit(function($thislookup) {
     $thislookup.preventDefault();
     $.ajax("conn.php",{
-        beforeSend:function(xhr,s){if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
-        data:$("#lookup").serialize(),
-        dataType:"json",
-        method:"POST",
-        complete:function(){},
-        success:function(data){reachedLimit(false);$lastDataTime = Date.now();phraseReturn(data);},
+      beforeSend:function(xhr,s){if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
+      data:$("#lookup").serialize(),
+      dataType:"json",
+      method:"POST",
+      complete:function(){},
+      success:function(data){reachedLimit(false);$lastDataTime = Date.now();phraseReturn(data);},
     });
 });
 
@@ -48,11 +22,11 @@ $("#lookup").submit(function($thislookup) {
 $("#loadMore").submit(function($thislookup) {
     $thislookup.preventDefault();
     $.ajax("conn.php",{
-        data:$("#loadMore").serialize(),
-        dataType:"json",
-        method:"POST",
-        complete:function(){},
-        success:function(data){phraseReturn(data,1);},
+      data:$("#loadMore").serialize(),
+      dataType:"json",
+      method:"POST",
+      complete:function(){},
+      success:function(data){phraseReturn(data,1);},
     });
 });
 

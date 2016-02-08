@@ -1,5 +1,6 @@
 <?php
-/* PHP code by SimonOrJ.  All Rights Reserved.
+/* CoreProtect LWI v0.7.0-beta. February 7, 2016
+ * PHP code by SimonOrJ.
  * Requires PHP 5.4+
  * Database tables to use:
 block (a: block, click, kill)
@@ -20,7 +21,7 @@ Output status codes:
     4 - Values from cachectrl Not Found
     7 - No status code
 */
-// TODO: Figure out why coordinate search is not working.
+
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
@@ -57,6 +58,10 @@ $q = $_REQUEST;
 $cc = new cachectrl($codb,$co_,$legacySupport);
 $cm = ($translateCo2Mc) ? new co2mc() : new keepCo();
 
+// Special Material list
+$signBlocks = ["minecraft:standing_sign","minecraft:wall_sign"];
+
+// Compiling code
 if(isset($q["SQL"])) {
     // Reserved for loading slightly more quickly
     $lookup = $codb->prepare($out[0]["SQL"] = $q["SQL"]);
@@ -189,15 +194,22 @@ else {
         else $action[0][] = 3;
     }
     
+    // keyword
+    if(isset($keyword)) {
+        $search = "data LIKE '%".$keyword."%'";
+        if(in_array("block",$a,true))$serachSign = "(line_1 LIKE '%".$keyword."%' OR line_2 LIKE '%".$keyword."%' OR line_3 LIKE '%".$keyword."%' OR line_4 LIKE '%".$keyword."%')";
+    }
+    else $search = false;
     
-    // Make query heading
+    // Function for heading
     function sel($as,$cl) {
         if($as === 0) return ",NULL AS ".$cl;
         return ",".$as." AS ".$cl;
     }
-    
+
+    // Make query heading
     function sqlreq($table) {
-        global $co_, $time, $username, $userid, $limit;
+        global $co_, $time, $username, $userid, $limit, $search;
         $where[0] = $time;
         if($userid) $where[] = ($table == "username")?$username:$userid;
         switch($table) {
@@ -229,6 +241,7 @@ else {
                 break;
             case "chat":
             case "command":
+                if($search) $where[] = $search;
             case "username_log":
                 $ret = sel(0,"wid").sel(0,"x").sel(0,"y").sel(0,"z").sel(0,"type");
                 $ret .= ($table == "username_log")? sel("uuid","data") : sel("message","data");
@@ -255,7 +268,8 @@ else {
                 break;
         }
     }
-    
+    // SELECT time,'block' AS 'table',user,wid,x,y,z,type,data,NULL AS amount,action,rolled_back FROM co_block where type LIKE ($signBlocks) AND x= AND y= AND z= AND time<=1454881758 ORDER BY time DESC LIMIT 1;
+    // SELECT x,
     $tables = "";
     if(($out[0]["SQLqs"]=count($sql)) > 1) foreach($sql as $key => $value) {
         if($key) $tables .= " UNION ALL ";
@@ -287,9 +301,14 @@ if ($lookup->execute()) {
             else {
                 if ($r["action"] == 2) $r["table"] = "click";
                 $r["type"] = $cm->getMc($cc->getValue($r["type"],"material"));
-                if(in_array($r["type"],["minecraft:standing_sign","minecraft:wall_sign"],true)) {
-                    $sign = $codb->query($r["signSQL"]="SELECT `line_1`,`line_2`,`line_3`,`line_4` FROM ".$co_."sign WHERE x=".$r["x"]." AND y=".$r["y"]." AND z=".$r["z"]." AND time".(($r["action"]=="0")?"<":">=").$r["time"]." ORDER BY time ".(($r["action"]=="0")?"DESC":"ASC")." LIMIT 1;");
-                    $r["signdata"]=$sign->fetch(PDO::FETCH_NUM);
+                if(in_array($r["type"],$signBlocks,true)) {
+                    $sign = $codb->query("SELECT line_1,line_2,line_3,line_4 FROM ".$co_."sign WHERE x=".$r["x"]." AND y=".$r["y"]." AND z=".$r["z"]." AND time".(($r["action"]=="0")?"<":">=").$r["time"]." ORDER BY time ".(($r["action"]=="0")?"DESC":"ASC")." LIMIT 1;")->fetch(PDO::FETCH_NUM);
+                    if($sign!=NULL)foreach($sign as $val) {
+                        if(trim($val)!="") {
+                            $r["signdata"]=$sign;
+                            break;
+                        }
+                    }
                 }
             }
         }

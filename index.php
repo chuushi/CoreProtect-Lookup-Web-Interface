@@ -1,4 +1,4 @@
-<?php include "settings.php"?><!DOCTYPE html>
+<?php include "settings.php";$fm=!empty($_GET);?><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -86,14 +86,14 @@ a inputs:
 <div class="form-group row">
   <div class="col-lg-2 form-control-label">Actions</div>
   <div class="dtButtons btn-group col-lg-10">
-    <label class="btn btn-secondary" for="abl"><input type="checkbox" id="abl" name="a[]" value="block" checked>Block</label>
-    <label class="btn btn-secondary" for="acl"><input type="checkbox" id="acl" name="a[]" value="click">Click</label>
-    <label class="btn btn-secondary" for="acn"><input type="checkbox" id="acn" name="a[]" value="container">Container</label>
-    <label class="btn btn-secondary" for="ach"><input type="checkbox" id="ach" name="a[]" value="chat">Chat</label>
-    <label class="btn btn-secondary" for="acm"><input type="checkbox" id="acm" name="a[]" value="command">Command</label>
-    <label class="btn btn-secondary" for="aki"><input type="checkbox" id="akl" name="a[]" value="kill">Kill</label>
-    <label class="btn btn-secondary" for="ass"><input type="checkbox" id="ass" name="a[]" value="session">Session</label>
-    <label class="btn btn-secondary" for="aus"><input type="checkbox" id="aus" name="a[]" value="username">Username</label>
+    <label class="btn btn-secondary" for="abl"><input type="checkbox" id="abl" name="a[]" value="block"<?=(!$fm||in_array("blocK",$_GET["a"]))?" checked":""?>>Block</label>
+    <label class="btn btn-secondary" for="acl"><input type="checkbox" id="acl" name="a[]" value="click"<?=($fm&&in_array("click",$_GET["a"]))?" checked":""?>>Click</label>
+    <label class="btn btn-secondary" for="acn"><input type="checkbox" id="acn" name="a[]" value="container"<?=($fm&&in_array("container",$_GET["a"]))?" checked":""?>>Container</label>
+    <label class="btn btn-secondary" for="ach"><input type="checkbox" id="ach" name="a[]" value="chat"<?=($fm&&in_array("chat",$_GET["a"]))?" checked":""?>>Chat</label>
+    <label class="btn btn-secondary" for="acm"><input type="checkbox" id="acm" name="a[]" value="command"<?=($fm&&in_array("command",$_GET["a"]))?" checked":""?>>Command</label>
+    <label class="btn btn-secondary" for="aki"><input type="checkbox" id="akl" name="a[]" value="kill"<?=($fm&&in_array("kill",$_GET["a"]))?" checked":""?>>Kill</label>
+    <label class="btn btn-secondary" for="ass"><input type="checkbox" id="ass" name="a[]" value="session"<?=($fm&&in_array("session",$_GET["a"]))?" checked":""?>>Session</label>
+    <label class="btn btn-secondary" for="aus"><input type="checkbox" id="aus" name="a[]" value="username"<?=($fm&&in_array("username",$_GET["a"]))?" checked":""?>>Username</label>
   </div>
 </div>
 <div class="form-group row">
@@ -127,25 +127,25 @@ a inputs:
 </div>
 <div class="form-group row">
   <label class="col-xs-2 form-control-label" for="wid">World</label>
-  <div class="col-xs-10"><input class="form-control" type="text" id="wid" name="wid" placeholder="world"></div>
+  <div class="col-xs-10"><input class="form-control autocomplete" data-qftr="world" type="text" id="wid" name="wid" placeholder="world"></div>
 </div>
 <div class="form-group row">
   <label class="col-lg-2 form-control-label" for="usr">Users</label>
   <div class="input-group col-lg-10" >
     <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="eus"><input type="checkbox" id="eus" name="e[]" value="u">Exclude</label></span>
-    <input class="form-control" type="text" pattern="((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16}))(,\s?((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16})))*" id="usr" name="u" placeholder="Separate by single comma(,)">
+    <input class="form-control autocomplete" data-qftr="user" type="text" pattern="((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16}))(,\s?((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16})))*" id="usr" name="u" placeholder="Separate by single comma(,)">
   </div>
 </div>
 <div class="form-group row">
   <label class="col-lg-2 form-control-label" for="blk">Blocks</label>
   <div class="input-group col-lg-10">
     <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="ebl"><input type="checkbox" id="ebl" name="e[]" value="b">Exclude</label></span>
-    <input class="form-control" type="text" pattern="([^:]+:[^:,]+)+" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)">
+    <input class="form-control autocomplete" data-qftr="material" type="text" pattern="([^:]+:[^:,]+)+" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)">
   </div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="kwd">Keyword</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="kwd" name="keyword" placeholder="Coming in v0.6.x-alpha!" disabled></div>
+  <div class="col-sm-10"><input class="form-control" type="text" id="kwd" name="keyword"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="date">Date/Time</label>
@@ -153,7 +153,7 @@ a inputs:
     <span class="dtButtons input-group-btn">
       <label class="btn btn-secondary" for="trv"><input type="checkbox" id="trv" name="asendt">Reverse</label>
     </span>
-    <input class="form-control" type="datetime-local" id="date" name="t" placeholder="--/--/---- --:-- --">
+    <input class="form-control" type="datetime-local" id="date" name="t" placeholder="0000-00-00T00:00:00">
   </div>
   <input type="hidden" name="unixtime" value="on">
   <label class="col-sm-2 form-control-label" for="lim">Limit</label>
@@ -220,59 +220,10 @@ $dynmapMapName = "<?=$dynmapMapName?>";
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 <script src="res/out-table.js"></script>
-<script>
-    // usr, blk, wid
-    $(function() {
-    function split( val ) {
-      return val.split(/,/);
-    }
- 
-    $( "#usr" )
-      // don't navigate away from the field on tab when selecting an item
-      .bind( "keydown", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
-            $( this ).autocomplete( "instance" ).menu.active ) {
-          event.preventDefault();
-        }
-      })
-      .autocomplete({
-        source: function( request, response ) {
-            $.ajax("autocomplete.php",{
-                data: {
-                  a : "user",
-                  b : split(request.term).pop(),
-                  e : split(request.term),
-                  l : 6
-                },
-                dataType:"json",
-                method:"POST",
-                success:function(data){
-                    response(data);
-                }
-            });
-        },
-        focus: function( event, ui ) {
-          var terms = split( this.value );
-          terms.pop();
-          terms.push( ui.item.value );
-          this.value = terms.join( "," );
-          return false;
-        },
-        select: function( event, ui ) {
-          var terms = split( this.value );
-          // remove the current input
-          terms.pop();
-          // add the selected item
-          terms.push( ui.item.value );
-          this.value = terms.join( "," );
-          return false;
-        }
-      });
-  });
-</script>
+<script src="res/form-handler.js"></script>
 <div class="container">
-<p>Index last updated  Jan 25, 2016.  Version 0.7.0-alpha</p>
-<p>This web app utilizes <a href="http://v4-alpha.getbootstrap.com/">Bootstrap v4</a> and <a href="https://eonasdan.github.io/bootstrap-datetimepicker/"> Bootstrap Datepicker v4</a>.<br>COLWI &copy; SimonOrJ, 2015-<?=date("Y")?>.  All Rights Reserved.</p>
+<p>Index last updated  February 7, 2016.  Version 0.7.0-beta</p>
+<p>This web app utilizes <a href="http://v4-alpha.getbootstrap.com/">Bootstrap v4</a> and <a href="https://eonasdan.github.io/bootstrap-datetimepicker/"> Bootstrap Datepicker v4</a>.<br>CoreProtect LWI &copy; SimonOrJ, 2015-<?=date("Y")?>.  All Rights Reserved.</p>
 </div>
 </body>
 </html>
