@@ -19,7 +19,8 @@ Output status codes:
     2 - SQL Query Unsuccessful
     3 - Database Connection Failed
     4 - Values from cachectrl Not Found
-    7 - No status code
+    6 - No status code
+    7 - (JS-side) Invalid response
 */
 
 error_reporting(-1);
@@ -32,8 +33,8 @@ $_timer = microtime(true);
 function _shutdown() {
     global $out,$co_,$_timer,$searchSession;
     if(!isset($out[0]["status"])) {
-        $out[0]["status"] = 7;
-        $out[0]["reason"] = "Script terminated too early";
+        $out[0]["status"] = 6;
+        $out[0]["reason"] = "Uncaught error has made the script terminate too early.";
     }
     $out[0]["duration"] = microtime(true) - $_timer;
     echo json_encode($out);
@@ -72,7 +73,7 @@ if(isset($q["SQL"])) {
 }
 else {
     foreach ($q as $key => $value) {
-        if (in_array($key,["a","b","e","u","xyz"],true)) {if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!==""))) $$key = (is_array($value))?$value:explode(',', $value);}
+        if (in_array($key,["a","b","e","u","xyz"],true)) {if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!==""))) $$key = (is_array($value))?$value:explode(',', str_replace(' ', '', $value));}
         elseif (in_array($key,["r","t","keyword","wid","rollback"],true)) {if($value!=="") $$key = $value;}
         elseif (in_array($key,["unixtime","asendt"],true)) {if($value!=="") $$key = true;}
         elseif ($key == "xyz2") {
@@ -196,8 +197,13 @@ else {
     
     // keyword
     if(isset($keyword)) {
-        $search = "data LIKE '%".$keyword."%'";
-        if(in_array("block",$a,true))$serachSign = "(line_1 LIKE '%".$keyword."%' OR line_2 LIKE '%".$keyword."%' OR line_3 LIKE '%".$keyword."%' OR line_4 LIKE '%".$keyword."%')";
+        $keywords = str_getcsv($keyword, ' ');
+        foreach($keywords as $val) $search[] = "message LIKE '%".$val."%'";
+        $search = "(".implode(" AND ",$search).")";
+        /*if(in_array("block",$a,true)) {
+            foreach($keywords as $val) $serachSign[] = "(line_1 LIKE '%".$val."%' OR line_2 LIKE '%".$val."%' OR line_3 LIKE '%".$val."%' OR line_4 LIKE '%".$val."%')";
+            $searchSign = "(".implode(" AND ",$searchSign).")";
+        }*/
     }
     else $search = false;
     
@@ -269,7 +275,7 @@ else {
         }
     }
     // SELECT time,'block' AS 'table',user,wid,x,y,z,type,data,NULL AS amount,action,rolled_back FROM co_block where type LIKE ($signBlocks) AND x= AND y= AND z= AND time<=1454881758 ORDER BY time DESC LIMIT 1;
-    // SELECT x,
+    // SELECT time,user,x,y,z,wid from co_sign where (line like '%stuff%') ORDER BY time DESC LIMIT 1;
     $tables = "";
     if(($out[0]["SQLqs"]=count($sql)) > 1) foreach($sql as $key => $value) {
         if($key) $tables .= " UNION ALL ";

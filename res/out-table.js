@@ -9,12 +9,16 @@ function outTable(){
 $("#lookup").submit(function($thislookup) {
     $thislookup.preventDefault();
     $.ajax("conn.php",{
-      beforeSend:function(xhr,s){if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
+      beforeSend:function(xhr,s){$("#submitBtn").prop("disabled",true);if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
       data:$("#lookup").serialize(),
       dataType:"json",
       method:"POST",
-      complete:function(){},
+      complete:function(){$("#submitBtn").prop("disabled",false);},
       success:function(data){reachedLimit(false);$lastDataTime = Date.now();phraseReturn(data);},
+      error: function(){phraseReturn([{
+        status:7,
+        reason:"The lookup script was unable to send a proper response."
+      }]);}
     });
 });
 
@@ -43,15 +47,6 @@ function if_exist(value,if_not) {
     return value;
 }
 
-
-/* class data:
-  rDrop
-  t
-  u
-  xyz
-  b
-*/
-
 // Dropdown menu creation function
 $("#output").on("show.bs.dropdown",".rDrop",function(){
     if(!$(this).hasClass("dropdown")) {
@@ -62,9 +57,15 @@ $("#output").on("show.bs.dropdown",".rDrop",function(){
             $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+($dynmapURL?'<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>':"")+'</div>');
         }
         else if($(this).hasClass("b")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');}
-        else{$(this).append('<div class="dropdown-menu"><span class="dropdown-header">wat</span></div>');}
+        else{$(this).append('<div class="dropdown-menu"><span class="dropdown-header">derp</span></div>');}
     }
 });
+
+// To avoid duplicates.
+function csvAppend(csv,add) {
+    var a = csv.split(/, ?/);
+    return $.inArray(add,a)===-1?csv+", "+add:csv;
+}
 // Dropdown Menu Listener
 var dmapWin;
 $("#output").on("click",".rDrop .cPointer",function(){
@@ -93,7 +94,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#usr").val(nVal);
             }
             else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(val+","+nVal);}
+            else {$("#usr").val(csvAppend(val,nVal));}
         }
         else if($(this).hasClass("ESch")) {
             if(!$("#eus").prop("checked")){
@@ -102,7 +103,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#usr").val(nVal);
             }
             else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(val+","+nVal);}
+            else {$("#usr").val(csvAppend(val,nVal));}
         }
     }
     else if($(this).hasClass("c")) {
@@ -134,7 +135,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#blk").val(nVal);
             }
             else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(val+","+nVal);}
+            else {$("#blk").val(csvAppend(val,nVal));}
         }
         else if($(this).hasClass("ESch")) {
             if(!$("#ebl").prop("checked")){
@@ -143,7 +144,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#blk").val(nVal);
             }
             else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(val+","+nVal);}
+            else {$("#blk").val(csvAppend(val,nVal));}
         }
     }
 });
@@ -212,12 +213,12 @@ function phraseReturn(obj,more) {
             // UNIX to JS Date
             r[i].time *= 1000;
             if($timeDividor < Math.abs($lastDataTime-r[i].time)||!moment($lastDataTime).isSame(r[i].time,"day")){o += '<tr class="table-section"><th colspan="7">'+moment(r[i].time).calendar(null,{
-                sameDay: "[Today at]"+$timeFormat,
+                sameDay: "[Today at] "+$timeFormat,
                 nextDay: "[Please Configure Correct Minecraft Server Time]",
                 nextWeek: "[Please Configure Correct Minecraft Server Time]",
                 lastDay: "[Yesterday at] "+$timeFormat,
-                lastWeek: "[Last] dddd, "+$dateFormat,
-                sameElse: $dateFormat
+                lastWeek: "[Last] dddd, "+$dateFormat+" "+$timeFormat,
+                sameElse: $dateFormat+" "+$timeFormat
             })+"</th></tr>";}
             o += "<tr";
             if (r[i].rolled_back === "1"){o += ' class="table-success"';}

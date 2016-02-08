@@ -1,8 +1,6 @@
 <?php
-/* CoreProtect Lookup Web Interface v0.5.0-alpha created by SimonOrJ.
+/* CoreProtect LWI - v0.7.0-beta coded by SimonOrJ.
  * CoreProtect developed by Intellii.
- * This is still in alpha.  Expect bugs here and there.
-
 /* ================================================== *\
  *     Database and Related Settings for conn.php     *
 \* ================================================== */
@@ -75,7 +73,7 @@ $dateFormat = "ll";
 $timeFormat = "LTS";
 
 
-/* Dividor Time - How far apart should the time be until
+/* Dividor Time - How far apart should the time be before
  * a table time dividor kicks in? 
  * Time in milliseconds.*/
 $timeDividor = 1200000; // Default: 20 minutes (1200000)

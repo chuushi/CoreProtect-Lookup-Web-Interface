@@ -27,51 +27,48 @@ function radius(boolCorner) {
 }
 $("#rcToggle").click(function(){radius();});
 
-    // usr, blk, wid
-    function split( val ) {
-      return val.split(/,/);
-    }
- var qftr;
-    $( ".autocomplete" )
-      // don't navigate away from the field on tab when selecting an item
-      .bind( "keydown", function( event ) {
-          if ( event.keyCode === $.ui.keyCode.TAB &&
-              $( this ).autocomplete( "instance" ).menu.active ) {
-            event.preventDefault();
+// usr, blk, wid
+var qftr;
+$( ".autocomplete" )
+  // don't navigate away from the field on tab when selecting an item
+  .bind( "keydown", function( event ) {
+      if ( event.keyCode === $.ui.keyCode.TAB &&
+          $( this ).autocomplete( "instance" ).menu.active ) {
+        event.preventDefault();
+      }
+      qftr = $(this).attr("data-qftr");
+  })
+  .autocomplete({
+    source: function( request, response ){
+        var a = request.term.split(/, ?/);
+        $.ajax("autocomplete.php",{
+          data: {
+            a : qftr,
+            b : a.pop(),
+            e : a,
+            l : 6
+          },
+          dataType:"json",
+          method:"POST",
+          success:function(data){
+              response(data);
           }
-          qftr = $(this).attr("data-qftr");
-      })
-      .autocomplete({
-        source: function( request, response ){
-            var a = split(request.term);
-            $.ajax("autocomplete.php",{
-              data: {
-                a : qftr,
-                b : a.pop(),
-                e : a,
-                l : 6
-              },
-              dataType:"json",
-              method:"POST",
-              success:function(data){
-                  response(data);
-              }
-            });
-        },
-        focus: function( event, ui ) {
-            var terms = split( this.value );
-            terms.pop();
-            terms.push( ui.item.value );
-            this.value = terms.join( "," );
-            return false;
-        },
-        select: function( event, ui ) {
-            var terms = split( this.value );
-            terms.pop();
-            terms.push( ui.item.value );
-            this.value = terms.join( "," );
-            return false;
-        }
-      });
-};
+        });
+    },
+    focus: function( event, ui ) {
+        var terms = this.value.split(/, ?/);
+        terms.pop();
+        terms.push( ui.item.value );
+        this.value = terms.join( ", " );
+        return false;
+    },
+    select: function( event, ui ) {
+        var terms = this.value.split(/, ?/);
+        terms.pop();
+        terms.push( ui.item.value );
+        this.value = terms.join( ", " );
+        return false;
+    }
+});
+}
 formHandler();

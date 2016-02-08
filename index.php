@@ -8,78 +8,14 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
-  <link rel="stylesheet" href="res/bootstrap-v4.0.0-alpha.2-overstyles.css">
-  
-  <style>
-  /* https://gist.github.com/daz/2168334 */
-  .ui-autocomplete {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 1000;
-  float: left;
-  display: none;
-  min-width: 160px;
-  _width: 160px;
-  padding: 4px 0;
-  margin: 2px 0 0 0;
-  list-style: none;
-  background-color: #ffffff;
-  border-color: #ccc;
-  border-color: rgba(0, 0, 0, 0.2);
-  border-style: solid;
-  border-width: 1px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding;
-  background-clip: padding-box;
-  *border-right-width: 2px;
-  *border-bottom-width: 2px;
-
-  .ui-menu-item > a.ui-corner-all {
-    display: block;
-    padding: 3px 15px;
-    clear: both;
-    font-weight: normal;
-    line-height: 18px;
-    color: #555555;
-    white-space: nowrap;
-
-    &.ui-state-hover, &.ui-state-active {
-      color: #ffffff;
-      text-decoration: none;
-      background-color: #0088cc;
-      border-radius: 0px;
-      -webkit-border-radius: 0px;
-      -moz-border-radius: 0px;
-      background-image: none;
-    }
-  }
-}
-  </style>
+  <link rel="stylesheet" href="res/main.css">
+  <link rel="stylesheet" href="res/jquery-autocomplete.css">
 </head>
 <body>
 <div class="container">
 <h1>CoreProtect Lookup Web Interface</h1>
 <p class="second">by SimonOrJ</p>
 <p>This project is still undergoing alpha testing.  Please report any problems or feedback to the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.  Thank you for testing! ~SimonOrJ</p>
-<div id="test"></div>
-<div id="debug"></div>
-
-<!--
-- time(t) in seconds and t2
-- block(b)
-- chat/command/sign search (keyword)
-- exclude (e) players or blocks.
-
-a inputs:
-'block','chat','click','command','container','kill','session','username'
--->
 <div id="lookupForm" class="card">
 <div class="card-header"><span class="h4 card-title">Make a Lookup</span></div>
 <form id="lookup" class="card-block" role="form" method="get" action="./">
@@ -163,7 +99,7 @@ a inputs:
 </div>
 <div class="row">
   <div class="col-sm-offset-2 col-sm-10">
-    <input class="btn btn-secondary" type="submit" value="Make a Lookup">
+    <input class="btn btn-secondary" type="submit" id="submitBtn" value="Make a Lookup">
   </div>
 </div>
 </form>
