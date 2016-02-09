@@ -1,6 +1,16 @@
 Changes:
 ================================================================================
 
+v0.7.1 - February ?, 2016
+-------------------------
+- Interface:
+ - Added smooth scrolling feature (courtesy of 
+   [mattsince87](http://codepen.io/mattsince87/pen/exByn)).
+ - Added result index.
+ - Moved scrollspy navbar to the bottom for ease.
+ - Fixed "Kill" button.
+
+
 v0.7.0 - February 7, 2016
 -------------------------
 - `index.php`

@@ -1,20 +1,25 @@
-/* CoreProtect LWI - v0.7.0-beta
- * Style Overwrites */
+/* CoreProtect LWI - v0.7.1-beta
+ * Some styles */
 html {
   overflow-y:scroll;
+}
+body {
+  position:relative;
+  padding-bottom:54px;
+}
+#top {
+  margin-bottom:.75rem;
 }
 .center {
   text-align:center;
 }
-.btn {
-  margin-bottom:0;
-}
 .cPointer {
   cursor:pointer;
 }
-/*.dropdown-menu {
-  top:auto;
-}*/
+/* Style Overwrites */
+.btn {
+  margin-bottom:0;
+}
 .table-striped tbody tr:nth-of-type(odd) .table-warning {
   background-color:#fbf6dd;
 }

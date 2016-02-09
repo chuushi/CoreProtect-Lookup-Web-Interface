@@ -1,22 +1,21 @@
-<?php require_once __DIR__."/../settings.php";define('LOGIN_USER',$loginUsername);define('LOGIN_PASS',$loginPassword);class Login{var $prefix="login_";var $cookie_duration=21;var $user="";var $pass="";function authorize(){if(isset($_COOKIE[$this->prefix.'user'])){$_SESSION[$this->prefix.'user']=$_COOKIE[$this->prefix.'user'];$_SESSION[$this->prefix.'pass']=$_COOKIE[$this->prefix.'pass'];}if(isset($_POST['action'])&&$_POST['action']=="set_login"){$this->user=$_POST['user'];$this->pass=md5($this->prefix.$_POST['pass']);$this->check();if(isset($_POST['remember'])){setcookie($this->prefix."user",$this->user,time()+($this->cookie_duration*86400));setcookie($this->prefix."pass",$this->pass,time()+($this->cookie_duration*86400));}$_SESSION[$this->prefix.'user']=$this->user;$_SESSION[$this->prefix.'pass']=$this->pass;}elseif(isset($_GET['action'])&&$_GET['action']=="prompt"){session_unset();session_destroy();if(!empty($_COOKIE[$this->prefix.'user']))setcookie($this->prefix."user","blanked",time()-(3600*25));if(!empty($_COOKIE[$this->prefix.'pass']))setcookie($this->prefix."pass","blanked",time()-(3600*25));$this->prompt();}elseif(isset($_GET['action'])&&$_GET['action']=="clear_login"){session_unset();session_destroy();if(!empty($_COOKIE[$this->prefix.'user']))setcookie($this->prefix."user","blanked",time()-(3600*25));if(!empty($_COOKIE[$this->prefix.'pass']))setcookie($this->prefix."pass","blanked",time()-(3600*25));$msg='Logout successful.';$this->prompt($msg);}elseif(!isset($_SESSION[$this->prefix.'pass'])||!isset($_SESSION[$this->prefix.'user'])){$this->prompt();}else{$this->user=$_SESSION[$this->prefix.'user'];$this->pass=$_SESSION[$this->prefix.'pass'];$this->check();}}function check(){if(md5($this->prefix.LOGIN_PASS)!=$this->pass||LOGIN_USER!=$this->user){if(!empty($_COOKIE[$this->prefix.'user']))setcookie($this->prefix."user","blanked",time()-(3600*25));if(!empty($_COOKIE[$this->prefix.'pass']))setcookie($this->prefix."pass","blanked",time()-(3600*25));session_unset();session_destroy();$msg='Incorrect username or password.';$this->prompt($msg);}}function prompt($msg=''){?><!DOCTYPE html>
+<?php /* CoreProtect LWI - v0.7.1-beta * Login Script by richcheting from http://www.ricocheting.com/code/php/simple-login */require_once __DIR__."/../settings.php";define('LOGIN_USER',$loginUsername);define('LOGIN_PASS',$loginPassword);class Login{var $prefix="login_";var $cookie_duration=21;var $user="";var $pass="";function authorize(){if(isset($_COOKIE[$this->prefix.'user'])){$_SESSION[$this->prefix.'user']=$_COOKIE[$this->prefix.'user'];$_SESSION[$this->prefix.'pass']=$_COOKIE[$this->prefix.'pass'];}if(isset($_POST['action'])&&$_POST['action']=="set_login"){$this->user=$_POST['user'];$this->pass=md5($this->prefix.$_POST['pass']);$this->check();if(isset($_POST['remember'])){setcookie($this->prefix."user",$this->user,time()+($this->cookie_duration*86400));setcookie($this->prefix."pass",$this->pass,time()+($this->cookie_duration*86400));}$_SESSION[$this->prefix.'user']=$this->user;$_SESSION[$this->prefix.'pass']=$this->pass;}elseif(isset($_GET['action'])&&$_GET['action']=="prompt"){session_unset();session_destroy();if(!empty($_COOKIE[$this->prefix.'user']))setcookie($this->prefix."user","blanked",time()-(3600*25));if(!empty($_COOKIE[$this->prefix.'pass']))setcookie($this->prefix."pass","blanked",time()-(3600*25));$this->prompt();}elseif(isset($_GET['action'])&&$_GET['action']=="clear_login"){session_unset();session_destroy();if(!empty($_COOKIE[$this->prefix.'user']))setcookie($this->prefix."user","blanked",time()-(3600*25));if(!empty($_COOKIE[$this->prefix.'pass']))setcookie($this->prefix."pass","blanked",time()-(3600*25));$msg='Logout successful.';$this->prompt($msg);}elseif(!isset($_SESSION[$this->prefix.'pass'])||!isset($_SESSION[$this->prefix.'user'])){$this->prompt();}else{$this->user=$_SESSION[$this->prefix.'user'];$this->pass=$_SESSION[$this->prefix.'pass'];$this->check();}}function check(){if(md5($this->prefix.LOGIN_PASS)!=$this->pass||LOGIN_USER!=$this->user){if(!empty($_COOKIE[$this->prefix.'user']))setcookie($this->prefix."user","blanked",time()-(3600*25));if(!empty($_COOKIE[$this->prefix.'pass']))setcookie($this->prefix."pass","blanked",time()-(3600*25));session_unset();session_destroy();$msg='Incorrect username or password.';$this->prompt($msg);}}function prompt($msg=''){?><!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Signin Template for Bootstrap</title>
+    <title>CorePortect Lookup Web Interface &bull; by SimonOrJ</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
     <link rel="stylesheet" href="res/main.css">
   </head>
 
   <body>
-    <nav class="navbar navbar-dark bg-inverse navbar-fixed-top">
-      <a href="#top" class="navbar-brand hidden-xs-down">CoreProtect Lookup Web Interface</a>
-      <ul id="row-pages" class="nav navbar-nav">
-      </ul>
-      <span class="btn btn-secondary-outline pull-xs-right disabled">logout</span>
+    <nav id="top" class="navbar navbar-light bg-faded navbar-full">
+      <div class="container">
+        <h1 class="navbar-brand">CoreProtect Lookup Web Interface</h1>
+        <a href="index.php?action=clear_login" class="btn btn-info-outline pull-xs-right disabled">logout</a>
+      </div>
     </nav>
-    <div id="top" style="height:4rem;"></div>
     <div class="container">
       <div class="card">
       <div class="card-header h4">Login Page</div>

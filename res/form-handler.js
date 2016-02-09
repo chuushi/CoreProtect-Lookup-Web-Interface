@@ -1,4 +1,4 @@
-/* CoreProtect LWI - v0.7.0-beta
+/* CoreProtect LWI - v0.7.1-beta
  * Javascript code by SimonOrJ.
  * this uses jQuery and jQuery UI.
  */
@@ -6,6 +6,21 @@ function formHandler() {
 "use strict";
 $("#date").datetimepicker({format:$dateFormat+" "+$timeFormat});
 $("[for=abl]").addClass("active");
+
+// If URL contains lookup data
+if($fm){
+    var fixChecked = function(e) {
+        if($(e).prop("checked")){$(e).parent().addClass("active");}
+        else{$(e).parent().removeClass("active");}
+    };
+    $("[name='a[]']").each(function() {fixChecked(this);});
+    $("[name='e[]']").each(function() {fixChecked(this);});
+    $("[name='rollback']").each(function() {fixChecked(this);});
+    fixChecked($("#trv"));
+    if($PHP_$t){$("#date").val(moment($PHP_$t).format($dateFormat+" "+$timeFormat));}
+    if(($("#y2").val()!=="")||($("#z2").val()!=="")) {radius(true);}
+}
+
 
 // Radius/Corners toggle
 function radius(boolCorner) {

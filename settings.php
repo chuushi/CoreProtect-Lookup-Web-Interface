@@ -1,5 +1,5 @@
 <?php
-/* CoreProtect LWI - v0.7.0-beta coded by SimonOrJ.
+/* CoreProtect LWI - v0.7.1-beta coded by SimonOrJ.
  * CoreProtect developed by Intellii.
 /* ================================================== *\
  *                   Login Settings                   *
@@ -98,7 +98,7 @@ $timeFormat = "LTS";
 $timeDividor = 1200000; // Default: 20 minutes (1200000)
 
 // Intervals on which to create page links on navbar.
-$pageInteval = 50;
+$pageInteval = 25;
 
 
 /* MC Dynamic Map link and settings

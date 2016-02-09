@@ -1,4 +1,4 @@
-/* CoreProtect LWI - v0.7.0-beta
+/* CoreProtect LWI - v0.7.1-beta
  * Javascript code by SimonOrJ.
  * this uses jQuery.
  */
@@ -9,13 +9,13 @@ var resCt,intCt;
 $("#lookup").submit(function($thislookup) {
     $thislookup.preventDefault();
     $.ajax("conn.php",{
-      beforeSend:function(xhr,s){$("#row-pages").html("");$("#submitBtn").prop("disabled",true);if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
+      beforeSend:function(xhr,s){$("#submitBtn").prop("disabled",true);if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
       data:$("#lookup").serialize(),
       dataType:"json",
       method:"POST",
       complete:function(){$("#submitBtn").prop("disabled",false);},
-      success:function(data){reachedLimit(false);$lastDataTime = Date.now();resCt=1;intCt=$pageInterval;phraseReturn(data);},
-      error: function(){phraseReturn([{
+      success:function(data){$("#row-pages").html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li><li class="nav-item"><a class="nav-link" href="#row-0">0</a></li>');reachedLimit(false);$lastDataTime = Date.now();resCt=1;intCt=$pageInterval;phraseReturn(data);},
+      error: function(){$("#row-pages").html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li>');phraseReturn([{
         status:7,
         reason:"The lookup script was unable to send a proper response."
       }]);}
@@ -161,40 +161,40 @@ function phraseReturn(obj,more) {
     $("#genTime").text("Request generated in "+Math.round(obj[0].duration*1000)+"ms");
     var o;
     if (obj[0].status) { // If failed
-        o = '<tr><td colspan="7"';
+        o = '<tr><th scope="row">E</th><td colspan="7"';
         switch(obj[0].status) {
             case 1:
                 o += ' class="text-xs-center">'+reachedLimit(true);
             break;
             case 2:
-                o += "><b>The request did not go through properly.</b></td></tr><tr><td>"+obj[1][0]+"</td><td>"+obj[1][1]+'</td><td colspan="7">Error '+obj[1][2];
+                o += '><b>The request did not go through properly.</b></td></tr><tr><th scope="row">-</th><td>'+obj[1][0]+"</td><td>"+obj[1][1]+'</td><td colspan="7">Error '+obj[1][2];
                 reachedLimit(true);
             break;
             case 3:
-                o += '><b>The webserver could not establish a connection to the database.</b> Please check your settings.</td></tr><tr><td colspan="7">PDO Exception: '+obj[1];
+                o += '><b>The webserver could not establish a connection to the database.</b> Please check your settings.</td></tr><tr><th scope="row">-</th><td colspan="7">PDO Exception: '+obj[1];
                 
             break;
             case 4:
                 o += "><b>The following value does not exist in the CoreProtect's database:</b></td></tr>";
                 for(var j=0; j<obj[1].length;j++) {
-                    o += "<tr><td></td><td>";
+                    o += '<tr><th scope="row">-</th><td>';
                     switch(obj[1][j][0]) {
                         // [material,id or value, thing that has weird stuff]
                         case "material":
-                            o += 'Block</td><td colspan="5">'+obj[1][j][2];
+                            o += 'Block';
                             break;
                         case "user":
-                            o += 'Username</td><td colspan="5">'+obj[1][j][2];
+                            o += 'Username';
                             break;
                         default:
-                            o += obj[1][j][0]+'</td><td colspan="5">'+obj[1][j][2];
+                            o += obj[1][j][0];
                     }
-                    o += "</td></tr>";
+                    o += '</td><td colspan="6">'+obj[1][j][2]+'</td></tr>';
                 }
                 reachedLimit(true);
                 break;
             default:
-                o += "><b>Unexpected Error "+obj[0].status+":</b> "+obj[0].reason;
+                o += '><th scope="row"></th><b>Unexpected Error '+obj[0].status+":</b> "+obj[0].reason;
                 break;
         }
         o += '</td></tr>';
@@ -212,7 +212,7 @@ function phraseReturn(obj,more) {
         for (i = 0; i<r.length; i++) {
             // UNIX to JS Date
             r[i].time *= 1000;
-            if($timeDividor < Math.abs($lastDataTime-r[i].time)||!moment($lastDataTime).isSame(r[i].time,"day")){o += '<tr class="table-section"><th colspan="7">'+moment(r[i].time).calendar(null,{
+            if($timeDividor < Math.abs($lastDataTime-r[i].time)||!moment($lastDataTime).isSame(r[i].time,"day")){o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'+moment(r[i].time).calendar(null,{
                 sameDay: "[Today at] "+$timeFormat,
                 nextDay: "[Please Configure Correct Minecraft Server Time]",
                 nextWeek: "[Please Configure Correct Minecraft Server Time]",
@@ -224,7 +224,7 @@ function phraseReturn(obj,more) {
             if (r[i].rolled_back === "1"){o += ' class="table-success"';}
 
             // Time, Username, Action
-            o += '><td class="rDrop t" title="'+moment(r[i].time).format($dateFormat)+'" data-time="'+r[i].time+'">'+spanDToggle+moment(r[i].time).format($timeFormat)+'</span></td><td class="rDrop u">'+spanDToggle+r[i].user+'</span></td><td>'+r[i].table+'</td><td';
+            o += '><th scope="row">'+resCt+'</th><td class="rDrop t" title="'+moment(r[i].time).format($dateFormat)+'" data-time="'+r[i].time+'">'+spanDToggle+moment(r[i].time).format($timeFormat)+'</span></td><td class="rDrop u">'+spanDToggle+r[i].user+'</span></td><td>'+r[i].table+'</td><td';
             $lastDataTime = r[i].time;
             switch(r[i].table) {
                 case "click":
@@ -262,6 +262,16 @@ function phraseReturn(obj,more) {
     for(intCt;intCt<resCt;intCt=intCt+$pageInterval){
       $("#row-pages").append('<li class="nav-item"><a class="nav-link" href="#row-'+intCt+'">'+intCt+'</a></li>');
     }
+
+/* Smooth scrolling by mattsince87 from http://codepen.io/mattsince87/pen/exByn
+// ------------------------------
+// http://twitter.com/mattsince87
+// ------------------------------
+*/
+    $('.nav a').click(function(){  
+        $('html,body').stop().animate({scrollTop:$($(this).attr('href')).offset().top},380);
+        return false;
+    });
 }
 }
 outTable();
