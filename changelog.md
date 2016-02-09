@@ -9,7 +9,10 @@ v0.7.1 - February ?, 2016
  - Added result index.
  - Moved scrollspy navbar to the bottom for ease.
  - Fixed "Kill" button.
-
+ - Made searching by keyword more versatile.
+ - Added tooltips to aid in meaning of some searches.
+- Backend:
+ - Keyword search has been improved.
 
 v0.7.0 - February 7, 2016
 -------------------------

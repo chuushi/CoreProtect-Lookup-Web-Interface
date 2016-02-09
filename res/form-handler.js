@@ -6,6 +6,7 @@ function formHandler() {
 "use strict";
 $("#date").datetimepicker({format:$dateFormat+" "+$timeFormat});
 $("[for=abl]").addClass("active");
+$('[data-toggle="tooltip"]').tooltip();
 
 // If URL contains lookup data
 if($fm){

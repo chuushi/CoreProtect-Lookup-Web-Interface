@@ -72,8 +72,8 @@ if(isset($q["SQL"])) {
 }
 else {
     foreach ($q as $key => $value) {
-        if (in_array($key,["a","b","e","u","xyz"],true)) {if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!==""))) $$key = (is_array($value))?$value:explode(',', str_replace(' ', '', $value));}
-        elseif (in_array($key,["r","t","keyword","wid","rollback"],true)) {if($value!=="") $$key = $value;}
+        if (in_array($key,["a","b","e","u","xyz","keyword"],true)) {if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!==""))) $$key = (is_array($value))?$value:($key=="keyword"?str_getcsv($value):explode(',',str_replace(' ', '', $value)));}
+        elseif (in_array($key,["r","t","wid","rollback"],true)) {if($value!=="") $$key = $value;}
         elseif (in_array($key,["unixtime","asendt"],true)) {if($value!=="") $$key = true;}
         elseif ($key == "xyz2") {
             if((is_array($value)&&!in_array("",$value,true))||(is_string($value)&&($value!=="")))$$key = (is_array($value))?$value:explode(',', $value);
@@ -196,9 +196,13 @@ else {
     
     // keyword
     if(isset($keyword)) {
-        $keywords = str_getcsv($keyword, ' ');
-        foreach($keywords as $val) $search[] = "message LIKE '%".$val."%'";
-        $search = "(".implode(" AND ",$search).")";
+        foreach($keyword as $word) {
+            $terms = [];
+            $words = str_getcsv($word,' ');
+            foreach($words as $val) $terms[] = "message LIKE '%".$val."%'";
+            $search[] = "(".implode(" AND ",$terms).")";
+        }
+        $search = "(".implode(" OR ",$search).")";
         /*if(in_array("block",$a,true)) {
             foreach($keywords as $val) $serachSign[] = "(line_1 LIKE '%".$val."%' OR line_2 LIKE '%".$val."%' OR line_3 LIKE '%".$val."%' OR line_4 LIKE '%".$val."%')";
             $searchSign = "(".implode(" AND ",$searchSign).")";

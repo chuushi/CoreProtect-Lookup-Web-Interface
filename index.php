@@ -1,4 +1,4 @@
-<?php include "settings.php";$fm=!empty($_GET);//CoreProtect LWI by SimonOrJ. All Rights Reserved.?><!DOCTYPE html>
+<?php include "settings.php";$fm=!empty($_GET["a"]);//CoreProtect LWI by SimonOrJ. All Rights Reserved.?><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -32,14 +32,14 @@
 <div class="form-group row">
   <div class="col-lg-2 form-control-label">Actions</div>
   <div class="dtButtons btn-group col-lg-10">
-    <label class="btn btn-secondary" for="abl"><input type="checkbox" id="abl" name="a[]" value="block"<?=(!$fm||in_array("block",$_GET["a"]))?" checked":""?>>Block</label>
-    <label class="btn btn-secondary" for="acl"><input type="checkbox" id="acl" name="a[]" value="click"<?=($fm&&in_array("click",$_GET["a"]))?" checked":""?>>Click</label>
-    <label class="btn btn-secondary" for="acn"><input type="checkbox" id="acn" name="a[]" value="container"<?=($fm&&in_array("container",$_GET["a"]))?" checked":""?>>Container</label>
+    <label class="btn btn-secondary" for="abl" data-toggle="tooltip" data-placement="top" title="Block manipulation"><input type="checkbox" id="abl" name="a[]" value="block"<?=(!$fm||in_array("block",$_GET["a"]))?" checked":""?>>Block</label>
+    <label class="btn btn-secondary" for="acl" data-toggle="tooltip" data-placement="top" title="Clickable events (e.g. Chest, door, buttons)"><input type="checkbox" id="acl" name="a[]" value="click"<?=($fm&&in_array("click",$_GET["a"]))?" checked":""?>>Click</label>
+    <label class="btn btn-secondary" for="acn" data-toggle="tooltip" data-placement="top" title="Item transaction from containers"><input type="checkbox" id="acn" name="a[]" value="container"<?=($fm&&in_array("container",$_GET["a"]))?" checked":""?>>Container</label>
     <label class="btn btn-secondary" for="ach"><input type="checkbox" id="ach" name="a[]" value="chat"<?=($fm&&in_array("chat",$_GET["a"]))?" checked":""?>>Chat</label>
     <label class="btn btn-secondary" for="acm"><input type="checkbox" id="acm" name="a[]" value="command"<?=($fm&&in_array("command",$_GET["a"]))?" checked":""?>>Command</label>
-    <label class="btn btn-secondary" for="akl"><input type="checkbox" id="akl" name="a[]" value="kill"<?=($fm&&in_array("kill",$_GET["a"]))?" checked":""?>>Kill</label>
-    <label class="btn btn-secondary" for="ass"><input type="checkbox" id="ass" name="a[]" value="session"<?=($fm&&in_array("session",$_GET["a"]))?" checked":""?>>Session</label>
-    <label class="btn btn-secondary" for="aus"><input type="checkbox" id="aus" name="a[]" value="username"<?=($fm&&in_array("username",$_GET["a"]))?" checked":""?>>Username</label>
+    <label class="btn btn-secondary" for="akl" data-toggle="tooltip" data-placement="top" title="Mob kills"><input type="checkbox" id="akl" name="a[]" value="kill"<?=($fm&&in_array("kill",$_GET["a"]))?" checked":""?>>Kill</label>
+    <label class="btn btn-secondary" for="ass" data-toggle="tooltip" data-placement="top" title="Player login/logout event"><input type="checkbox" id="ass" name="a[]" value="session"<?=($fm&&in_array("session",$_GET["a"]))?" checked":""?>>Session</label>
+    <label class="btn btn-secondary" for="aus" data-toggle="tooltip" data-placement="top" title="Username change history"><input type="checkbox" id="aus" name="a[]" value="username"<?=($fm&&in_array("username",$_GET["a"]))?" checked":""?>>Username</label>
   </div>
 </div>
 <div class="form-group row">
@@ -91,7 +91,7 @@
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="kwd">Keyword</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="kwd" name="keyword"<?=$fm?' value="'.$_GET["keyword"].'"':""?>></div>
+  <div class="col-sm-10"><input class="form-control" type="text" id="kwd" name="keyword"<?=$fm?' value="'.$_GET["keyword"].'"':""?> data-toggle="tooltip" data-placement="top" title='Space [&nbsp;] for AND. Comma [,] for OR. Enclose terms in quotes [""] to escape spaces/commas. Only applies to chat and command.'></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="date">Date/Time</label>
