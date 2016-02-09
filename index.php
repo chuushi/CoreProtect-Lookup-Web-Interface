@@ -171,7 +171,7 @@ $PHP_$t = <?=($fm&&$_GET["t"]!=="")?' value="'.$_GET["t"].'"':"false"?>;
 <script src="res/out-table.js"></script>
 <script src="res/form-handler.js"></script>
 <div class="container">
-<p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a> or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.</p>
+<p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a> or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.<br>This webserver is running PHP <?=phpversion()?>.</p>
 <p>&copy; <?=$copyright?> &mdash; CoreProtect LWI version 0.7.1-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
 </div>
 </body>
