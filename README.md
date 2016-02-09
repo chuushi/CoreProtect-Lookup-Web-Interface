@@ -35,9 +35,9 @@ If you would like to contribute directly to the code and know how git works, you
 
 Download one of the releases from the releases tab or from the plugin page in dev.bukkit.org, and extract the zipped file into the directory accessible by the webserver.
 
-The webserver must have write permission to the `cache/` folder in order for this web application to work.  Do this by running:
+The webserver should have write permission to the `cache/` folder in order for this web application to work efficiently.  Do this by running:
 `$ chmod 777 cache`
-or any equivalent of this from other machines from this plugin directory.
+or any equivalent of this from this plugin directory.
 
 After the initial setup, configure your MySQL server or sqlite `database.db` file path information and other auxiliary settings by editing the `settings.php` file.  After that, rest should be automatic.
 

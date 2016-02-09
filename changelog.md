@@ -11,8 +11,11 @@ v0.7.1 - February ?, 2016
  - Fixed "Kill" button.
  - Made searching by keyword more versatile.
  - Added tooltips to aid in meaning of some searches.
+ - Index now alerts you when the `cache/` is not writable.
 - Backend:
  - Keyword search has been improved.
+ - Modified the block "minecraft:bed" to "minecraft:bed(block)" to avoid
+   confusion with the item "minecraft:bed".
 
 v0.7.0 - February 7, 2016
 -------------------------
