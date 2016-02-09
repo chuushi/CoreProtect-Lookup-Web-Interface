@@ -26,6 +26,7 @@
   </div>
 </nav>
 <div class="container">
+<?php if(!is_writable("./cache/")):?><div class="alert alert-warning  alert-dismissible fade in" role="alert"><strong>Notice:</strong> The directory <code>./cache/</code> is not writable. Lookup will take slightly longer to process, and autocomplete may not work. Please refer to readme.md for setup information.</div><?php endif;?>
 <div id="lookupForm" class="card">
 <div class="card-header"><span class="h4 card-title">Make a Lookup</span></div>
 <form id="lookup" class="card-block" role="form" method="get" action="./">

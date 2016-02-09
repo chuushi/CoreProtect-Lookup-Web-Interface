@@ -1,5 +1,5 @@
 <?php
-/* CoreProtect LWI v0.7.0-beta. February 7, 2016
+/* CoreProtect LWI v0.7.1-beta. February 7, 2016
  * PHP code by SimonOrJ.
  * Requires PHP 5.4+
  * Database tables to use:

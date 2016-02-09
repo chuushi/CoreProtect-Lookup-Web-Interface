@@ -161,7 +161,7 @@ function phraseReturn(obj,more) {
     $("#genTime").text("Request generated in "+Math.round(obj[0].duration*1000)+"ms");
     var o;
     if (obj[0].status) { // If failed
-        o = '<tr><th scope="row">E</th><td colspan="7"';
+        o = '<tr class="text-'+(obj[0].status===1?"info":"danger")+'"><th scope="row">'+(obj[0].status===1?"--":"E")+'</th><td colspan="7"';
         switch(obj[0].status) {
             case 1:
                 o += ' class="text-xs-center">'+reachedLimit(true);
