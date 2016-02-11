@@ -14,9 +14,9 @@
 <body data-spy="scroll" data-target="#row-pages">
 <nav id="top" class="navbar navbar-light bg-faded navbar-full">
   <div class="container">
-    <h1 class="navbar-brand">CoreProtect Lookup Web Interface</h1>
+    <span class="navbar-brand">CoreProtect Lookup Web Interface</span>
     <ul class="nav navbar-nav">
-      <li class="nav-item"><a class="nav-link" href="credits.php">Credits</a></li>
+	  <?php foreach($_index["navigation"] as $ll => $hf) echo '<li class="nav-item"><a class="nav-link" href="'.$hf.'">'.$ll.'</a></li>';?>
     </ul>
     <?=$_login["required"]?'<a href="./?action=clear_login" class="btn btn-info-outline pull-xs-right">logout</a>':""?>
   </div>

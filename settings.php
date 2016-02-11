@@ -86,6 +86,17 @@ $_index=[
  */
 "copyright" => "SimonOrJ, 2015-".date("Y"),
 
+
+"navigation" => [
+/* Navbar links
+ * The links are made in this format:
+ "[link label]" => "[link href]",
+ * This is expandable, but be careful of how long you
+ * make the navbar by using long link label names.
+ */
+"Home" => "/",
+],
+
 /* Datetime Picker and Date/Time Display format to use.
  * This uses moment's date display option.  Refer to 
    http://momentjs.com/docs/#/displaying/format/

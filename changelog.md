@@ -10,6 +10,7 @@ v0.8.0 - February 10, 2016
  - Added smooth scrolling to anchor link (courtesy of 
    [mattsince87](http://codepen.io/mattsince87/pen/exByn)).
  - Added result index.
+ - Added a way to add links to the navbar through settings.php.
  - Moved scrollspy navbar to the bottom for ease.
   - To Fix: make the bar scrollable in one way or another. (Any suggestions?)
  - Fixed "Kill" button.
