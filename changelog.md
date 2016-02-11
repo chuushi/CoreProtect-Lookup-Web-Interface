@@ -1,21 +1,28 @@
 Changes:
 ================================================================================
 
-v0.7.1 - February ?, 2016
+v0.8.0 - February 10, 2016
 -------------------------
+- Major Fix:
+ - Fixed database.db file in settings not pointing to the path defined in the
+   settings.php.
 - Interface:
- - Added smooth scrolling feature (courtesy of 
+ - Added smooth scrolling to anchor link (courtesy of 
    [mattsince87](http://codepen.io/mattsince87/pen/exByn)).
  - Added result index.
  - Moved scrollspy navbar to the bottom for ease.
+  - To Fix: make the bar scrollable in one way or another. (Any suggestions?)
  - Fixed "Kill" button.
  - Made searching by keyword more versatile.
  - Added tooltips to aid in meaning of some searches.
  - Index now alerts you when the `cache/` is not writable.
+ - Increased "Load More" default value to from 10 to 30.
+ - `out-table.js` - error handling code has been modified to fix display style.
 - Backend:
  - Keyword search has been improved.
  - Modified the block "minecraft:bed" to "minecraft:bed(block)" to avoid
    confusion with the item "minecraft:bed".
+ - `login.php` - code has been optimized.
 
 v0.7.0 - February 7, 2016
 -------------------------

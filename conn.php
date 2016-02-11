@@ -1,5 +1,5 @@
 <?php
-/* CoreProtect LWI v0.7.1-beta. February 7, 2016
+/* CoreProtect LWI v0.8.0-beta. February 7, 2016
  * PHP code by SimonOrJ.
  * Requires PHP 5.4+
  * Database tables to use:
@@ -68,7 +68,7 @@ if(isset($q["SQL"])) {
     $out[0]["SQLqs"] = $q["SQLqs"];
     
     // Defaults if the query or parts of the query is empty:
-    if(empty($q["lim"])) $q["lim"] = 10;
+    if(empty($q["lim"])) $q["lim"] = 30;
 }
 else {
     foreach ($q as $key => $value) {

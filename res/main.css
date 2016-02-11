@@ -7,6 +7,9 @@ body {
   position:relative;
   padding-bottom:54px;
 }
+#scroll-nav {
+  max-height:54px;
+}
 #top {
   margin-bottom:.75rem;
 }

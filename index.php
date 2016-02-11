@@ -1,4 +1,4 @@
-<?php include "settings.php";$fm=!empty($_GET["a"]);//CoreProtect LWI by SimonOrJ. All Rights Reserved.?><!DOCTYPE html>
+<?php /* CoreProtect LWI by SimonOrJ. All Rights Reserved. */include "settings.php";$fm=!empty($_GET["a"]);?><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -15,10 +15,13 @@
 <nav id="top" class="navbar navbar-light bg-faded navbar-full">
   <div class="container">
     <h1 class="navbar-brand">CoreProtect Lookup Web Interface</h1>
-    <?=$loginRequired?'<a href="index.php?action=clear_login" class="btn btn-info-outline pull-xs-right">logout</a>':""?>
+    <ul class="nav navbar-nav">
+      <li class="nav-item"><a class="nav-link" href="credits.php">Credits</a></li>
+    </ul>
+    <?=$_login["required"]?'<a href="./?action=clear_login" class="btn btn-info-outline pull-xs-right">logout</a>':""?>
   </div>
 </nav>
-<nav class="navbar navbar-dark bg-inverse navbar-fixed-bottom">
+<nav id="scroll-nav" class="navbar navbar-dark bg-inverse navbar-fixed-bottom">
   <div class="container-fluid">
     <ul id="row-pages" class="nav navbar-nav">
       <li class="nav-item"><a class="nav-link" href="#top">Top</a></li>
@@ -26,7 +29,7 @@
   </div>
 </nav>
 <div class="container">
-<?php if(!is_writable("./cache/")):?><div class="alert alert-warning  alert-dismissible fade in" role="alert"><strong>Notice:</strong> The directory <code>./cache/</code> is not writable. Lookup will take slightly longer to process, and autocomplete may not work. Please refer to readme.md for setup information.</div><?php endif;?>
+<?php if(!is_writable("./cache/")):?><div class="alert alert-warning alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Notice:</strong> The directory <code>./cache/</code> is not writable. Lookup may take marginally longer to process, and autocomplete may not work. Please refer to readme.md for setup information.</div><?php endif;?>
 <div id="lookupForm" class="card">
 <div class="card-header"><span class="h4 card-title">Make a Lookup</span></div>
 <form id="lookup" class="card-block" role="form" method="get" action="./">
@@ -128,7 +131,7 @@
 <form class="container" id="loadMore" action="">
 <div class="row">
   <div class="col-sm-offset-2 col-sm-8 form-group input-group">
-    <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="10">
+    <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="30">
   </div>
 </div>
 <input type="hidden" id="SQL" name="SQL">
@@ -153,13 +156,13 @@ document.getElementById("x2").setAttribute("placeholder","Radius");
 document.getElementById("date").setAttribute("type","text");
 document.getElementById("date").removeAttribute("name");
 document.getElementById("loadMoreBtn").setAttribute("disabled","");
-$dateFormat = "<?=$dateFormat?>";
-$timeFormat = "<?=$timeFormat?>";
-$timeDividor = "<?=$timeDividor?>";
-$dynmapURL = "<?=$dynmapURL?>";
-$dynmapZoom = "<?=$dynmapZoom?>";
-$dynmapMapName = "<?=$dynmapMapName?>";
-$pageInterval = <?=$pageInteval?>;
+$dateFormat = "<?=$_index["dateFormat"]?>";
+$timeFormat = "<?=$_index["timeFormat"]?>";
+$timeDividor = <?=$_index["timeDividor"]?>*1000;
+$dynmapURL = "<?=$_index["dynmapURL"]?>";
+$dynmapZoom = "<?=$_index["dynmapZoom"]?>";
+$dynmapMapName = "<?=$_index["dynmapMapName"]?>";
+$pageInterval = <?=$_index["pageInteval"]?>;
 $fm = <?=$fm?"true":"false"?>;
 $PHP_$t = <?=($fm&&$_GET["t"]!=="")?' value="'.$_GET["t"].'"':"false"?>;
 </script>
@@ -173,7 +176,7 @@ $PHP_$t = <?=($fm&&$_GET["t"]!=="")?' value="'.$_GET["t"].'"':"false"?>;
 <script src="res/form-handler.js"></script>
 <div class="container">
 <p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a> or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.<br>This webserver is running PHP <?=phpversion()?>.</p>
-<p>&copy; <?=$copyright?> &mdash; CoreProtect LWI version 0.7.1-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
+<p>&copy; <?=$_index["copyright"]?> &mdash; CoreProtect LWI version 0.8.0-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
 </div>
 </body>
 </html>

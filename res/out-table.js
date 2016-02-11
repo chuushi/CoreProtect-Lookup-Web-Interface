@@ -1,4 +1,4 @@
-/* CoreProtect LWI - v0.7.1-beta
+/* CoreProtect LWI - v0.8.0-beta
  * Javascript code by SimonOrJ.
  * this uses jQuery.
  */
@@ -175,9 +175,9 @@ function phraseReturn(obj,more) {
                 
             break;
             case 4:
-                o += "><b>The following value does not exist in the CoreProtect's database:</b></td></tr>";
+                o += "><b>The following value does not exist in the CoreProtect's database:</b>";
                 for(var j=0; j<obj[1].length;j++) {
-                    o += '<tr><th scope="row">-</th><td>';
+                    o += '</td></tr><tr><th scope="row">-</th><td>';
                     switch(obj[1][j][0]) {
                         // [material,id or value, thing that has weird stuff]
                         case "material":
@@ -189,18 +189,19 @@ function phraseReturn(obj,more) {
                         default:
                             o += obj[1][j][0];
                     }
-                    o += '</td><td colspan="6">'+obj[1][j][2]+'</td></tr>';
+                    o += '</td><td colspan="6">'+obj[1][j][2];
                 }
                 reachedLimit(true);
                 break;
             default:
-                o += '><th scope="row"></th><b>Unexpected Error '+obj[0].status+":</b> "+obj[0].reason;
+                o += '><b>Unexpected Error '+obj[0].status+":</b> "+obj[0].reason;
+                reachedLimit(true);
                 break;
         }
         o += '</td></tr>';
     }
     else { // Success
-        if(more){$("#offset").val(parseInt($("#offset").val())+parseInt(if_exist($("#moreLim").val(),10)));}
+        if(more){$("#offset").val(parseInt($("#offset").val())+parseInt(if_exist($("#moreLim").val(),30)));}
         else { // Set form values for offset lookup
             $("#SQL").val(obj[0].SQL);
             $("#SQLqs").val(obj[0].SQLqs);

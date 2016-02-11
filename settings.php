@@ -1,41 +1,43 @@
 <?php
-/* CoreProtect LWI - v0.7.1-beta coded by SimonOrJ.
+/* CoreProtect LWI - v0.8.0-beta coded by SimonOrJ.
  * CoreProtect developed by Intellii.
 /* ================================================== *\
  *                   Login Settings                   *
 \* ================================================== */
+$_login = [
 // Require logon? true if yes, false if no.
-$loginRequired = true;
+"required" => true,
 // Username
-$loginUsername = "admin";
+"username" => "admin",
 // Password
-$loginPassword = "password";
+"password" => "password",
+// Duration to stay logged in if "Remember me" is checked
+"duration" => 21,
 // Login was made possible through richcheting's script.
-
+];
 
 /* ================================================== *\
  *     Database and Related Settings for conn.php     *
 \* ================================================== */
-
+$_sql = [
 // Is the database on a mysql server?
 // true if yes, false if no.
-$onMySQL = false;
+"onMySQL" => false,
 
-if($onMySQL == false) {
-    // Provide the path to the database.sql file.
-    $dbpath = "./database.db";
-}
-elseif ($onMySQL == true) {
-    // Fill out the following:
-    // Hostname[:port]
-    $dbhost = "127.0.0.1";
-    // NySQL username
-    $dbuser = "username";
-    // MySQL password associated with username
-    $dbpass = "password";
-    // Database name
-    $dbname = "minecraft";
-}
+// If using SQLite:
+  // Provide the path to the database.sql file.
+  "databasePath" => "./database.db",
+
+// If using MySQL:
+  // Hostname[:port]
+  "hostname" => "127.0.0.1",
+  // NySQL username
+  "username" => "username",
+  // MySQL password associated with username
+  "password" => "password",
+  // Database name
+  "database" => "minecraft",
+];
 // CoreProtect prefix (if you are using a custom prefix)
 $co_ = "co_"; // Default: "co_"
 
@@ -76,53 +78,47 @@ $translateCo2Mc = true;
 /* ================================================== *\
  *               Settings for index.php               *
 \* ================================================== */
-
+$_index=[
 /* Copyright notice thing on the bottom of the page; I
  * dunno o.o
  * You can use "." to append to strings, and 'date("Y")'
  * to set current year.
  */
-$copyright = "SimonOrJ, 2015-".date("Y");
+"copyright" => "SimonOrJ, 2015-".date("Y"),
 
 /* Datetime Picker and Date/Time Display format to use.
  * This uses moment's date display option.  Refer to 
    http://momentjs.com/docs/#/displaying/format/
  * for formatting help. */
-$dateFormat = "ll";
-$timeFormat = "LTS";
+"dateFormat" => "ll",
+"timeFormat" => "LTS",
 
 
 /* Dividor Time - How far apart should the time be before
  * a table time dividor kicks in? 
- * Time in milliseconds.*/
-$timeDividor = 1200000; // Default: 20 minutes (1200000)
+ * Time in seconds.*/
+"timeDividor" => 300, // Default: 5 minutes (300)
 
 // Intervals on which to create page links on navbar.
-$pageInteval = 25;
+"pageInteval" => 25,
 
 
 /* MC Dynamic Map link and settings
  * If there is no dynmap, leave it as false.
  * If you want to use dynmap to assist in block lookup,
  * toggle it true.*/
-$useDynmap = false;
+"useDynmap"     => false,
 // URL to the dynmap
-$dynmapURL = "http://127.0.0.1:8123/";
+"dynmapURL"     => "http://127.0.0.1:8123/",
 // Zoom Level
-$dynmapZoom = 6; // Higher is closer.
+"dynmapZoom"    => 6, // Higher is closer.
 // Map type
-$dynmapMapName = "flat"; //flat, surface, or cave
-
-
-// texturepack to use. Use _EXACT_ folder/directory name.
-//$texture = "default"; //In Progress!
-
-// More features to come...
-
+"dynmapMapName" => "flat", //flat, surface, or cave
+];
 
 /* ================================================== *\
  *             End of user configuration              *
 \* ================================================== */
-if(!$useDynmap) $dynmapURL = false;
-if($loginRequired){session_start();require"res/login.php";$login = new Login;$login->authorize();}
+if(!$_index["useDynmap"]) $_index["dynmapURL"] = false;
+if($_login["required"]){session_start();require"res/login.php";$login = new Login;$login->authorize();}
 ?>
