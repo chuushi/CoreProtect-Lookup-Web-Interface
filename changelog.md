@@ -1,8 +1,21 @@
 Changes:
 ================================================================================
 
+v0.8.1 - February 11, 2016
+--------------------------
+- Fix:
+ - Corner 2 has been fixed.
+ - Bukkit-specific:
+  - Cache folder has been cleared of scrap data that was accidently included in
+    the v0.8.0-beta release.
+- Interface:
+ - Advanced dropdown menu has been added with an option to clear the cache.
+- Backend:
+ - Simple script to clear cache was added: `purge.php`
+
+
 v0.8.0 - February 10, 2016
--------------------------
+--------------------------
 - Major Fix:
  - Fixed database.db file in settings not pointing to the path defined in the
    settings.php.
