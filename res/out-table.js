@@ -1,4 +1,4 @@
-/* CoreProtect LWI - v0.8.0-beta
+/* CoreProtect LWI - v0.8.1-beta
  * Javascript code by SimonOrJ.
  * this uses jQuery.
  */
@@ -66,88 +66,6 @@ function csvAppend(csv,add) {
     var a = csv.split(/, ?/);
     return $.inArray(add,a)===-1?csv+", "+add:csv;
 }
-// Dropdown Menu Listener
-var dmapWin;
-$("#output").on("click",".rDrop .cPointer",function(){
-    var $par = $(this).parent(),val,nVal;
-    if($(this).hasClass("t")) {
-        console.log($par.parent().attr("data-time"));
-        nVal = moment($par.parent().attr("data-time"),["x"]).format($dateFormat+" "+$timeFormat);
-        if($(this).hasClass("Asc")) {
-            $("#trv").prop("checked",true);
-            $("[for=trv]").addClass("active");
-            $("#date").val(nVal);
-        }
-        else if($(this).hasClass("Desc")) {
-            $("#trv").prop("checked",false);
-            $("[for=trv]").removeClass("active");
-            $("#date").val(nVal);
-        }
-    }
-    else if($(this).hasClass("u")) {
-        val = $("#usr").val();
-        nVal = $par.prev().text();
-        if($(this).hasClass("Sch")) {
-            if($("#eus").prop("checked")){
-                $("#eus").prop("checked",false);
-                $("[for=eus]").removeClass("active");
-                $("#usr").val(nVal);
-            }
-            else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(csvAppend(val,nVal));}
-        }
-        else if($(this).hasClass("ESch")) {
-            if(!$("#eus").prop("checked")){
-                $("#eus").prop("checked",true);
-                $("[for=eus]").addClass("active");
-                $("#usr").val(nVal);
-            }
-            else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(csvAppend(val,nVal));}
-        }
-    }
-    else if($(this).hasClass("c")) {
-        nVal = $par.prev().text().split(" ");
-        if($(this).hasClass("Fl1")) {
-            $("#x1").val(nVal[0]);
-            $("#y1").val(nVal[1]);
-            $("#z1").val(nVal[2]);
-            $("#wid").val(nVal[3]);
-        }
-        else if($(this).hasClass("Fl2")) {
-            radius(true);
-            $("#x2").val(nVal[0]);
-            $("#y2").val(nVal[1]);
-            $("#z2").val(nVal[2]);
-            $("#wid").val(nVal[3]);
-        }
-        else if($(this).hasClass("DMap")) {
-            dmapWin = window.open($dynmapURL+"?worldname="+nVal[3]+"&mapname="+$dynmapMapName+"&zoom="+$dynmapZoom+"&x="+nVal[0]+"&y="+nVal[1]+"&z="+nVal[2],"CoLWI-dmap");
-        }
-    }
-    else if($(this).hasClass("b")) {
-        val = $("#blk").val();
-        nVal = $par.parent().attr("data-block");
-        if($(this).hasClass("Sch")) {
-            if($("#ebl").prop("checked")){
-                $("#ebl").prop("checked",false);
-                $("[for=ebl]").removeClass("active");
-                $("#blk").val(nVal);
-            }
-            else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(csvAppend(val,nVal));}
-        }
-        else if($(this).hasClass("ESch")) {
-            if(!$("#ebl").prop("checked")){
-                $("#ebl").prop("checked",true);
-                $("[for=ebl]").addClass("active");
-                $("#blk").val(nVal);
-            }
-            else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(csvAppend(val,nVal));}
-        }
-    }
-});
 
 // Displaying sign data function
 $("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){$(this).next().collapse("toggle");});

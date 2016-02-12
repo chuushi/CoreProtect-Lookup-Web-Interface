@@ -1,4 +1,4 @@
-/* CoreProtect LWI - v0.7.1-beta
+/* CoreProtect LWI - v0.8.1-beta
  * Javascript code by SimonOrJ.
  * this uses jQuery and jQuery UI.
  */
@@ -43,7 +43,7 @@ function radius(boolCorner) {
 }
 $("#rcToggle").click(function(){radius();});
 
-// usr, blk, wid
+// Autocomplete
 var qftr;
 $( ".autocomplete" )
   // don't navigate away from the field on tab when selecting an item
@@ -84,6 +84,99 @@ $( ".autocomplete" )
         terms.push( ui.item.value );
         this.value = terms.join( ", " );
         return false;
+    }
+});
+
+// Dropdown Menu Listener
+$("#output").on("click",".rDrop .cPointer",function(){
+    var $par = $(this).parent(),val,nVal;
+    if($(this).hasClass("t")) {
+        console.log($par.parent().attr("data-time"));
+        nVal = moment($par.parent().attr("data-time"),["x"]).format($dateFormat+" "+$timeFormat);
+        if($(this).hasClass("Asc")) {
+            $("#trv").prop("checked",true);
+            $("[for=trv]").addClass("active");
+            $("#date").val(nVal);
+        }
+        else if($(this).hasClass("Desc")) {
+            $("#trv").prop("checked",false);
+            $("[for=trv]").removeClass("active");
+            $("#date").val(nVal);
+        }
+    }
+    else if($(this).hasClass("u")) {
+        val = $("#usr").val();
+        nVal = $par.prev().text();
+        if($(this).hasClass("Sch")) {
+            if($("#eus").prop("checked")){
+                $("#eus").prop("checked",false);
+                $("[for=eus]").removeClass("active");
+                $("#usr").val(nVal);
+            }
+            else if(val === ""){$("#usr").val(nVal);}
+            else {$("#usr").val(csvAppend(val,nVal));}
+        }
+        else if($(this).hasClass("ESch")) {
+            if(!$("#eus").prop("checked")){
+                $("#eus").prop("checked",true);
+                $("[for=eus]").addClass("active");
+                $("#usr").val(nVal);
+            }
+            else if(val === ""){$("#usr").val(nVal);}
+            else {$("#usr").val(csvAppend(val,nVal));}
+        }
+    }
+    else if($(this).hasClass("c")) {
+        nVal = $par.prev().text().split(" ");
+        if($(this).hasClass("Fl1")) {
+            $("#x1").val(nVal[0]);
+            $("#y1").val(nVal[1]);
+            $("#z1").val(nVal[2]);
+            $("#wid").val(nVal[3]);
+        }
+        else if($(this).hasClass("Fl2")) {
+            radius(true);
+            $("#x2").val(nVal[0]);
+            $("#y2").val(nVal[1]);
+            $("#z2").val(nVal[2]);
+            $("#wid").val(nVal[3]);
+        }
+        else if($(this).hasClass("DMap")) {
+            window.open($dynmapURL+"?worldname="+nVal[3]+"&mapname="+$dynmapMapName+"&zoom="+$dynmapZoom+"&x="+nVal[0]+"&y="+nVal[1]+"&z="+nVal[2],"CoLWI-dmap");
+        }
+    }
+    else if($(this).hasClass("b")) {
+        val = $("#blk").val();
+        nVal = $par.parent().attr("data-block");
+        if($(this).hasClass("Sch")) {
+            if($("#ebl").prop("checked")){
+                $("#ebl").prop("checked",false);
+                $("[for=ebl]").removeClass("active");
+                $("#blk").val(nVal);
+            }
+            else if(val === ""){$("#blk").val(nVal);}
+            else {$("#blk").val(csvAppend(val,nVal));}
+        }
+        else if($(this).hasClass("ESch")) {
+            if(!$("#ebl").prop("checked")){
+                $("#ebl").prop("checked",true);
+                $("[for=ebl]").addClass("active");
+                $("#blk").val(nVal);
+            }
+            else if(val === ""){$("#blk").val(nVal);}
+            else {$("#blk").val(csvAppend(val,nVal));}
+        }
+    }
+});
+$("#purgeCache").click(function() {
+    if(confirm("Do you want to purge the cache? You won't lose any permanent data.")) {
+        $.ajax("purge.php",{
+          dataType:"json",
+          success:function(data){
+              if(data[0]) {alert("The ./cache/ directory was purged successfully.");}
+              else {alert("Purge was unsuccessful. Please check your settings.");}
+          }
+        });
     }
 });
 }

@@ -1,4 +1,4 @@
-<?php /* CoreProtect LWI by SimonOrJ. All Rights Reserved. */include "settings.php";$fm=!empty($_GET["a"]);?><!DOCTYPE html>
+<?php /* CoreProtect LWI by SimonOrJ. All Rights Reserved. */include "settings.php";$fm=($_GET["a"]?true:false);?><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -29,21 +29,21 @@
   </div>
 </nav>
 <div class="container">
-<?php if(!is_writable("./cache/")):?><div class="alert alert-warning alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Notice:</strong> The directory <code>./cache/</code> is not writable. Lookup may take marginally longer to process, and autocomplete may not work. Please refer to readme.md for setup information.</div><?php endif;?>
+<?php if(!is_writable("./cache/")):?><div class="alert alert-warning alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Notice:</strong> The directory <code>./cache/</code> is not writable. Lookup may take marginally longer to process, and autocomplete will not have updated data. Please refer to readme.md for setup information.</div><?php endif;?>
 <div id="lookupForm" class="card">
 <div class="card-header"><span class="h4 card-title">Make a Lookup</span></div>
 <form id="lookup" class="card-block" role="form" method="get" action="./">
 <div class="form-group row">
   <div class="col-lg-2 form-control-label">Actions</div>
   <div class="dtButtons btn-group col-lg-10">
-    <label class="btn btn-secondary" for="abl" data-toggle="tooltip" data-placement="top" title="Block manipulation"><input type="checkbox" id="abl" name="a[]" value="block"<?=(!$fm||in_array("block",$_GET["a"]))?" checked":""?>>Block</label>
-    <label class="btn btn-secondary" for="acl" data-toggle="tooltip" data-placement="top" title="Clickable events (e.g. Chest, door, buttons)"><input type="checkbox" id="acl" name="a[]" value="click"<?=($fm&&in_array("click",$_GET["a"]))?" checked":""?>>Click</label>
-    <label class="btn btn-secondary" for="acn" data-toggle="tooltip" data-placement="top" title="Item transaction from containers"><input type="checkbox" id="acn" name="a[]" value="container"<?=($fm&&in_array("container",$_GET["a"]))?" checked":""?>>Container</label>
-    <label class="btn btn-secondary" for="ach"><input type="checkbox" id="ach" name="a[]" value="chat"<?=($fm&&in_array("chat",$_GET["a"]))?" checked":""?>>Chat</label>
-    <label class="btn btn-secondary" for="acm"><input type="checkbox" id="acm" name="a[]" value="command"<?=($fm&&in_array("command",$_GET["a"]))?" checked":""?>>Command</label>
-    <label class="btn btn-secondary" for="akl" data-toggle="tooltip" data-placement="top" title="Mob kills"><input type="checkbox" id="akl" name="a[]" value="kill"<?=($fm&&in_array("kill",$_GET["a"]))?" checked":""?>>Kill</label>
-    <label class="btn btn-secondary" for="ass" data-toggle="tooltip" data-placement="top" title="Player login/logout event"><input type="checkbox" id="ass" name="a[]" value="session"<?=($fm&&in_array("session",$_GET["a"]))?" checked":""?>>Session</label>
-    <label class="btn btn-secondary" for="aus" data-toggle="tooltip" data-placement="top" title="Username change history"><input type="checkbox" id="aus" name="a[]" value="username"<?=($fm&&in_array("username",$_GET["a"]))?" checked":""?>>Username</label>
+    <label class="btn btn-secondary" for="abl" data-toggle="tooltip" data-placement="top" title="Block manipulation"><input type="checkbox" id="abl" name="a[]" value="block"<?=(!$fm||in_array("block",$a))?" checked":""?>>Block</label>
+    <label class="btn btn-secondary" for="acl" data-toggle="tooltip" data-placement="top" title="Clickable events (e.g. Chest, door, buttons)"><input type="checkbox" id="acl" name="a[]" value="click"<?=($fm&&in_array("click",$a))?" checked":""?>>Click</label>
+    <label class="btn btn-secondary" for="acn" data-toggle="tooltip" data-placement="top" title="Item transaction from containers"><input type="checkbox" id="acn" name="a[]" value="container"<?=($fm&&in_array("container",$a))?" checked":""?>>Container</label>
+    <label class="btn btn-secondary" for="ach"><input type="checkbox" id="ach" name="a[]" value="chat"<?=($fm&&in_array("chat",$a))?" checked":""?>>Chat</label>
+    <label class="btn btn-secondary" for="acm"><input type="checkbox" id="acm" name="a[]" value="command"<?=($fm&&in_array("command",$a))?" checked":""?>>Command</label>
+    <label class="btn btn-secondary" for="akl" data-toggle="tooltip" data-placement="top" title="Mob kills"><input type="checkbox" id="akl" name="a[]" value="kill"<?=($fm&&in_array("kill",$a))?" checked":""?>>Kill</label>
+    <label class="btn btn-secondary" for="ass" data-toggle="tooltip" data-placement="top" title="Player login/logout event"><input type="checkbox" id="ass" name="a[]" value="session"<?=($fm&&in_array("session",$a))?" checked":""?>>Session</label>
+    <label class="btn btn-secondary" for="aus" data-toggle="tooltip" data-placement="top" title="Username change history"><input type="checkbox" id="aus" name="a[]" value="username"<?=($fm&&in_array("username",$a))?" checked":""?>>Username</label>
   </div>
 </div>
 <div class="form-group row">
@@ -143,6 +143,15 @@
   </div>
 </div>
 </form>
+<div class="container">
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Advanced
+    </button>
+    <div class="dropdown-menu" aria-labelledby="Advanced">
+      <button id="purgeCache" class="dropdown-item list-group-item-danger">Purge cache</button>
+    </div>
+  </div><p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a> or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.<br>This webserver is running PHP <?=phpversion()?>.</p>
 <script>
 // Quick Styling for JS-enabled browser
 document.getElementById("corner1").innerHTML = "Center";
@@ -174,9 +183,7 @@ $PHP_$t = <?=($fm&&$_GET["t"]!=="")?' value="'.$_GET["t"].'"':"false"?>;
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 <script src="res/out-table.js"></script>
 <script src="res/form-handler.js"></script>
-<div class="container">
-<p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a> or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.<br>This webserver is running PHP <?=phpversion()?>.</p>
-<p>&copy; <?=$_index["copyright"]?> &mdash; CoreProtect LWI version 0.8.0-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
+<p>&copy; <?=$_index["copyright"]?> &mdash; CoreProtect LWI version 0.8.1-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
 </div>
 </body>
 </html>
