@@ -72,7 +72,7 @@ $("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){$(t
 
 // returns data in table format
 var spanSign = '<span class="collapse-toggle" data-toggle="collapse-next" aria-expanded="false">',
-divSignData = function(Lines) {return '<div class="mcSign">'+Lines[0]+'<br>'+Lines[1]+'<br>'+Lines[2]+'<br>'+Lines[3]+"</div>";},
+divSignData = function(Lines) {return '<div class="mcSign">'+Lines.join("&nbsp;\n&nbsp;")+"</div>";},
 spanDToggle =  '<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">',
 $lastDataTime;
 function phraseReturn(obj,more) {
@@ -133,8 +133,6 @@ function phraseReturn(obj,more) {
             r[i].time *= 1000;
             if($timeDividor < Math.abs($lastDataTime-r[i].time)||!moment($lastDataTime).isSame(r[i].time,"day")){o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'+moment(r[i].time).calendar(null,{
                 sameDay: "[Today at] "+$timeFormat,
-                nextDay: "[Please Configure Correct Minecraft Server Time]",
-                nextWeek: "[Please Configure Correct Minecraft Server Time]",
                 lastDay: "[Yesterday at] "+$timeFormat,
                 lastWeek: "[Last] dddd, "+$dateFormat+" "+$timeFormat,
                 sameElse: $dateFormat+" "+$timeFormat

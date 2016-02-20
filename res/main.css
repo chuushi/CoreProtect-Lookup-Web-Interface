@@ -81,6 +81,7 @@ body {
   border-radius:.25rem;
   min-width:11rem;
   text-align:center;
+  white-space:pre;
 }
 @media(max-width:991px) {
 .groups-line {

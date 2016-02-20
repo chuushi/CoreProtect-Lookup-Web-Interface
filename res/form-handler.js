@@ -91,7 +91,6 @@ $( ".autocomplete" )
 $("#output").on("click",".rDrop .cPointer",function(){
     var $par = $(this).parent(),val,nVal;
     if($(this).hasClass("t")) {
-        console.log($par.parent().attr("data-time"));
         nVal = moment($par.parent().attr("data-time"),["x"]).format($dateFormat+" "+$timeFormat);
         if($(this).hasClass("Asc")) {
             $("#trv").prop("checked",true);
