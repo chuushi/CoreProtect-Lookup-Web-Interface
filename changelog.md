@@ -1,6 +1,12 @@
 Changes:
 ================================================================================
 
+v0.8.2 - February 22, 2016
+--------------------------
+- Patch:
+ - The SQL injection is made harder by encrypting the SQL term itself.
+
+
 v0.8.1 - February 11, 2016
 --------------------------
 - Fix:
