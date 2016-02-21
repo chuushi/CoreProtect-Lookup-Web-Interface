@@ -42,6 +42,12 @@ $_sql = [
 $co_ = "co_"; // Default: "co_"
 
 
+/* Random string to encrypt SQL and prevent SQL injection.
+ * Just type in some random string.  You'll never need to
+ * memorize it. */
+$_key = "SomeStringToPreventSQLInjection(CHANGE ME)";
+
+
 // Minecraft Server-Webserver Time Offset in seconds
 $timeOffset = 0; // accepts negative values, Default: 0
 

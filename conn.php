@@ -64,7 +64,7 @@ $signBlocks = ["minecraft:standing_sign","minecraft:wall_sign"];
 // Compiling code
 if(isset($q["SQL"])) {
     // Reserved for loading slightly more quickly
-    $lookup = $codb->prepare($out[0]["SQL"] = $q["SQL"]);
+    $lookup = $codb->prepare(openssl_decrypt($out[0]["SQL"] = $q["SQL"],"aes-256-ctr",$SQL_key));
     $out[0]["SQLqs"] = $q["SQLqs"];
     
     // Defaults if the query or parts of the query is empty:
@@ -284,7 +284,8 @@ else {
         if($key) $tables .= " UNION ALL ";
         $tables .= "SELECT * FROM (".$value." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?) AS T".$key;
     }
-    $lookup = $codb->prepare($out[0]["SQL"] = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?,?;");
+    $lookup = $codb->prepare($sql = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?,?;");
+    $out[0]["SQL"] = openssl_encrypt($sql,"aes-256-ctr",$SQL_key);
 }
 
 if($out[0]["SQLqs"] > 1) for($i = 1; $i <= $out[0]["SQLqs"]; $i++) {
