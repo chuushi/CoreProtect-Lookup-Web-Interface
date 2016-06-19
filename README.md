@@ -23,8 +23,6 @@ In addition, this plugin makes it possible to:
 
 This plugin requires a Minecraft server running CoreProtect 2.11+ and a webserver running PHP 5.4+.  It can fetch data logged by CoreProtect through the MySQL server or the sqlite (database.db) file.
 
-If you would like to contribute directly to the code and know how git works, you may do so (and maybe teach me more about collaborating using git, if you will).  If there is any issues, please tell me about it!
-
 ## Setup
 *Prerequisites:*
 
@@ -55,6 +53,8 @@ This project consists of five main files:
  - `co2mc.php` - PHP class used for legacy Minecraft name conversion
 
 # [Changelog](changelog.md)
+
+# [Contributing](CONTRIBUTING.md)
 
 # [Plugin Page on Bukkit](http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/)
 
