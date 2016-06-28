@@ -1,4 +1,4 @@
-<?php /* CoreProtect LWI by SimonOrJ. All Rights Reserved. */include "settings.php";$fm=($_GET["a"]?true:false);?><!DOCTYPE html>
+<?php /* CoreProtect LWI by SimonOrJ. All Rights Reserved. */include "settings.php";$fm=($_GET["autoLookup"]?true:false);?><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
