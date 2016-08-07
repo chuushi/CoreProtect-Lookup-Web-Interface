@@ -1,6 +1,15 @@
 Changes:
 ================================================================================
 
+v0.8.2.1 - August 7, 2016
+-------------------------
+- Patch:
+ - Disabled possible SQL injection by temporary disabling Load More support.
+  - This will be fixed in the coming days.
+- Rewrote `conn.php`
+- Moved around all the files.
+- This update aims to make it possible for people to collaborate.
+
 v0.8.2 - February 22, 2016
 --------------------------
 - Patch:
