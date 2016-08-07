@@ -27,7 +27,7 @@ Output status codes:
 //error_reporting(-1);ini_set('display_errors', 'On');
 
 // Logger https://craig.is/writing/chrome-logger
-require "ChromePhp.php";
+//require "ChromePhp.php";
 //hromePhp::log('conn.php has been called.');
 //ChromePhp::warn('Sample Warning.');
 
