@@ -5,7 +5,7 @@
 /* ================================================== *\
  *                   Login Settings                   *
 \* ================================================== */
-$_login = [
+$_login = array(
 // Require logon? true if yes, false if no.
 "required" => true,
 // Username
@@ -15,12 +15,12 @@ $_login = [
 // Duration to stay logged in if "Remember me" is checked
 "duration" => 21,
 // Login was made possible through richcheting's script.
-];
+);
 
 /* ================================================== *\
  *     Database and Related Settings for conn.php     *
 \* ================================================== */
-$_sql = [
+$_sql = array(
 // Is the database on a mysql server?
 // true if yes, false if no.
 "onMySQL" => false,
@@ -38,7 +38,7 @@ $_sql = [
   "password" => "password",
   // Database name
   "database" => "minecraft",
-];
+);
 // CoreProtect prefix (if you are using a custom prefix)
 $co_ = "co_"; // Default: "co_"
 
@@ -85,7 +85,7 @@ $translateCo2Mc = true;
 /* ================================================== *\
  *               Settings for index.php               *
 \* ================================================== */
-$_index=[
+$_index=array(
 /* Copyright notice thing on the bottom of the page; I
  * dunno o.o
  * You can use "." to append to strings, and 'date("Y")'
@@ -94,7 +94,7 @@ $_index=[
 "copyright" => "SimonOrJ, 2015-".date("Y"),
 
 
-"navigation" => [
+"navigation" => array(
 /* Navbar links
  * The links are made in this format:
  "[link label]" => "[link href]",
@@ -102,7 +102,7 @@ $_index=[
  * make the navbar by using long link label names.
  */
 "Home" => "/",
-],
+),
 
 /* Datetime Picker and Date/Time Display format to use.
  * This uses moment's date display option.  Refer to 
@@ -132,7 +132,7 @@ $_index=[
 "dynmapZoom"    => 6, // Higher is closer.
 // Map type
 "dynmapMapName" => "flat", //flat, surface, or cave
-];
+);
 
 /* ================================================== *\
  *             End of user configuration              *

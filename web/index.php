@@ -147,10 +147,10 @@ if(!is_writable("./cache/")):?>
 </div>
 
 <!-- Load More form -->
-<form class="container" id="loadMore" action="">
+<form class="container" id="loadMore"><!--action=""-->
 <div class="row">
   <div class="col-sm-offset-2 col-sm-8 form-group input-group">
-    <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="30">
+    <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="Broken; will work on v0.9.0" disabled>
   </div>
 </div>
 <input type="hidden" id="SQL" name="SQL">
@@ -158,7 +158,7 @@ if(!is_writable("./cache/")):?>
 <input type="hidden" id="offset" name="offset">
 <div class="form-group row">
   <div class="col-sm-offset-2 col-sm-8">
-    <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more">
+    <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more" disabled>
   </div>
 </div>
 </form>
