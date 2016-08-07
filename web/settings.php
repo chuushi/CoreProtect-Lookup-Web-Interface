@@ -1,5 +1,6 @@
 <?php
-/* CoreProtect LWI - v0.8.0-beta coded by SimonOrJ.
+/* CoreProtect LWI - v0.8.2-beta coded by SimonOrJ.
+ * This will be completely different on v0.9.0.
  * CoreProtect developed by Intellii.
 /* ================================================== *\
  *                   Login Settings                   *
@@ -26,7 +27,7 @@ $_sql = [
 
 // If using SQLite:
   // Provide the path to the database.sql file.
-  "databasePath" => "./database.db",
+  "databasePath" => "../database.db",
 
 // If using MySQL:
   // Hostname[:port]

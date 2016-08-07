@@ -19,6 +19,9 @@ body {
 .cPointer {
   cursor:pointer;
 }
+form label {
+  white-space:nowrap;
+}
 /* Style Overwrites */
 .btn {
   margin-bottom:0;

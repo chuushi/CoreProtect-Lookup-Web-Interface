@@ -61,12 +61,6 @@ $("#output").on("show.bs.dropdown",".rDrop",function(){
     }
 });
 
-// To avoid duplicates.
-function csvAppend(csv,add) {
-    var a = csv.split(/, ?/);
-    return $.inArray(add,a)===-1?csv+", "+add:csv;
-}
-
 // Displaying sign data function
 $("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){$(this).next().collapse("toggle");});
 

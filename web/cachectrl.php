@@ -3,10 +3,22 @@
 // Class for things with cache.
 // users, blocks, arts, images, entities,
 // TODO: Make this update usernames somehow.
-class cachectrl {
-    private $ALL = ["art","entity","material","user","world"], $artDb = [], $entityDb = [], $materialDb = [], $userDb = [], $worldDb = [], $art, $artLookup, $entity, $entityLookup, $material, $materialLookup, $user, $userLookup, $world, $worldLookup, $codb, $co_, $legacy;
+class CacheCtrl {
+    private $ALL = ["art","entity","material","user","world"],
+            $artDb = [],
+            $entityDb = [],
+            $materialDb = [],
+            $userDb = [],
+            $worldDb = [],
+            $art, $artLookup,
+            $entity, $entityLookup,
+            $material, $materialLookup,
+            $user, $userLookup,
+            $world, $worldLookup,
+            $codb, $co_, $legacy;
     
     function __construct($codb,$co_,$legacySupport) {
+        // Load 
         foreach($this->ALL as $d) if(file_exists(__DIR__."/cache/".$d.".php")) {
             $e = $d."Db";
             $this->$e = require("cache/".$d.".php");

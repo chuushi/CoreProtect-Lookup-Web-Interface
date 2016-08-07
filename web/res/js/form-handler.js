@@ -28,20 +28,26 @@ function radius(boolCorner) {
     if(($("#corner1").text() === "Center")||boolCorner) {
         $("#corner1").text("Corner 1");
         $("#corner2").text("Corner 2");
-        $("#c2").addClass("input-group");
+        $("#c2>div").addClass("input-group");
         $(".c2").show();
         $("#x2").attr("placeholder","x");
     }
     else {
         $("#corner1").text("Center");
         $("#corner2").text("Radius");
-        $("#c2").removeClass("input-group");
+        $("#c2>div").removeClass("input-group");
         $(".c2").val("");
         $(".c2").hide();
         $("#x2").attr("placeholder","Radius");
     }
 }
 $("#rcToggle").click(function(){radius();});
+
+// Some CSV Function
+function csvAppend(csv,add) {
+    var a = csv.split(/, ?/);
+    return $.inArray(add,a)===-1?csv+", "+add:csv;
+}
 
 // Autocomplete
 var qftr;
