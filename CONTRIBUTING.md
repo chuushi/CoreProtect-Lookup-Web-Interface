@@ -47,4 +47,4 @@ if (this) {
 - PHP
  - Every array must use `array()`.
 - JavaScript
- - The coding style on JavaScript must use the "use strict" directive.
+ - The coding style on JavaScript must follow the "use strict" directive requirements.
