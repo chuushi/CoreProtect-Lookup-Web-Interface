@@ -58,9 +58,20 @@ else {
     $out[0]["reason"] = "Settings not configured; please visit config.php first.";
     exit();
 }*/
-require "PDO.php";
+require "settings.php";
+require "pdowrapper.php";
 require "cachectrl.php";
-require "co2mc.php";
+require "bukkittominecraft.php";
+
+// Create class
+$codb = pdoWrapper($_sql);
+
+// When PDO failed to connect
+if (is_a($codb, "PDOException")) {
+    $out[0]["status"]=3;$out[0]["reason"]="Database connection failed";$out[1]=$codb->getMessage();
+    exit();
+}
+
 
 // Module Classes
 $Cc = new CacheCtrl($codb,$co_,$legacySupport);
@@ -257,7 +268,7 @@ if (true) {
         // block search translation
         if(isset($q['b'])) {
             foreach($q['b'] as $key => $bk) {
-                $bk = $Cm->getCo($bk);
+                $bk = $Cm->getBk($bk);
                 $q['b'][$key] = $bk;
                 if($legacySupport) if($bk !== ($bk2=preg_replace("/^minecraft:/","",$bk))) $q['b'][] = $bk2;
             }

@@ -23,21 +23,21 @@ $_login = array(
 $_sql = array(
 // Is the database on a mysql server?
 // true if yes, false if no.
-"onMySQL" => false,
+"type" => "sqlite",
 
 // If using SQLite:
   // Provide the path to the database.sql file.
-  "databasePath" => "../database.db",
+  "path" => "../database.db",
 
 // If using MySQL:
   // Hostname[:port]
-  "hostname" => "127.0.0.1",
+  "host" => "127.0.0.1",
   // NySQL username
-  "username" => "username",
+  "user" => "username",
   // MySQL password associated with username
-  "password" => "password",
+  "pass" => "password",
   // Database name
-  "database" => "minecraft",
+  "data" => "minecraft",
 );
 // CoreProtect prefix (if you are using a custom prefix)
 $co_ = "co_"; // Default: "co_"
