@@ -33,10 +33,10 @@
   </div>
 </nav>
 
-<!-- Write alert box -->
 <div class="container">
 <?php // If it doesn't have write permission to the ./cache directory
 if(!is_writable("./cache/")):?>
+<!-- Write alert box -->
 <div class="alert alert-warning alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Notice:</strong> The directory <code>./cache/</code> is not writable. Lookup may take marginally longer to process, and autocomplete will not have updated data. Please refer to readme.md for setup information.</div>
 <?php endif;?>
 
@@ -62,9 +62,9 @@ if(!is_writable("./cache/")):?>
   <div class="col-lg-10">
     <button class="btn btn-secondary" type="button" id="rcToggle">Radius/Corners</button>
     <span class="dtButtons btn-group">
-    <label class="btn btn-outline-success" for="rbt"><input type="radio" id="rbt" name="rollback" value="1"<?php echo ($fm&&$_GET["rollback"]==="1")?" checked":"";?>><span class="glyphicon glyphicon-ok"></span></label>
-    <label class="btn btn-secondary active" for="rb"><input type="radio" id="rb" name="rollback" value=""<?php echo (!$fm||$_GET["rollback"]==="")?" checked":"";?>>Rollback</label>
-    <label class="btn btn-outline-secondary" for="rbf"><input type="radio" id="rbf" name="rollback" value="0"<?php echo ($fm&&$_GET["rollback"]==="0")?" checked":"";?>><span class="glyphicon glyphicon-minus"></span></label>
+      <label class="btn btn-outline-success" for="rbt"><input type="radio" id="rbt" name="rollback" value="1"<?php echo ($fm&&$_GET["rollback"]==="1")?" checked":"";?>><span class="glyphicon glyphicon-ok"></span></label>
+      <label class="btn btn-secondary active" for="rb"><input type="radio" id="rb" name="rollback" value=""<?php echo (!$fm||$_GET["rollback"]==="")?" checked":"";?>>Rollback</label>
+      <label class="btn btn-outline-secondary" for="rbf"><input type="radio" id="rbf" name="rollback" value="0"<?php echo ($fm&&$_GET["rollback"]==="0")?" checked":"";?>><span class="glyphicon glyphicon-minus"></span></label>
     </span>
   </div>
 </div>
@@ -96,16 +96,20 @@ if(!is_writable("./cache/")):?>
 </div>
 <div class="form-group row">
   <label class="col-lg-2 form-control-label" for="usr">Users</label>
-  <div class="input-group col-lg-10" >
-    <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="eus"><input type="checkbox" id="eus" name="e[]" value="u"<?php echo ($fm&&in_array("u",$_GET["e"]))?" checked":"";?>>Exclude</label></span>
-    <input class="form-control autocomplete" data-qftr="user" type="text" pattern="((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16}))(,\s?((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16})))*" id="usr" name="u" placeholder="Separate by single comma(,)"<?php echo $fm?' value="'.$_GET["u"].'"':"";?>>
+  <div class="col-lg-10">
+    <div class="input-group">
+      <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="eus"><input type="checkbox" id="eus" name="e[]" value="u"<?php echo ($fm&&in_array("u",$_GET["e"]))?" checked":"";?>>Exclude</label></span>
+      <input class="form-control autocomplete" data-qftr="user" type="text" pattern="((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16}))(,\s?((#[a-zA-Z_]+)|([a-zA-Z0-9_]{2,16})))*" id="usr" name="u" placeholder="Separate by single comma(,)"<?php echo $fm?' value="'.$_GET["u"].'"':"";?>>
+    </div>
   </div>
 </div>
 <div class="form-group row">
   <label class="col-lg-2 form-control-label" for="blk">Blocks</label>
-  <div class="input-group col-lg-10">
-    <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="ebl"><input type="checkbox" id="ebl" name="e[]" value="b"<?php echo ($fm&&in_array("b",$_GET["e"]))?" checked":"";?>>Exclude</label></span>
-    <input class="form-control autocomplete" data-qftr="material" type="text" pattern="([^:]+:[^:,]+)+" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)"<?php echo $fm?' value="'.$_GET["b"].'"':"";?>>
+  <div class="col-lg-10">
+    <div class="input-group">
+      <span class="dtButtons input-group-btn"><label class="btn btn-secondary" for="ebl"><input type="checkbox" id="ebl" name="e[]" value="b"<?php echo ($fm&&in_array("b",$_GET["e"]))?" checked":"";?>>Exclude</label></span>
+      <input class="form-control autocomplete" data-qftr="material" type="text" pattern="([^:]+:[^:,]+)+" id="blk" name="b" placeholder="minecraft:<block> - Separate by single comma(,)"<?php echo $fm?' value="'.$_GET["b"].'"':"";?>>
+    </div>
   </div>
 </div>
 <div class="form-group row">
@@ -114,11 +118,13 @@ if(!is_writable("./cache/")):?>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="date">Date/Time</label>
-  <div class="input-group col-lg-4 col-sm-10 groups-line">
-    <span class="dtButtons input-group-btn">
-      <label class="btn btn-secondary" for="trv"><input type="checkbox" id="trv" name="asendt"<?php echo ($fm&&$_GET["asendt"]=="on")?" checked":"";?>>Reverse</label>
-    </span>
-    <input class="form-control" type="datetime-local" id="date" name="t" placeholder="0000-00-00T00:00:00"<?php echo $fm?' value="'.$_GET["t"].'"':"";?>>
+  <div class="col-lg-4 col-sm-10 groups-line">
+    <div class="input-group">
+      <span class="dtButtons input-group-btn">
+        <label class="btn btn-secondary" for="trv"><input type="checkbox" id="trv" name="asendt"<?php echo ($fm&&$_GET["asendt"]=="on")?" checked":"";?>>Reverse</label>
+      </span>
+      <input class="form-control" type="datetime-local" id="date" name="t" placeholder="0000-00-00T00:00:00"<?php echo $fm?' value="'.$_GET["t"].'"':"";?>>
+    </div>
   </div>
   <input type="hidden" name="unixtime" value="on">
   <label class="col-sm-2 form-control-label" for="lim">Limit</label>
@@ -127,7 +133,7 @@ if(!is_writable("./cache/")):?>
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-offset-2 col-sm-10">
+  <div class="offset-sm-2 col-sm-10">
     <input class="btn btn-secondary" type="submit" id="submitBtn" value="Make a Lookup">
   </div>
 </div>
@@ -176,16 +182,19 @@ if(!is_writable("./cache/")):?>
 </div>
 
 <!-- Copyright Message -->
-<p>&copy; <?php echo $_index["copyright"];?> &mdash; CoreProtect LWI version 0.8.2-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
-
+<div class="container-fluid">
+<p>&copy; <?php echo str_replace("%year%", date("Y"),$_index["copyright"]);?> &mdash; CoreProtect LWI version 0.9.0-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
+</div>
 <!-- All the scripting needs -->
 <script>
 // Quick Styling for JS-enabled browser
 document.getElementById("corner1").innerHTML = "Center";
 document.getElementById("corner2").innerHTML = "Radius";
 document.getElementById("c2").className = "col-lg-4 col-sm-10";
+// Default: Radius search
 a = document.getElementsByClassName("c2");
 for(var i = 0; i < a.length; i++) a[i].style.display = "none";
+// Add data-toggle attribute to checkboxes (and radio buttons) with dtButtons class
 a = document.getElementsByClassName("dtButtons");
 for(var i = 0; i < a.length; i++) a[i].setAttribute("data-toggle","buttons");
 document.getElementById("x2").setAttribute("placeholder","Radius");
@@ -206,7 +215,7 @@ $PHP_$t = <?php echo ($fm&&$_GET["t"]!=="")?' value="'.$_GET["t"].'"':"false";?>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">// JQuery</script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js">// Dropdown</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js">// Bootstrap dependency</script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous">// Bootstrap (Alpha!)</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous">// Bootstrap (Alpha!)</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js">// datetime-picker dependency</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">// Datetime Picker</script>
 <script src="res/js/out-table.js"></script>
