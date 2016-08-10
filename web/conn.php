@@ -19,6 +19,7 @@ Output status codes:
     2 - SQL Query Unsuccessful
     3 - Database Connection Failed
     4 - Values from cachectrl Not Found
+    5 - Settings Error
     6 - No status code
     7 - (JS-side) Invalid response
 */
@@ -37,17 +38,18 @@ $timer = microtime(true);
 // Code to run right before code terminates
 function _shutdown() {
     global $out,$co_,$timer,$searchSession;
+    
+    // Set type to application/json
+    header('Content-type:application/json;charset=utf-8');
+    
     if(!isset($out[0]["status"])) {
         $out[0]["status"] = 6;
         $out[0]["reason"] = "Uncaught error has made the script terminate too early.";
     }
     $out[0]["duration"] = microtime(true) - $timer;
-    echo json_encode($out);
+    echo json_encode($out, JSON_PARTIAL_OUTPUT_ON_ERROR);
 }
 register_shutdown_function("_shutdown");
-
-// Set type to application/json
-header('Content-type:application/json;charset=utf-8');
 
 
 

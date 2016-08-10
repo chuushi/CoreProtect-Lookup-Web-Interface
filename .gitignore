@@ -1,6 +1,7 @@
-/theme/
-/aspnet_client/
-/web/cache/*
-/old/
+theme/
+aspnet_client/
+web/cache/*
+old/
+
 database.db
-test.php
+
