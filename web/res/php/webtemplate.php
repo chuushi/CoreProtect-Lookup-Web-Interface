@@ -1,14 +1,15 @@
 <?php
 // WebTemplate
-// Constructor: @array Configuration[, @string PageTitle]
+// Constructor: @array Configuration[, @string Username, @string PageTitle]
 // (c) SimonOrJ, 2016
 
 class WebTemplate {
     private $c, $t;
     
-    public function __construct(&$config, $title = "CorePortect Lookup Web Interface &bull; by SimonOrJ") {
+    public function __construct(&$config, $username = false, $title = "CorePortect Lookup Web Interface &bull; by SimonOrJ") {
         $this->c = &$config;
         $this->t = $title;
+        $this->u = $username;
     }
     // Head
     public function head() {?>
@@ -30,15 +31,16 @@ class WebTemplate {
     public function navbar($shownavs = true) {?>
 <nav id="top" class="navbar navbar-light bg-faded navbar-full">
   <div class="container">
-    <a class="navbar-brand" href="./">CoreProtect Lookup Web Interface</span>
+    <a class="navbar-brand" href="./">CoreProtect Lookup Web Interface</a>
     <ul class="nav navbar-nav">
 	  <?php if ($shownavs) foreach($this->c['navbar'] as $ll => $hf) echo '<li class="nav-item"><a class="nav-link" href="'.$hf.'">'.$ll.'</a></li>';?>
     </ul>
-    <?php
-//if ("<a href="./?action=clear_login" class="btn btn-outline-info pull-xs-right">"
-if ($this->c['login']['required']) echo'<a href="./login.php?action=logout" class="btn btn-outline-info pull-xs-right">logout</a>';
-
-    ?>
+    <div class="nav pull-xs-right">
+      <?php if ($this->u):?>
+      <span style="margin-right:.5rem;">Hello, <?php echo $this->u;?>!</span>
+      <?php endif;?>
+      <a href="./login.php<?php if ($this->u) echo "?action=logout"?>" class="btn btn-outline-info"><?php echo $this->u ? "logout" : "login";?></a>
+    </div>
   </div>
 </nav>
 <?php

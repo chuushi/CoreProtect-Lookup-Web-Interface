@@ -32,13 +32,6 @@ include "pdowrapper.php";
 if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty($_GET['submit'])) {
     // Out variable
     $out = array(0);
-    // TODO: Do a user permission check.
-    
-    // if user is not logged in or if does not have permission
-    // rediect to login page.
-    //"login.php?next=settings.php"
-    //exit();
-    // endif
 
     switch ($_GET['submit']) {
         case "server":
@@ -258,7 +251,7 @@ $c = include "config.php";
 // If not called from the interface, then:
 if (empty($_GET["fromLookup"])):
 require "/res/php/webtemplate.php";
-$template = new WebTemplate($c, "Setup - CoLWI");
+$template = new WebTemplate($c, $login->username(), "Setup &bull; CoLWI");
 ?>
 <!doctype html>
 <html>

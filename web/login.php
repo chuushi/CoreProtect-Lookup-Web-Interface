@@ -15,7 +15,7 @@ if (empty($_REQUEST['action'])) {
 } else {
     if ($_REQUEST['action'] === "login") {
         if (($status = $login->login($_POST['bah'], $_POST['dun'], !empty($_POST['pen']))) === true) {
-            header("Location: ".$_GET['landing']);
+            header("Location: ".(empty($_GET['landing']) ? "./" : $_GET['landing']));
         } elseif ($status === false) {
             $msg = array("Wrong username or password.", "danger");
         }
@@ -44,7 +44,7 @@ if (empty($msg)) {
 }
 
 require "res/php/webtemplate.php";
-$template = new WebTemplate($c);
+$template = new WebTemplate($c, $login->username(), "Login page &bull; CoLWI");
 
 ?><!DOCTYPE html>
 <html>
@@ -52,14 +52,6 @@ $template = new WebTemplate($c);
   <?php $template->head(); ?>
   
   <body>
-  <!--
-    <nav id="top" class="navbar navbar-light bg-faded navbar-full">
-      <div class="container">
-        <h1 class="navbar-brand">CoreProtect Lookup Web Interface</h1>
-        <a href="index.php?action=clear_login" class="btn btn-info-outline pull-xs-right disabled">logout</a>
-      </div>
-    </nav>
-    -->
     <?php $template->navbar($status); ?>
     <div class="container">
       <div class="card">
