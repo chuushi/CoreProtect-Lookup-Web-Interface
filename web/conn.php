@@ -37,7 +37,7 @@ $timer = microtime(true);
 
 // Code to run right before code terminates
 function _shutdown() {
-    global $out,$co_,$timer,$searchSession;
+    global $out,$timer,$searchSession;
     
     // Set type to application/json
     header('Content-type:application/json;charset=utf-8');
@@ -56,17 +56,26 @@ register_shutdown_function("_shutdown");
 // Load Modules
 /*if(file_exists("cache/setup.php")) require "cache/config.php";
 else {
-    $out[0]["status"] = 3;
-    $out[0]["reason"] = "Settings not configured; please visit config.php first.";
+    $out[0]["status"] = 5;
+    $out[0]["reason"] = "Settings not configured; please visit setup.php first.";
     exit();
 }*/
-require "settings.php";
+
+if (!file_exists($server = "server/".$_REQUEST["server"].".php")) {
+    // Server doesn't exist.
+    $out[0]["status"] = 5;
+    $out[0]["reason"] = "Server configuration does not exist.";
+    exit();
+}
+
+$server = require $server;
+$c = require "config.php";
 require "pdowrapper.php";
 require "cachectrl.php";
 require "bukkittominecraft.php";
 
 // Create class
-$codb = pdoWrapper($_sql);
+$codb = pdoWrapper($server['db']);
 
 // When PDO failed to connect
 if (is_a($codb, "PDOException")) {
@@ -76,8 +85,8 @@ if (is_a($codb, "PDOException")) {
 
 
 // Module Classes
-$Cc = new CacheCtrl($codb,$co_,$legacySupport);
-$Cm = ($translateCo2Mc) ? new BukkitToMinecraft() : new KeepBukkit();
+$Cc = new CacheCtrl($codb,$server['co'],$server['legacy']);
+$Cm = ($c['form']['bukkitToMc']) ? new BukkitToMinecraft() : new KeepBukkit();
 
 // Special Material list
 $signBlocks = ["minecraft:standing_sign","minecraft:wall_sign"];
@@ -322,7 +331,7 @@ if (true) {
 
     // Make query heading
     function sqlreq($table) {
-        global $co_, $filter;
+        global $server, $filter;
         $where[0] = $filter['time'];
         if($filter['userid'])
             $where[] = ($table == "username") ? $filter['username'] : $filter['userid'];
@@ -358,7 +367,7 @@ if (true) {
                 $select .= ($table == "username_log")? sel("uuid","data") : sel("message","data");
                 $select .= sel(0,"amount").sel(0,"action").sel(0,"rolled_back");
         }
-        return "SELECT time,'".$table."' AS 'table',user".$select." FROM ".$co_.$table.((empty($where)) ? "" : " where ".implode(" AND ",$where));
+        return "SELECT time,'".$table."' AS 'table',user".$select." FROM ".$server['co'].$table.((empty($where)) ? "" : " where ".implode(" AND ",$where));
     }
     
     foreach($q['a'] as $pa) {
@@ -414,7 +423,7 @@ if ($lookup->execute()) {
                 if ($r["action"] == 2) $r["table"] = "click";
                 $r["type"] = $Cm->getMc($Cc->getValue($r["type"],"material"));
                 if(in_array($r["type"],$signBlocks,true)) {
-                    $sign = $codb->query("SELECT line_1,line_2,line_3,line_4 FROM ".$co_."sign WHERE x=".$r["x"]." AND y=".$r["y"]." AND z=".$r["z"]." AND time".(($r["action"]=="0")?"<":">=").$r["time"]." ORDER BY time ".(($r["action"]=="0")?"DESC":"ASC")." LIMIT 1;")->fetch(PDO::FETCH_NUM);
+                    $sign = $codb->query("SELECT line_1,line_2,line_3,line_4 FROM ".$server['co']."sign WHERE x=".$r["x"]." AND y=".$r["y"]." AND z=".$r["z"]." AND time".(($r["action"]=="0")?"<":">=").$r["time"]." ORDER BY time ".(($r["action"]=="0")?"DESC":"ASC")." LIMIT 1;")->fetch(PDO::FETCH_NUM);
                     if($sign!=NULL)foreach($sign as $val) {
                         if(trim($val)!="") {
                             $r["signdata"]=$sign;

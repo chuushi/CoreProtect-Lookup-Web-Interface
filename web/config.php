@@ -21,7 +21,7 @@
   'user' => 
   array (
     # Optional: Change and set-up the admin user.
-    'admin' => 
+    'admin' =>
     array (
       # 1. Set the password.
       'pass' => 'password',
@@ -50,13 +50,14 @@
     'BanManager' => '../banmanager/',
     'Dynmap' => 'http://127.0.0.1:8123/',
   ),
-  # Optional: configure this just by using this file?
+  # Optional: configure this just by using this file.
   'form' => 
   array (
-    'dateFormat' => 'll',
-    'timeFormat' => 'LTS',
-    'timeDividor' => 300,
+    'dateFormat'   => 'll',
+    'timeFormat'   => 'LTS',
+    'timeDividor'  => 300,
     'pageInterval' => 25,
+    'bukkitToMc'   => true,     // Translate Bukkit block/item names to MC name
   ),
   'copyright' => 'SimonOrJ, 2015-%year%',
 );?>

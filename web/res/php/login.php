@@ -2,12 +2,8 @@
 // Original Login Script by richcheting from http://www.ricocheting.com/code/php/simple-login
 
 // Login
-// Constructor: @array Configuration[, @string LandingPage]
+// Constructor: @array Configuration[, @string PostLoginPage]
 // (c) SimonOrJ, 2015-2016
-
-// Testing script
-error_reporting(-1);ini_set('display_errors', 'On');
-
 
 // TODO: Make a more secure login sessions.
 
@@ -24,13 +20,14 @@ class Login{
     }
     
     public function authorize() {
-        // If cookie is set
+        // If cookie is set (remembered session)
         if (isset($_COOKIE[$this->prefix . 'user'])) {
+            // make session equal to cookie
             $_SESSION[$this->prefix . 'user'] = $_COOKIE[$this->prefix . 'user'];
             $_SESSION[$this->prefix . 'pass'] = $_COOKIE[$this->prefix . 'pass'];
         }
 
-        if (isset($_POST['action']) && $_POST['action'] == "set_login") {
+        if (isset($_POST['action']) && $_POST['action'] == "login") {
             // Login
             $this->user = $_POST['user'];
             $this->pass = md5($this->prefix . $_POST['pass']);
@@ -49,7 +46,7 @@ class Login{
             if (!empty($_COOKIE[$this->prefix . 'user'])) setcookie($this->prefix . "user", NULL, -1, "/");
             if (!empty($_COOKIE[$this->prefix . 'pass'])) setcookie($this->prefix . "pass", NULL, -1, "/");
             $this->prompt();
-        } elseif (isset($_GET['action']) && $_GET['action'] == "clear_login") {
+        } elseif (isset($_GET['action']) && $_GET['action'] == "clear_session") {
             // Logout
             session_unset();
             session_destroy();
@@ -84,7 +81,7 @@ class Login{
         }
     }
 
-    function prompt($msg = '') {?><!DOCTYPE html>
+    private function prompt($msg = '') {?><!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -144,11 +141,4 @@ class Login{
         exit;
     }
 }
-
-// If the page was loaded directly
-if (true) {
-    session_start();
-    $login = new Login;$login->authorize();
-}
-
 ?>
