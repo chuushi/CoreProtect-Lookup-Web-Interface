@@ -14,7 +14,7 @@
     'path' => '../database.db', // sqlite; Relative to webroot
   ),
   'co'     => 'co_',            // Prefix.
-  'legacy' => true,             // Did this start logging below CP v2.11?
+  'legacy' => false,            // Did this start logging below CP v2.11?
   'dynmap' =>                   // If no dynmap, erase/comment out the array
                                 //   below and set this to false.
   array(
