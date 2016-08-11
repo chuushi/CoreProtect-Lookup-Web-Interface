@@ -26,7 +26,13 @@ require "res/php/webtemplate.php";
 $template = new WebTemplate($c, $login->username());
 
 // Is the lookup options in the GET request? (Check only via "action")
-$gr = !empty($_GET['a']); // idk what "gr" stands for...
+if ($gr = !empty($_GET['a'])) { // I forgot what "gr" stands for...
+    $moreQuery = $_GET;
+    if (!empty($moreQuery['lim'])) {
+        $moreQuery['offet'] = $_GET['lim'];
+        unset($moreQuery['lim']);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -173,7 +179,7 @@ for ($i = 2; $i < count($sv[0]); $i++) {
     <div class="input-group">
       <span class="dtButtons input-group-btn">
         <label class="btn btn-secondary" for="eus">
-          <input type="checkbox" id="eus" name="e[]" value="u"<?php if ($gr && in_array("u",$_GET["e"])) echo " checked";?>>
+          <input type="checkbox" id="eus" name="e[]" value="u"<?php if ($gr && $e = !empty($_GET['e']) && in_array("u",$_GET["e"])) echo " checked";?>>
           Exclude
         </label>
       </span>
@@ -187,7 +193,7 @@ for ($i = 2; $i < count($sv[0]); $i++) {
     <div class="input-group">
       <span class="dtButtons input-group-btn">
         <label class="btn btn-secondary" for="ebl">
-          <input type="checkbox" id="ebl" name="e[]" value="b"<?php if ($gr && in_array("b",$_GET["e"])) echo " checked";?>>
+          <input type="checkbox" id="ebl" name="e[]" value="b"<?php if ($gr && $e && in_array("b",$_GET["e"])) echo " checked";?>>
           Exclude
         </label>
       </span>
@@ -240,15 +246,15 @@ for ($i = 2; $i < count($sv[0]); $i++) {
 </div>
 
 <!-- Load More form -->
-<form class="container" id="loadMore"><!--action=""-->
+<form class="container" id="loadMore" method="post" action="./<?php if (!empty($moreQuery)) echo "?".http_build_query($moreQuery)?>">
 <div class="row">
   <div class="col-sm-offset-2 col-sm-8 form-group input-group">
-    <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="Broken; will work on v0.9.0" disabled>
+    <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="10">
   </div>
 </div>
 <div class="form-group row">
   <div class="col-sm-offset-2 col-sm-8">
-    <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more" disabled>
+    <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more">
   </div>
 </div>
 </form>
@@ -265,13 +271,13 @@ for ($i = 2; $i < count($sv[0]); $i++) {
       <?php if ($c['user'][$un]['perm'] === 0):?>
       <a class="dropdown-item" href="setup.php">Setup</a>
       <?php endif;?>
-      <button id="purgeCache" class="dropdown-item list-group-item-danger">Purge server cache</button>
-      <button id="purgeCache" class="dropdown-item list-group-item-danger">Purge all cache</button>
+      <button id="purgeThisCache" class="dropdown-item list-group-item-danger">Purge server cache</button>
+      <button id="purgeAllCache" class="dropdown-item list-group-item-danger">Purge all cache</button>
     </div>
     <?php endif;?>
   </div>
   <?php endif;?>
-  <p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.<!-- or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.--><br>This webserver is running PHP <?php echo phpversion();?>.</p>
+  <p>If you encounter any issues, please open an issue on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.<br>This webserver is running PHP <?php echo phpversion();?>.</p>
 </div>
 
 <!-- Copyright Message -->

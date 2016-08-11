@@ -62,14 +62,18 @@ if ($c['login']['required']) {
 }
 
 
-// Load Modules
-/*if(file_exists("cache/setup.php")) require "cache/config.php";
-else {
+// Check for required variables
+if (empty($_REQUEST['server'])) {
+    // Required server variable is missing.
     $out[0]["status"] = 5;
-    $out[0]["reason"] = "Settings not configured; please visit setup.php first.";
+    $out[0]["reason"] = "Server variable does not exist.";
     exit();
-}*/
-
+}
+if (empty($_REQUEST['a'])) {
+    $out[0]["status"] = 1;
+    $out[0]["reason"] = "No action to lookup.";
+    exit();
+}
 // Check if server exists
 if (!file_exists($server = "server/".$_REQUEST['server'].".php")) {
     // Server doesn't exist.
@@ -78,6 +82,7 @@ if (!file_exists($server = "server/".$_REQUEST['server'].".php")) {
     exit();
 }
 
+// Load Modules
 $server = require $server;
 require "pdowrapper.php";
 require "cachectrl.php";

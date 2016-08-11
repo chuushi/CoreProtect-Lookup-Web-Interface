@@ -1,4 +1,10 @@
 <?php
+// function pdoWrapper
+// (c) SimonOrJ, 2015-2016
+
+// Parameter @array database
+//   returns @PDO on success or @PDOException on failure.
+
 function pdoWrapper($d) {
     try {
         $p = ($d["type"] === "mysql")
