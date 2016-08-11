@@ -76,13 +76,16 @@ if (!is_writable("./cache/")):?>
   <div class="col-sm-10">
     <select class="form-control" id="lServer" name="server">
 <?php
-$sv = array(scandir("server/"), isset($_GET['server']), "");
-for ($i = 2; $i < count($sv[0]); $i++) {
-    $sv[2] = substr($sv[0][$i], 0, strlen($sv[0][$i])-4);
+// List servers
+$sv = new FilesystemIterator("server/");
+$svSet = isset($_GET['server']);
+foreach ($sv as $fi) {
+    if ($fi->getExtension() !== "php") continue;
+    
     echo "<option";
-    if ($sv[1] && $_GET['server'] === $sv[2])
+    if ($svSet && $_GET['server'] === $fi->getBasename(".php"))
         echo " selected";
-    echo ">".$sv[2]."</option>";
+    echo ">".$fi->getBasename(".php")."</option>";
 }
 ?>
     </select>
@@ -246,7 +249,7 @@ for ($i = 2; $i < count($sv[0]); $i++) {
 </div>
 
 <!-- Load More form -->
-<form class="container" id="loadMore" method="post" action="./<?php if (!empty($moreQuery)) echo "?".http_build_query($moreQuery)?>">
+<form class="container" id="loadMore" method="post" action="./<?php if (!empty($moreQuery)) echo "?".http_build_query($moreQuery);?>">
 <div class="row">
   <div class="col-sm-offset-2 col-sm-8 form-group input-group">
     <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="10">
@@ -254,7 +257,7 @@ for ($i = 2; $i < count($sv[0]); $i++) {
 </div>
 <div class="form-group row">
   <div class="col-sm-offset-2 col-sm-8">
-    <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more">
+    <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more"<?php if (empty($moreQuery)) echo " disabled";?>>
   </div>
 </div>
 </form>
@@ -271,7 +274,7 @@ for ($i = 2; $i < count($sv[0]); $i++) {
       <?php if ($c['user'][$un]['perm'] === 0):?>
       <a class="dropdown-item" href="setup.php">Setup</a>
       <?php endif;?>
-      <button id="purgeThisCache" class="dropdown-item list-group-item-danger">Purge server cache</button>
+      <button id="purgeServerCache" class="dropdown-item list-group-item-danger">Purge server cache</button>
       <button id="purgeAllCache" class="dropdown-item list-group-item-danger">Purge all cache</button>
     </div>
     <?php endif;?>
@@ -306,7 +309,6 @@ document.getElementById("x2").setAttribute("placeholder","Radius");
 document.getElementById("date").setAttribute("placeholder","")
 document.getElementById("date").setAttribute("type","text");
 document.getElementById("date").removeAttribute("name");
-document.getElementById("loadMoreBtn").setAttribute("disabled","");
 // Get variables from the settings
 
 var $config = <?php echo json_encode($c);?>;
@@ -323,6 +325,7 @@ $fm = <?php echo $gr?"true":"false";?>;
 $PHP_$t = <?php echo ($gr&&$_GET["t"]!=="")?' value="'.$_GET["t"].'"':"false";?>;
 </script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">// JQuery</script>
+<script src="res/js/buttons.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js">// Dropdown</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js">// Bootstrap dependency</script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous">// Bootstrap (Alpha!)</script>

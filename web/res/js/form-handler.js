@@ -1,8 +1,8 @@
-/* CoreProtect LWI - v0.8.1-beta
- * Javascript code by SimonOrJ.
+/* CoreProtect LWI - v0.9.0-beta
+ * (c) SimonOrJ, 2015-2016
  * this uses jQuery and jQuery UI.
  */
-function formHandler() {
+(function () {
 "use strict";
 $("#date").datetimepicker({format:$dateFormat+" "+$timeFormat});
 $("[for=abl]").addClass("active");
@@ -10,18 +10,11 @@ $('[data-toggle="tooltip"]').tooltip();
 
 // If URL contains lookup data
 if($fm){
-    var fixChecked = function(e) {
-        if($(e).prop("checked")){$(e).parent().addClass("active");}
-        else{$(e).parent().removeClass("active");}
-    };
-    $("[name='a[]']").each(function() {fixChecked(this);});
-    $("[name='e[]']").each(function() {fixChecked(this);});
-    $("[name='rollback']").each(function() {fixChecked(this);});
-    fixChecked($("#trv"));
-    if($PHP_$t){$("#date").val(moment($PHP_$t).format($dateFormat+" "+$timeFormat));}
+    // Most of the checking is done in buttons.js.
     if(($("#y2").val()!=="")||($("#z2").val()!=="")) {radius(true);}
-}
 
+    if($PHP_$t){$("#date").val(moment($PHP_$t).format($dateFormat+" "+$timeFormat));}
+}
 
 // Radius/Corners toggle
 function radius(boolCorner) {
@@ -52,46 +45,46 @@ function csvAppend(csv,add) {
 // Autocomplete
 var qftr;
 $( ".autocomplete" )
-  // don't navigate away from the field on tab when selecting an item
-  .bind( "keydown", function( event ) {
+    // don't navigate away from the field on tab when selecting an item
+    .bind( "keydown", function( event ) {
       if ( event.keyCode === $.ui.keyCode.TAB &&
           $( this ).autocomplete( "instance" ).menu.active ) {
         event.preventDefault();
       }
       qftr = $(this).attr("data-qftr");
-  })
-  .autocomplete({
-    source: function( request, response ){
-        var a = request.term.split(/, ?/);
-        $.ajax("autocomplete.php",{
-          data: {
-            a : qftr,
-            b : a.pop(),
-            e : a,
-            l : 6
-          },
-          dataType:"json",
-          method:"POST",
-          success:function(data){
-              response(data);
-          }
-        });
-    },
-    focus: function( event, ui ) {
-        var terms = this.value.split(/, ?/);
-        terms.pop();
-        terms.push( ui.item.value );
-        this.value = terms.join( ", " );
-        return false;
-    },
-    select: function( event, ui ) {
-        var terms = this.value.split(/, ?/);
-        terms.pop();
-        terms.push( ui.item.value );
-        this.value = terms.join( ", " );
-        return false;
-    }
-});
+    })
+    .autocomplete({
+        source: function( request, response ){
+            var a = request.term.split(/, ?/);
+            $.ajax("autocomplete.php",{
+              data: {
+                a : qftr,
+                b : a.pop(),
+                e : a,
+                l : 6
+              },
+              dataType:"json",
+              method:"POST",
+              success:function(data){
+                  response(data);
+              }
+            });
+        },
+        focus: function( event, ui ) {
+            var terms = this.value.split(/, ?/);
+            terms.pop();
+            terms.push( ui.item.value );
+            this.value = terms.join( ", " );
+            return false;
+        },
+        select: function( event, ui ) {
+            var terms = this.value.split(/, ?/);
+            terms.pop();
+            terms.push( ui.item.value );
+            this.value = terms.join( ", " );
+            return false;
+        }
+    });
 
 // Dropdown Menu Listener
 $("#output").on("click",".rDrop .cPointer",function(){
@@ -173,16 +166,31 @@ $("#output").on("click",".rDrop .cPointer",function(){
         }
     }
 });
-$("#purgeCache").click(function() {
-    if(confirm("Do you want to purge the cache? You won't lose any permanent data.")) {
-        $.ajax("purge.php",{
-          dataType:"json",
-          success:function(data){
-              if(data[0]) {alert("The ./cache/ directory was purged successfully.");}
-              else {alert("Purge was unsuccessful. Please check your settings.");}
-          }
+
+// Purge server cache button
+$("#purgeServerCache").click(function() {
+    var server = $("#lServer").val();
+    if(confirm("Do you want to purge \""+server+"\" server's cache? You won't lose any permanent data.")) {
+        $.ajax("purge.php?server="+server,{
+            dataType:"json",
+            success:function(data){
+                if(data[0]) {alert("The \""+server+"\" server's cache was cleared successfully.");}
+                else {alert("Unfortunately, the purge of \""+server+"\" server's cache was unsuccessful."+(data[1]?"\nReason: "+data[1]:""));}
+            }
         });
     }
 });
-}
-formHandler();
+
+// Purge all cache button
+$("#purgeAllCache").click(function() {
+    if(confirm("Do you want to purge all of the cache? You won't lose any permanent data.")) {
+        $.ajax("purge.php?all=on",{
+            dataType:"json",
+            success:function(data){
+                if(data[0]) {alert("The ./cache/ directory was cleared successfully.");}
+                else {alert("Unfortunately, the purge was unsuccessful."+(data[1]?"\nMessage"+data[1]:""));}
+            }
+        });
+    }
+});
+}());

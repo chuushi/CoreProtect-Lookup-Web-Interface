@@ -232,7 +232,7 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
     
     // If js works, return JSON of $out
     if ($_POST['js'] !== "disabled") {
-//        header('Content-type:application/json;charset=utf-8');
+        header('Content-type:application/json;charset=utf-8');
         echo json_encode($out,JSON_PARTIAL_OUTPUT_ON_ERROR);
         exit();
     }
@@ -249,6 +249,7 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             // Empty array
             $c = array();
         }
+        header('Content-type:application/json;charset=utf-8');
         echo json_encode($c,JSON_PARTIAL_OUTPUT_ON_ERROR);
 
         exit();
@@ -288,9 +289,11 @@ $template = new WebTemplate($c, $login->username(), "Setup &bull; CoLWI");
         <option value="">new</option>
         <option disabled>------</option>
 <?php
-$serv = scandir("server/");
-for ($i = 2; $i < count($serv); $i++) {
-    echo "<option>".substr($serv[$i], 0, strlen($serv[$i])-4)."</option>";
+// List servers
+$sv = new FilesystemIterator("server/");
+foreach ($sv as $fi) {
+    if ($fi->getExtension() !== "php") continue;
+    echo "<option>".$fi->getBasename(".php")."</option>";
 }
 ?>
       </select>

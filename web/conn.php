@@ -407,7 +407,7 @@ if (true) {
     $tables = "";
     if(($out[0]["SQLqs"]=count($sql)) > 1) foreach($sql as $key => $val) {
         if($key) $tables .= " UNION ALL ";
-        $tables .= "SELECT * FROM (".$val." ORDER BY time ".(($asendt)?"ASC":"DESC")." LIMIT ?) AS T".$key;
+        $tables .= "SELECT * FROM (".$val." ORDER BY time ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?) AS T".$key;
     }
     $lookup = $codb->prepare($sql = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY time ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?,?;");
     $out[0]["SQL"] = $sql;
