@@ -49,7 +49,8 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                 $file = $_POST['name'];
             }
             
-            if (empty($_POST['name']) && ($file = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file)) !== $_POST['newName']) {
+            // Check for valid name
+            if (empty($_POST['name']) && ($file = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file)) !== $_POST['newname']) {
                 // warn about illegal server name
                 $out = array(5, "Server name includes illegal characters. Consider using \"".$file."\".");
                 break;
@@ -164,6 +165,12 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                 // Update existing server
                 if (file_exists($file)) {
                     
+                    // Check if any update variable was set.
+                    if (empty($_POST['update'])) {
+                        $out = array(5, "There is nothing to update.");
+                        break;
+                    }
+                    
                     // Load the file
                     $s = include $file;
                     
@@ -214,6 +221,7 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             if (!empty($_POST['timeFormat']))   $c['form']['timeFormat']   = $_POST['timeFormat'];
             if (!empty($_POST['timeDividor']))  $c['form']['timeDividor']  = intval($_POST['timeDividor']);
             if (!empty($_POST['pageInterval'])) $c['form']['pageInterval'] = intval($_POST['pageInterval']);
+            if (!empty($_POST['bukkitToMc']))   $c['form']['bukkitToMc']   = $_POST['pageInterval'] === true;
             if (!empty($_POST['copyright']))    $c['copyright']            = $_POST['copyright'];
             
             // Save file
@@ -399,11 +407,20 @@ for ($i = 2; $i < count($serv); $i++) {
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfTDiv">Tab Interval (s)</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="cfTdiv" name="timeDividor" placeholder="300" value="<?php echo $c['form']['timeDividor'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfTdiv" name="timeDividor" placeholder="300" value="<?php echo $c['form']['timeDividor'] ?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfPage">Page Interval</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="cfPage" name="pageInterval" placeholder="25" value="<?php echo $c['form']['pageInterval'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfPage" name="pageInterval" placeholder="25" value="<?php echo $c['form']['pageInterval'] ?>"></div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="cfCopy">Item names</label> 
+  <div class="col-sm-10">
+    <select class="form-control" id="cfCopy" name="bukkitToMc">
+      <option value="true"<?php if ($c['form']['bukkitToMc']) echo " selected";?>>Mincraft item names</option>
+      <option value="false"<?php if (!$c['form']['bukkitToMc']) echo " selected";?>>Bukkit item names</option>
+    </select>
+  </div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfCopy">Copyright</label>
