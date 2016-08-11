@@ -8,6 +8,22 @@ Prereq:
 // Testing script
 error_reporting(-1);ini_set('display_errors', 'On');
 
+// Load configuration
+$c = require "config.php";
+
+// Login and permission check
+require "res/php/login.php";
+$login = new Login($c);
+if (!$login->check()) {
+    header("Location: login.php?landing=setup.php");
+    exit();
+}
+if ($c['user'][$login->username()]['perm'] !== 0) {
+    // Not enough permission.
+    header("Location: ./?from=setup.php");
+    exit();
+}
+
 
 include "pdowrapper.php";
 
@@ -60,7 +76,7 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             }
             
             // Possible: new, update
-            $c = array();
+            $s = array();
             
             if (empty($_POST['prefix'])) {
                 // Check for empty required fields
@@ -118,7 +134,7 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                 // New server
                 if (!file_exists($file)) {
                     if ($_POST['type'] === "mysql") {
-                        $c = array(
+                        $s = array(
                             'db' => array (
                                 'type' => 'mysql',
                                 'host' => $_POST['host'],
@@ -129,7 +145,7 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                         );
                     }
                     elseif ($_POST['type'] === "sqlite") {
-                        $c = array(
+                        $s = array(
                             'db' => array (
                                 'type' => 'sqlite',
                                 'path' => $_POST['path']
@@ -137,9 +153,9 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                         );
                     }
 
-                    $c['co'] = $_POST['prefix'];
-                    $c['legacy'] = $legacy;
-                    $c['dynmap'] = empty($_POST['dynmap']['link'])
+                    $s['co'] = $_POST['prefix'];
+                    $s['legacy'] = $legacy;
+                    $s['dynmap'] = empty($_POST['dynmap']['link'])
                             ? false 
                             : array(
                                 'link' => $_POST['dynmap']['link'],
@@ -156,10 +172,10 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                 if (file_exists($file)) {
                     
                     // Load the file
-                    $c = include $file;
+                    $s = include $file;
                     
                     // If this is in the "update" array, do the following.
-                    if (in_array("db",$_POST['update'],true)) $c['db'] = $_POST['type'] === "mysql"
+                    if (in_array("db",$_POST['update'],true)) $s['db'] = $_POST['type'] === "mysql"
                             ? array (
                                 'type' => 'mysql',
                                 'host' => $_POST['host'],
@@ -172,8 +188,8 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                                 'path' => $_POST['path']
                             );
                             // TODO: Re-evaluate legacy variable.
-                    if (in_array("prefix",$_POST['update'],true)) $c['co'] = $_POST['prefix'];
-                    if (in_array("dynmap",$_POST['update'],true)) $c['dynmap'] = empty($_POST['dynmap']['link'])
+                    if (in_array("prefix",$_POST['update'],true)) $s['co'] = $_POST['prefix'];
+                    if (in_array("dynmap",$_POST['update'],true)) $s['dynmap'] = empty($_POST['dynmap']['link'])
                             ? false
                             : array(
                                 'link' => $_POST['dynmap']['link'],
@@ -188,7 +204,7 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             }
             
             // Save file
-            file_put_contents($file,"<?php return ".var_export($c,true).";?>");
+            file_put_contents($file,"<?php return ".var_export($s,true).";?>");
             
             break;
         case "user":
@@ -196,9 +212,6 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             break;
         case "config":
         default:
-            // Load configuration
-            $c = include "config.php";
-            
             // TODO: make this work.
             if (!empty($_POST['navbar']))$c['navbar'] = array (
                 'Home' => '/',
@@ -244,31 +257,18 @@ $c = include "config.php";
 
 // If not called from the interface, then:
 if (empty($_GET["fromLookup"])):
+require "/res/php/webtemplate.php";
+$template = new WebTemplate($c, "Setup - CoLWI");
 ?>
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>CorePortect Lookup Web Interface &bull; by SimonOrJ</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
-  <link rel="stylesheet" href="res/css/main.css">
-</head>
+
+<?php $template->head();?>
+
 <body>
 
 <!-- Top navigation bar -->
-<nav id="top" class="navbar navbar-light bg-faded navbar-full">
-  <div class="container">
-    <span class="navbar-brand">CoreProtect Lookup Web Interface</span>
-    <ul class="nav navbar-nav">
-	  <?php foreach($c["navbar"] as $ll => $hf) echo '<li class="nav-item"><a class="nav-link" href="'.$hf.'">'.$ll.'</a></li>';?>
-    </ul>
-    <?php echo $_login["required"]?'<a href="./?action=clear_login" class="btn btn-outline-info pull-xs-right">logout</a>':"";?>
-  </div>
-</nav>
+<?php $template->navbar();?>
 <?php endif; ?>
 <!-- Server Settings -->
 <div class="container">

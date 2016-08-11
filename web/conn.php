@@ -25,15 +25,22 @@ Output status codes:
 */
 
 // Testing script
-//error_reporting(-1);ini_set('display_errors', 'On');
-
-// Logger https://craig.is/writing/chrome-logger
-//require "ChromePhp.php";
-//hromePhp::log('conn.php has been called.');
-//ChromePhp::warn('Sample Warning.');
+error_reporting(-1);ini_set('display_errors', 'On');
 
 // Record start time
 $timer = microtime(true);
+
+// Load config
+$c = require "config.php";
+
+// Login check
+require "res/php/login.php";
+$login = new Login($c);
+if (!$login->check()) {
+    header("Location: login.php");
+    exit();
+}
+unset($login);
 
 // Code to run right before code terminates
 function _shutdown() {
@@ -69,7 +76,6 @@ if (!file_exists($server = "server/".$_REQUEST["server"].".php")) {
 }
 
 $server = require $server;
-$c = require "config.php";
 require "pdowrapper.php";
 require "cachectrl.php";
 require "bukkittominecraft.php";

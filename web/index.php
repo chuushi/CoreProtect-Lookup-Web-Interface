@@ -6,6 +6,21 @@ error_reporting(-1);ini_set('display_errors', 'On');
 // Get the configuration variable.
 $c = require "config.php";
 
+// Check login status.
+require "res/php/login.php";
+$login = new Login($c);
+
+if ($login->check() !== true) {
+    header("Location: login.php?landing=.%2F");
+    exit();
+}
+
+/* Psuedocode:
+if not logged in
+    redirect to 
+    exit
+*/
+
 // Get the template file and initiate its class.
 require "res/php/webtemplate.php";
 $template = new WebTemplate($c);
@@ -34,8 +49,14 @@ $template->navbar();
 </nav>
 
 <div class="container">
-<?php // If it doesn't have write permission to the ./cache directory
-if(!is_writable("./cache/")):?>
+<?php
+// Rejected from setup.php
+if (!empty($_GET['from']) && $_GET['from'] === "setup.php" && $c['user'][$login->username()]['perm'] !== 0):
+?>
+<div class="alert alert-info alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Info:</strong> You were redirected from <code>setup.php</code> because you did not have sufficient permission.  Please consult your administrator.</div>
+<?php endif;
+// If it doesn't have write permission to the ./cache directory
+if (!is_writable("./cache/")):?>
 <!-- Write alert box -->
 <div class="alert alert-warning alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Notice:</strong> The directory <code>./cache/</code> is not writable. Lookup may take marginally longer to process, and autocomplete will not have updated data. Please refer to readme.md for setup information.</div>
 <?php endif;?>
@@ -241,9 +262,14 @@ for ($i = 2; $i < count($sv[0]); $i++) {
     <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Advanced
     </button>
+    <?php if ($c['user'][$login->username()]['perm'] <= 1):?>
     <div class="dropdown-menu" aria-labelledby="Advanced">
+      <?php if ($c['user'][$login->username()]['perm'] === 0):?>
+      <a class="dropdown-item" href="setup.php">Setup</a>
+      <?php endif;?>
       <button id="purgeCache" class="dropdown-item list-group-item-danger">Purge cache</button>
     </div>
+    <?php endif;?>
   </div><p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.<!-- or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.--><br>This webserver is running PHP <?php echo phpversion();?>.</p>
 </div>
 
