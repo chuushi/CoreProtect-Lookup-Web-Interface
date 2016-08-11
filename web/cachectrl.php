@@ -40,7 +40,7 @@ class CacheCtrl {
     }
     
     public function __destruct() {
-        if (!file_exists($this->fr))
+        if (!is_dir(dirname(__FILE__).'/'.$this->fr))
             mkdir(dirname(__FILE__).'/'.$this->fr);
         foreach($this->ALL as $v) {
             $e = $v."Lookup";

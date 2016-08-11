@@ -276,7 +276,7 @@ for ($i = 2; $i < count($sv[0]); $i++) {
 
 <!-- Copyright Message -->
 <div class="container-fluid">
-<p>&copy; <?php echo str_replace("%year%", date("Y"),$_index["copyright"]);?> &mdash; CoreProtect LWI version 0.9.0-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
+<p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?> &mdash; CoreProtect LWI version 0.9.0-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
 </div>
 
 <!-- All the scripting needs -->
