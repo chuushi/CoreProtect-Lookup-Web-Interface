@@ -1,14 +1,27 @@
 <?php /* CoreProtect LWI - v0.8.0-beta * Login Script by richcheting from http://www.ricocheting.com/code/php/simple-login */
-require_once __DIR__."/../settings.php";
-define('LOGIN_USER',$_login["username"]);
-define('LOGIN_PASS',$_login["password"]);
-define('LOGIN_DURATION',$_login["duration"]*86400);
+
+// Testing script
+error_reporting(-1);ini_set('display_errors', 'On');
+
+
+// For those missing password_hash
+//require "res/php/password.php";
+
+// TODO: Make a more secure login sessions.
+
 class Login{
-    var $prefix="login_",
+    private $prefix="CoLogin_",
         $user="",
-        $pass="";
-        
-    function authorize() {
+        $pass="",
+        $c = array(),
+        $cookie_duration = 86400;
+    
+    public function __construct() {
+        $this->c = include "config.php";
+        $cookie_duration = $this->c['login']['duration']*86400;
+    }
+    
+    public function authorize() {
         // If cookie is set
         if (isset($_COOKIE[$this->prefix . 'user'])) {
             $_SESSION[$this->prefix . 'user'] = $_COOKIE[$this->prefix . 'user'];
@@ -53,14 +66,19 @@ class Login{
         }
     }
 
-    function check() {
-        if (md5($this->prefix . LOGIN_PASS) != $this->pass || LOGIN_USER != $this->user) {
+    private function check() {
+        // if user does not exist (empty), or if the account is locked, or if the password does not match the user
+        if (empty($this->c['user'][$this->user]) || md5($this->prefix . $this->c['user'][$this->user]['pass']) !== $this->pass) {
+            // Username and password does not match.
             if (!empty($_COOKIE[$this->prefix . 'user'])) setcookie($this->prefix . "user", NULL, -1, "/");
             if (!empty($_COOKIE[$this->prefix . 'pass'])) setcookie($this->prefix . "pass", NULL, -1, "/");
             session_unset();
             session_destroy();
             $msg = 'Incorrect username or password.';
             $this->prompt($msg);
+        } elseif ($this->c['user'][$this->user]['lock'] !== false) {
+            // Account is locked.
+            $this->prompt($this->c['login']['lockmsg']);
         }
     }
 
@@ -85,7 +103,7 @@ class Login{
     <div class="container">
       <div class="card">
       <div class="card-header h4">Login Page</div>
-      <form class="card-block" action="./" method="post">
+      <form class="card-block" action="login.php" method="post">
         <div class="form-group row">
           <div class="col-sm-12">
             <span class="text-muted">
@@ -123,4 +141,11 @@ class Login{
 </html><?php
         exit;
     }
-}?>
+}
+
+if (true) {
+    session_start();
+    $login = new Login;$login->authorize();
+}
+
+?>

@@ -1,9 +1,23 @@
 <?php return array (
 // This is where the default configuration will go.  All comments will be
 //   discarded upon configuration of the tool from the web UI.
-// The lock on the account must be set to false before you can use it.
+// The lock on an account must be set to false before you can use it.
 // It is recommended to change the 'password' before you set the lock to
 //   false.
+// If you have alternate login system, then you may use that.
+
+// Permission levels:
+// 0: full control
+// 1: Lookup + Cache clearing
+// 2: Just lookup
+
+  'login' =>
+  array(
+    'required' => true, // True to require login, false for optional.
+    'duration' => 21,   // "Remember me" duration in days
+    'baseperm' => 2,    // If login not required, base permission to give.
+    'lockmsg'  => 'This account is locked.', // Locked account message.
+  ),
   'user' => 
   array (
     # Optional: Change and set-up the admin user.
@@ -34,7 +48,7 @@
   array (
     'Home' => '/',
     'BanManager' => '../banmanager/',
-    'Dynmap' => 'http://127.0.0.1:8123/'
+    'Dynmap' => 'http://127.0.0.1:8123/',
   ),
   # Optional: configure this just by using this file?
   'form' => 

@@ -241,6 +241,9 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
 }
 
 $c = include "config.php";
+
+// If not called from the interface, then:
+if (empty($_GET["fromLookup"])):
 ?>
 <!doctype html>
 <html>
@@ -256,6 +259,17 @@ $c = include "config.php";
 </head>
 <body>
 
+<!-- Top navigation bar -->
+<nav id="top" class="navbar navbar-light bg-faded navbar-full">
+  <div class="container">
+    <span class="navbar-brand">CoreProtect Lookup Web Interface</span>
+    <ul class="nav navbar-nav">
+	  <?php foreach($c["navbar"] as $ll => $hf) echo '<li class="nav-item"><a class="nav-link" href="'.$hf.'">'.$ll.'</a></li>';?>
+    </ul>
+    <?php echo $_login["required"]?'<a href="./?action=clear_login" class="btn btn-outline-info pull-xs-right">logout</a>':"";?>
+  </div>
+</nav>
+<?php endif; ?>
 <!-- Server Settings -->
 <div class="container">
 <?php if (!$writePerm):?>
@@ -425,8 +439,9 @@ document.getElementById("jsCheck").value="enabled";
 <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js">// Bootstrap dependency</script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous">// Bootstrap (Alpha!)</script>
 
-<?php endif;?>
+<?php endif;
+if (empty($_GET["fromLookup"])):?>
 
-</div>
 </body>
 </html>
+<?php endif;?>
