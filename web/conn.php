@@ -30,18 +30,6 @@ error_reporting(-1);ini_set('display_errors', 'On');
 // Record start time
 $timer = microtime(true);
 
-// Load config
-$c = require "config.php";
-
-// Login check
-require "res/php/login.php";
-$login = new Login($c);
-if (!$login->check()) {
-    header("Location: login.php");
-    exit();
-}
-unset($login);
-
 // Code to run right before code terminates
 function _shutdown() {
     global $out,$timer,$searchSession;
@@ -58,6 +46,20 @@ function _shutdown() {
 }
 register_shutdown_function("_shutdown");
 
+// Load config
+$c = require "config.php";
+
+// Login check
+if ($c['login']['required']) {
+    require "res/php/login.php";
+    $login = new Login($c);
+    if (!$login->check()) {
+        $out[0]["status"] = 5;
+        $out[0]["reason"] = "Login is required.";
+        exit();
+    }
+    unset($login);
+}
 
 
 // Load Modules
@@ -68,7 +70,8 @@ else {
     exit();
 }*/
 
-if (!file_exists($server = "server/".$_REQUEST["server"].".php")) {
+// Check if server exists
+if (!file_exists($server = "server/".$_REQUEST['server'].".php")) {
     // Server doesn't exist.
     $out[0]["status"] = 5;
     $out[0]["reason"] = "Server configuration does not exist.";
@@ -91,7 +94,7 @@ if (is_a($codb, "PDOException")) {
 
 
 // Module Classes
-$Cc = new CacheCtrl($codb,$server['co'],$server['legacy']);
+$Cc = new CacheCtrl($_REQUEST['server'], $codb, $server['co'], $server['legacy']);
 $Cm = ($c['form']['bukkitToMc']) ? new BukkitToMinecraft() : new KeepBukkit();
 
 // Special Material list

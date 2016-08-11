@@ -10,7 +10,7 @@ $c = require "config.php";
 require "res/php/login.php";
 $login = new Login($c);
 
-if ($login->check() !== true) {
+if ($login->check() !== true && $c['login']['required']) {
     header("Location: login.php?landing=.%2F");
     exit();
 }
@@ -246,9 +246,6 @@ for ($i = 2; $i < count($sv[0]); $i++) {
     <label class="input-group-addon" for="moreLim">load next </label><input class="form-control" type="number" id="moreLim" name="lim" min="1" placeholder="Broken; will work on v0.9.0" disabled>
   </div>
 </div>
-<input type="hidden" id="SQL" name="SQL">
-<input type="hidden" id="SQLqs" name="SQLqs">
-<input type="hidden" id="offset" name="offset">
 <div class="form-group row">
   <div class="col-sm-offset-2 col-sm-8">
     <input class="btn btn-secondary" id="loadMoreBtn" type="submit" value="Load more" disabled>
@@ -258,19 +255,23 @@ for ($i = 2; $i < count($sv[0]); $i++) {
 
 
 <div class="container">
+<?php if (!empty($un = $login->username())):?>
   <div class="btn-group" role="group">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Advanced
     </button>
-    <?php if ($c['user'][$login->username()]['perm'] <= 1):?>
+    <?php if ($c['user'][$un]['perm'] <= 1):?>
     <div class="dropdown-menu" aria-labelledby="Advanced">
-      <?php if ($c['user'][$login->username()]['perm'] === 0):?>
+      <?php if ($c['user'][$un]['perm'] === 0):?>
       <a class="dropdown-item" href="setup.php">Setup</a>
       <?php endif;?>
-      <button id="purgeCache" class="dropdown-item list-group-item-danger">Purge cache</button>
+      <button id="purgeCache" class="dropdown-item list-group-item-danger">Purge server cache</button>
+      <button id="purgeCache" class="dropdown-item list-group-item-danger">Purge all cache</button>
     </div>
     <?php endif;?>
-  </div><p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.<!-- or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.--><br>This webserver is running PHP <?php echo phpversion();?>.</p>
+  </div>
+  <?php endif;?>
+  <p>If you encounter any issues, please open an issue or a ticket on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.<!-- or the <a href="http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/">Bukkit plugin project page</a>.--><br>This webserver is running PHP <?php echo phpversion();?>.</p>
 </div>
 
 <!-- Copyright Message -->

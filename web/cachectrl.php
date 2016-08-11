@@ -1,7 +1,15 @@
 <?php
-// Code by SimonOrJ
+// CacheCtrl
+// (c) SimonOrJ, 2015-2016
+
+// __construct ( @string server, @PDO codb, @string co_, @boolean legacySupport )
+//   returns nothing.
+// ... four more member functions.
+
 // Class for things with cache.
 // users, blocks, arts, images, entities,
+
+
 // TODO: Make this update usernames somehow.
 class CacheCtrl {
     private $ALL = ["art","entity","material","user","world"],
@@ -15,26 +23,31 @@ class CacheCtrl {
             $material, $materialLookup,
             $user, $userLookup,
             $world, $worldLookup,
-            $codb, $co_, $legacy;
+            $fr, $codb, $co_, $legacy;
     
-    function __construct($codb,$co_,$legacySupport) {
-        // Load 
-        foreach($this->ALL as $d) if(file_exists(__DIR__."/cache/".$d.".php")) {
-            $e = $d."Db";
-            $this->$e = require("cache/".$d.".php");
-        }
+    public function __construct($server, $codb, $co_, $legacySupport) {
+        // Set variables
+        $this->fr = "cache/".$server."/"; // FileRoot
         $this->codb = $codb;
         $this->co_ = $co_;
         $this->legacy = $legacySupport;
+        
+        // Load 
+        foreach($this->ALL as $d) if(file_exists($this->fr.$d.".php")) {
+            $e = $d."Db";
+            $this->$e = require($this->fr.$d.".php");
+        }
     }
     
-    function __destruct() {
+    public function __destruct() {
+        if (!file_exists($this->fr))
+            mkdir(dirname(__FILE__).'/'.$this->fr);
         foreach($this->ALL as $v) {
             $e = $v."Lookup";
             if(!empty($this->$v) || !empty($this->$e)) {
                 // Save $db to file
                 $d = $v."Db";
-                file_put_contents(__DIR__."/cache/".$v.".php","<?php return ".var_export($this->$d,true).";?>");
+                file_put_contents(dirname(__FILE__).'/'.$this->fr.$v.".php","<?php return ".var_export($this->$d,true).";?>");
             }
         }
     }
@@ -42,7 +55,7 @@ class CacheCtrl {
     public $error = [];
     
     // Function for id to value retrieval
-    function getValue($id,$from) {
+    public function getValue($id,$from) {
         $lookup = $from."Lookup";
         $ac = $from."Db";
         $ac =& $this->$ac;
@@ -61,7 +74,7 @@ class CacheCtrl {
     }
     
     // Function for value to id retrieval
-    function getId($value,$from) {
+    public function getId($value,$from) {
         $ac = $from."Db";
         $ac =& $this->$ac;
         if ($id = array_search(strtolower($value),array_map("strtolower",$ac),true)) return $id;

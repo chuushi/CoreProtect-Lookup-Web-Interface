@@ -43,6 +43,9 @@ if (empty($msg)) {
     }
 }
 
+if (!$c['login']['required'])
+    $status = true;
+
 require "res/php/webtemplate.php";
 $template = new WebTemplate($c, $login->username(), "Login page &bull; CoLWI");
 

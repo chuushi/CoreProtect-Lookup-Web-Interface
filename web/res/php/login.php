@@ -4,16 +4,16 @@
 // Login
 // (c) SimonOrJ, 2015-2016
 
-// __constructor (@array &Configuration)
-// no returns
-// check: ( @void )
-// returns true on success, false on failure, or null on locked account.
-// username: ( @void )
-// returns string of the username.
-// login: ( @string username, @string password[, @boolean remember = false] )
-// same return as check().
-// logout: ( @void )
-// returns true at all times.
+// __construct ( @array &Configuration )
+//   returns nothing.
+// check ( @void )
+//   returns true on success, false on failure, or null on locked account.
+// username ( @void )
+//   returns string of the username.
+// login ( @string username, @string password[, @boolean remember = false] )
+//   same return as check().
+// logout ( @void )
+//   returns true at all times.
 
 // TODO: Make a more secure login sessions.
 

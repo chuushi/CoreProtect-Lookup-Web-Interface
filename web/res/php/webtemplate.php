@@ -1,7 +1,13 @@
 <?php
 // WebTemplate
-// Constructor: @array Configuration[, @string Username, @string PageTitle]
 // (c) SimonOrJ, 2016
+
+// __construct ( @array &Configuration[, @string Username, @string PageTitle] )
+//   returns nothing.
+// head ( @void )
+//   returns header DOM as string.
+// navbar ( @void )
+//   returns navbar DOM as string.
 
 class WebTemplate {
     private $c, $t;
