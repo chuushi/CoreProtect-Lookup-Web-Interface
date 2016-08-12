@@ -92,7 +92,6 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             if (empty($_POST['nodb']) || $_POST['nodb'] !== "on") {
                 // Connect to the server.
                 $codb = pdoWrapper($_POST);
-                ChromePhp::log("Reached file save point");
 
                 if (is_a($codb, "PDOException")) {
                     // Database Connection Unsuccessful

@@ -295,11 +295,13 @@ if (true) {
             foreach($q['b'] as $key => $bk) {
                 $bk = $Cm->getBk($bk);
                 $q['b'][$key] = $bk;
-                if($legacySupport) if($bk !== ($bk2=preg_replace("/^minecraft:/","",$bk))) $q['b'][] = $bk2;
+                // TODO: Get a better solution.
+                // TODO: Fix non-existant block lookup.
+                if($server['legacy']) if($bk !== ($bk2=preg_replace("/^minecraft:/","",$bk))) $q['b'][] = $bk2;
             }
             foreach($q['b'] as $key => $bk) $q['b'][$key] = $Cc->getId($bk,"material");
             $filter['block'] = "type"
-                    .isset($q['e'])&&in_array("b",$q['e'],true) ? " NOT " : " "
+                    .(isset($q['e']) && in_array("b",$q['e'],true) ? " NOT " : " ")
                     ."IN ('"
                     .implode("','",$q['b'])
                     ."')";
@@ -349,7 +351,7 @@ if (true) {
         $where[0] = $filter['time'];
         if($filter['userid'])
             $where[] = ($table == "username") ? $filter['username'] : $filter['userid'];
-        switch($table) {
+        switch ($table) {
             case "block":
             case "session":
             case "container":
