@@ -1,28 +1,39 @@
 <?php 
-// Original Login Script by richcheting from http://www.ricocheting.com/code/php/simple-login
-
-// Login
+// CoLWI v0.9.0
+// Login class
 // (c) SimonOrJ, 2015-2016
 
-// __construct ( @array &Configuration )
-//   returns nothing.
-// check ( @void )
+// void __construct ( array &Configuration )
+//
+// bool check ( void )
 //   returns true on success, false on failure, or null on locked account.
-// username ( @void )
+// string username ( void )
 //   returns string of the username.
-// login ( @string username, @string password[, @boolean remember = false] )
+// bool permission ( int minPerm )
+//   true on allowed access and false on no access.
+// bool login ( string username, @string password[, @boolean remember = false] )
 //   same return as check().
-// logout ( @void )
+// bool logout ( void )
 //   returns true at all times.
+// Constants:
+// Login::PERM_FULL
+// Login::PERM_PURGE
+// Login::PERM_LOOKUP
+
+// Original Login Script by richcheting from http://www.ricocheting.com/code/php/simple-login
 
 // TODO: Make a more secure login sessions.
 
 
 class Login {
+    const PERM_SETUP = 0,
+          PERM_PURGE = 1,
+          PERM_LOOKUP = 2;
+    
     private $prefix = "CoLogin_",
-        $user = "",
-        $pass = "",
-        $c;
+            $user = "",
+            $pass = "",
+            $c;
     
     public function __construct(&$config) {
         $this->c = &$config;
@@ -43,11 +54,6 @@ class Login {
         if (!empty($_SESSION[$this->prefix . 'pass'])) $this->pass = $_SESSION[$this->prefix . 'pass'];
     }
     
-    // Gets the logged in username.
-    public function username() {
-        return $this->user;
-    }
-
     // Checks cookie login status.
     public function check() {
         // If user does not exist (empty) or the password does not match the user
@@ -55,6 +61,7 @@ class Login {
             return false;
         }
         
+        // If credentials doesn't match
         if (empty($this->c['user'][$this->user]) || md5($this->prefix . $this->c['user'][$this->user]['pass']) !== $this->pass) {
             $this->logout();
             return false;
@@ -64,9 +71,31 @@ class Login {
         if ($this->c['user'][$this->user]['lock'] !== false) {
             return null;
         }
+        
+        // Login
         return true;
     }
     
+    // Gets the logged in username.
+    public function username() {
+        return $this->user;
+    }
+
+    // Gets the logged in username.
+    public function permission($minPerm) {
+        // If logged in and the user's permission is good enough
+        if (
+            $this->check() === true
+            && $minPerm >= $this->c['user'][$this->user]['perm']
+        )   return true;
+        
+        // True if login is not required and if permission is good enough
+        return (
+            !$this->c['login']['required']
+            && $minPerm >= $this->c['login']['baseperm']
+        );
+    }
+
     // Checks login details
     public function login($user, $pass, $remember = false) {
         $this->user = $user;

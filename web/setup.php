@@ -1,4 +1,11 @@
 <?php
+// CoLWI v0.9.0
+// Setup JSON application or Page
+// (c) SimonOrJ, 2015-2016
+
+// POST parameters:
+// (To be populated...)
+
 /*
 Prereq:
 - Have write access to config.php
@@ -14,16 +21,10 @@ $c = require "config.php";
 // Login and permission check
 require "res/php/login.php";
 $login = new Login($c);
-if (!$login->check()) {
+if (!$login->permission(Login::PERM_SETUP)) {
     header("Location: login.php?landing=setup.php");
     exit();
 }
-if ($c['user'][$login->username()]['perm'] !== 0) {
-    // Not enough permission.
-    header("Location: ./?from=setup.php");
-    exit();
-}
-
 
 include "pdowrapper.php";
 

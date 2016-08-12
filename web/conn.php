@@ -1,4 +1,11 @@
 <?php
+// Conn JSON application
+// (c) SimonOrJ, 2015-2016
+
+// Request parameters:
+// a   = action
+// (too many to list in a short time)
+
 /* CoreProtect LWI v0.9.0-beta-preview. August 7, 2016
  * PHP code by SimonOrJ.
  * Requires PHP 5.4+
@@ -50,16 +57,14 @@ register_shutdown_function("_shutdown");
 $c = require "config.php";
 
 // Login check
-if ($c['login']['required']) {
-    require "res/php/login.php";
-    $login = new Login($c);
-    if (!$login->check()) {
-        $out[0]["status"] = 5;
-        $out[0]["reason"] = "Login is required.";
-        exit();
-    }
-    unset($login);
+require "res/php/login.php";
+$login = new Login($c);
+if (!$login->permission(Login::PERM_LOOKUP)) {
+    $out[0]["status"] = 5;
+    $out[0]["reason"] = "Insufficient permission.";
+    exit();
 }
+unset($login);
 
 
 // Check for required variables

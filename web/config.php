@@ -14,9 +14,9 @@
   'login' =>
   array(
     'required' => true, // True to require login, false for optional.
+    'baseperm' => 2,    // If login not required, base permission to use.
+                        //   (if login is not required)
     'duration' => 21,   // "Remember me" duration in days
-    'baseperm' => 2,    // If login not required, base permission to give.
-    'lockmsg'  => 'This account is locked.', // Locked account message.
   ),
   'user' => 
   array (

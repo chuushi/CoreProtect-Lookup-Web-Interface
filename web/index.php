@@ -1,5 +1,11 @@
 <!-- CoreProtect LWI by SimonOrJ. All Rights Reserved. -->
 <?php
+// CoLWI v0.9.0
+// index page
+// (c) SimonOrJ, 2015-2016
+
+
+
 // Testing script
 error_reporting(-1);ini_set('display_errors', 'On');
 
@@ -9,8 +15,7 @@ $c = require "config.php";
 // Check login status.
 require "res/php/login.php";
 $login = new Login($c);
-
-if ($login->check() !== true && $c['login']['required']) {
+if (!$login->permission(Login::PERM_LOOKUP)) {
     header("Location: login.php?landing=.%2F");
     exit();
 }

@@ -1,12 +1,27 @@
 <?php
-// Purge page
+// CoLWI v0.9.0
+// Purge JSON application
 // (c) SimonOrJ, 2015-2016
 
 // Request parameters:
-// server: server name to purge
-// all: to purge all
+// server = server name to purge
+// all    = to purge all
 
+// Set header
+header('Content-type:application/json;charset=utf-8');
+
+// Load config
 $c = require "config.php";
+
+// Check login
+require "res/php/login.php";
+$login = new Login($c);
+if (!$login->permission(Login::PERM_PURGE)) {
+    // Not enough permission
+    $out = array(false, "You have insufficient permission to purge.");
+    echo json_encode($out);
+    exit();
+}
 
 $out = array(true);
 
@@ -37,7 +52,7 @@ if (!empty($_REQUEST['all'])) {
             if (!unlink($fi->getPathname()))
                 $out = array(false, "All of the files didn't want to go away.");
         }
-        if (!rmdir($path) && $out[0] !== false);
+        if (!rmdir($path) && $out[0] !== false)
             $out = array(false, "Directory couldn't be deleted.  Please check permissions.");
     } else {
         // Server directory does not exist.
@@ -49,6 +64,5 @@ if (!empty($_REQUEST['all'])) {
     $out = array(false, "Nothing happened.");
 }
 
-header('Content-type:application/json;charset=utf-8');
 echo json_encode($out);
 ?>
