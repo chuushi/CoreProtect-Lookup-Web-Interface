@@ -1,7 +1,8 @@
-/* CoreProtect LWI - v0.9.0-beta
- * (c) SimonOrJ, 2015-2016
- * this uses jQuery and jQuery UI.
- */
+// CoLWI v0.9.0
+// Setup JSON application or Page
+// Copyright (c) 2015-2016 SimonOrJ
+
+// this uses jQuery and jQuery UI.
 (function () {
 "use strict";
 $("#date").datetimepicker({format:$dateFormat+" "+$timeFormat});

@@ -1,7 +1,7 @@
 <?php
 // CoLWI v0.9.0
 // Setup JSON application or Page
-// (c) SimonOrJ, 2015-2016
+// Copyright (c) 2015-2016 SimonOrJ
 
 // POST parameters:
 // (To be populated...)

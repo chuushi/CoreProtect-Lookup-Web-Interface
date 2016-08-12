@@ -1,7 +1,7 @@
 <?php
 // CoLWI v0.9.0
 // AutoComplete JSON application
-// (c) SimonOrJ, 2015-2016
+// Copyright (c) 2015-2016 SimonOrJ
 
 // Request parameters:
 // s = server

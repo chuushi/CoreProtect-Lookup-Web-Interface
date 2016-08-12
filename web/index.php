@@ -1,8 +1,7 @@
-<!-- CoreProtect LWI by SimonOrJ. All Rights Reserved. -->
 <?php
 // CoLWI v0.9.0
-// index page
-// (c) SimonOrJ, 2015-2016
+// Index page
+// Copyright (c) 2015-2016 SimonOrJ
 
 
 
@@ -38,7 +37,7 @@ if ($gr = !empty($_GET['a'])) { // I forgot what "gr" stands for...
         unset($moreQuery['lim']);
     }
 }
-?>
+?><!-- CoreProtect LWI by SimonOrJ. All Rights Reserved. -->
 <!DOCTYPE html>
 <html>
 <?php 
