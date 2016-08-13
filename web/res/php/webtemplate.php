@@ -1,6 +1,7 @@
 <?php
-// WebTemplate
-// (c) SimonOrJ, 2016
+// CoLWI v0.9.0
+// WebTemplate PHP class
+// Copyright (c) 2015-2016 SimonOrJ
 
 // __construct ( @array &Configuration[, @string Username, @string PageTitle] )
 //   returns nothing.

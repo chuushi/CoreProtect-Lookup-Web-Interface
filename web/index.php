@@ -27,7 +27,7 @@ if not logged in
 
 // Get the template file and initiate its class.
 require "res/php/webtemplate.php";
-$template = new WebTemplate($c, $login->username());
+$template = new WebTemplate($c, $login->getUsername());
 
 // Is the lookup options in the GET request? (Check only via "action")
 if ($gr = !empty($_GET['a'])) { // I forgot what "gr" stands for...

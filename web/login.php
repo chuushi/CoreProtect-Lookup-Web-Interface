@@ -1,6 +1,7 @@
 <?php 
+// CoLWI v0.9.0
 // Login Page
-// (c) SimonOrJ, 2015-2016
+// Copyright (c) 2015-2016 SimonOrJ
 
 // Testing script
 error_reporting(-1);ini_set('display_errors', 'On');
@@ -35,7 +36,7 @@ if (empty($msg)) {
         if ($status === false) {
         $msg = array("Please login.", "info");
     } else {
-        $msg = array("You are currently logged in as <b>\"".$login->username()."\"</b>.", "success");
+        $msg = array("You are currently logged in as <b>\"".$login->getUsername()."\"</b>.", "success");
         if ($status === null) {
             $msg[0] .= "  This account is currently locked.";
             $msg[1] = "danger";
@@ -47,7 +48,7 @@ if (!$c['login']['required'])
     $status = true;
 
 require "res/php/webtemplate.php";
-$template = new WebTemplate($c, $login->username(), "Login page &bull; CoLWI");
+$template = new WebTemplate($c, $login->getUsername(), "Login page &bull; CoLWI");
 
 ?><!DOCTYPE html>
 <html>

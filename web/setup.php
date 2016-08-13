@@ -260,7 +260,7 @@ $c = include "config.php";
 // If not called from the interface, then:
 if (empty($_GET["fromLookup"])):
 require "res/php/webtemplate.php";
-$template = new WebTemplate($c, $login->username(), "Setup &bull; CoLWI");
+$template = new WebTemplate($c, $login->getUsername(), "Setup &bull; CoLWI");
 ?>
 <!doctype html>
 <html>

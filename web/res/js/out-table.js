@@ -1,8 +1,10 @@
-/* CoreProtect LWI - v0.8.1-beta
- * Javascript code by SimonOrJ.
- * this uses jQuery.
- */
-function outTable(){
+(function(){
+// CoLWI v0.9.0
+// Table-formatting JavaScript
+// Copyright (c) 2015-2016 SimonOrJ
+
+// This uses jQuery.
+
 "use strict";
 var resCt,intCt;
 // Main Submit

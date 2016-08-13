@@ -1,9 +1,9 @@
+(function () {
 // CoLWI v0.9.0
-// Setup JSON application or Page
+// Form-handler JavaScript
 // Copyright (c) 2015-2016 SimonOrJ
 
 // this uses jQuery and jQuery UI.
-(function () {
 "use strict";
 $("#date").datetimepicker({format:$dateFormat+" "+$timeFormat});
 $("[for=abl]").addClass("active");

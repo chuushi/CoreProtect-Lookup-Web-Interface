@@ -1,6 +1,7 @@
 <?php
-// CacheCtrl
-// (c) SimonOrJ, 2015-2016
+// CoLWI v0.9.0
+// CacheCtrl PHP class
+// Copyright (c) 2015-2016 SimonOrJ
 
 // __construct ( @string server, @PDO codb, @string co_, @boolean legacySupport )
 //   returns nothing.
@@ -40,14 +41,14 @@ class CacheCtrl {
     }
     
     public function __destruct() {
-        if (!is_dir(dirname(__FILE__).'/'.$this->fr))
-            mkdir(dirname(__FILE__).'/'.$this->fr);
+        if (!is_dir(__DIR__.'/'.$this->fr))
+            mkdir(__DIR__.'/'.$this->fr);
         foreach($this->ALL as $v) {
             $e = $v."Lookup";
             if(!empty($this->$v) || !empty($this->$e)) {
                 // Save $db to file
                 $d = $v."Db";
-                file_put_contents(dirname(__FILE__).'/'.$this->fr.$v.".php","<?php return ".var_export($this->$d,true).";?>");
+                file_put_contents(__DIR__.'/'.$this->fr.$v.".php","<?php return ".var_export($this->$d,true).";?>");
             }
         }
     }

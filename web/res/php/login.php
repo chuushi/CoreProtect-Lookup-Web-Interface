@@ -1,13 +1,13 @@
 <?php 
 // CoLWI v0.9.0
-// Login class
-// (c) SimonOrJ, 2015-2016
+// Login PHP class
+// Copyright (c) 2015-2016 SimonOrJ
 
 // void __construct ( array &Configuration )
 //
 // bool check ( void )
 //   returns true on success, false on failure, or null on locked account.
-// string username ( void )
+// string getUsername ( void )
 //   returns string of the username.
 // bool permission ( int minPerm )
 //   true on allowed access and false on no access.
@@ -77,10 +77,10 @@ class Login {
     }
     
     // Gets the logged in username.
-    public function username() {
+    public function getUsername() {
         return $this->user;
     }
-
+    
     // Gets the logged in username.
     public function permission($minPerm) {
         // If logged in and the user's permission is good enough

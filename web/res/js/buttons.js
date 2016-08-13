@@ -1,9 +1,9 @@
+(function(){
 // CoLWI v0.9.0
 // buttons JavaScript
 // Copyright (c) 2015-2016 SimonOrJ
 
-// Function that checks all checkboxes and radio buttons that are checked.
-(function(){
+// Function that adds "active" to all checkboxes and radio buttons that are checked.
 "use strict";
 
 $('.dtButtons label').each(function(i, el) {
