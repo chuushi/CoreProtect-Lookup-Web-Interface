@@ -77,6 +77,7 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
             
             // Possible: new, update
             $s = array();
+            $sj = array();
             
             if (empty($_POST['prefix'])) {
                 // Check for empty required fields
@@ -114,7 +115,7 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
                         if ($v[0] == 2 && $v[1] < 11) {
                             // This started from an old version of CP.
                             $legacy = true;
-                        } else {
+                        } elseif ($v[0] == 1) {
                             // Same here, but comes from CP v1.x.
                             $legacy = true;
                         }
@@ -157,18 +158,9 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
                     $s['legacy'] = $legacy;
                     
                     // Dynmap setup
-                    if (empty($_POST['dynmap']['link'])) {
-                        // No dynmap setup
-                        $sj = array('dynmap' => array(false));
-                    } else {
-                        // Dynmap setup
-                        $sj = array('dynmap' => array(
-                            'link' => $_POST['dynmap']['link'],
-                            'zoom' => $_POST['dynmap']['zoom'],
-                            'map'  => $_POST['dynmap']['map']
-                        ));
-                    }
-                    
+                    $sj['dynmap']['link'] = $_POST['dynmapLink'];
+                    $sj['dynmap']['zoom'] = $_POST['dynmapZoom'] ? $_POST['dynmapZoom'] : 6;
+                    $sj['dynmap']['map'] = $_POST['dynmapMap'] ? $_POST['dynmapMap'] : "flat";
                 } else {
                     // Server with that name exists already.
                     $out = array(5, "Server with this name already exists.");
@@ -200,22 +192,11 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
                                 'type' => 'sqlite',
                                 'path' => $_POST['path']
                             );
-                            // TODO: Re-evaluate legacy variable.
-                    if (in_array("prefix",$_POST['update'],true)) $s['co'] = $_POST['prefix'];
-                    if (in_array("dynmap",$_POST['update'],true)) {
-                        if (empty($_POST['dynmap']['link'])) {
-                            // TODO: Don't just write "false" on the json.
-                            // No dynmap setup
-                            $sj = array('dynmap' => array(false));
-                        } else {
-                            // Dynmap setup
-                            $sj = array('dynmap' => array(
-                                'link' => $_POST['dynmap']['link'],
-                                'zoom' => $_POST['dynmap']['zoom'],
-                                'map'  => $_POST['dynmap']['map']
-                            ));
-                        }
-                    }
+                    // TODO: make it possible to re-evaluate legacy variable.
+                    if (in_array("prefix",$_POST['update'],true))       $s['co'] = $_POST['prefix'];
+                    if (in_array("dynmapLink",$_POST['update'],true))   $sj['dynmap']['link'] = $_POST['dynmapLink'];
+                    if (in_array("dynmapZoom",$_POST['update'],true))   $sj['dynmap']['zoom'] = $_POST['dynmapZoom'] ? $_POST['dynmapZoom'] : 6;
+                    if (in_array("dynmapMap",$_POST['update'],true))    $sj['dynmap']['map'] = $_POST['dynmapMap'] ? $_POST['dynmapMap'] : "flat";
                 } else {
                     // Server with that name does not exist.
                     $out = array(5, "Server with this name does not exist.");
@@ -225,7 +206,7 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
             
             // Save file
             file_put_contents($file.".php","<?php return ".var_export($s,true).";?>");
-            file_put_contents($file.".json",json_encode($sj, JSON_PRETTY_PRINT));
+            file_put_contents($file.".json",json_encode($sj));
             
             break;
         case "user":
@@ -256,7 +237,7 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
     // If js works, return JSON of $out
     if (isset($_POST['js']) && $_POST['js'] !== "disabled") {
         header('Content-type:application/json;charset=utf-8');
-        echo json_encode($out,JSON_PARTIAL_OUTPUT_ON_ERROR);
+        echo json_encode($out, JSON_PARTIAL_OUTPUT_ON_ERROR);
         exit();
     }
 } elseif (!empty($_GET['server'])) {
@@ -275,7 +256,7 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
         }
         
         header('Content-type:application/json;charset=utf-8');
-        echo json_encode(array_merge($d,$dj),JSON_PARTIAL_OUTPUT_ON_ERROR);
+        echo json_encode(array_merge($d,$dj), JSON_PARTIAL_OUTPUT_ON_ERROR);
 
         exit();
 }
@@ -391,7 +372,7 @@ foreach ($sv as $fi) {
     <div class="col-sm-10">
     <div class="input-group">
       <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbPathU"><input type="checkbox" id="dbPathU" name="update[]" value="path">Change</label></span>
-      <input class="form-control" type="text" id="dbPath" name="path" value="<?php echo dirname(__FILE__) ?>">
+      <input class="form-control" type="text" id="dbPath" name="path" value="<?php echo __DIR__ ?>">
     </div>
   </div>
 </div>
@@ -400,7 +381,7 @@ foreach ($sv as $fi) {
   <div class="col-sm-10">
     <div class="input-group">
       <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbPrefixU"><input type="checkbox" id="dbPrefixU" name="update[]" value="prefix">Change</label></span>
-      <input class="form-control" type="text" id="dbPrefix" name="prefix" placeholder="co_" value="co_">
+      <input class="form-control" type="text" id="dbPrefix" name="prefix" placeholder="co_" value="co_" required>
     </div>
   </div>
 </div>
@@ -408,8 +389,26 @@ foreach ($sv as $fi) {
   <label class="col-sm-2 form-control-label" for="dbDmLn">Dynmap Link</label>
     <div class="col-sm-10">
     <div class="input-group">
-      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmLnU"><input type="checkbox" id="dbDmLnU" name="update[]" value="data">Change</label></span>
-      <input class="form-control" type="text" id="dbDmLn" name="dynmap" placeholder="http://127.0.0.1:8123/, empty for no Dynmap">
+      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmLnU"><input type="checkbox" id="dbDmLnU" name="update[]" value="dynmapLink">Change</label></span>
+      <input class="form-control" type="text" id="dbDmLn" name="dynmapLink" placeholder="http://127.0.0.1:8123/, empty for no Dynmap">
+    </div>
+  </div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="dbDmLn">Dynmap Zoom</label>
+    <div class="col-sm-10">
+    <div class="input-group">
+      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmLnU"><input type="checkbox" id="dbDmLnU" name="update[]" value="dynmapZoom">Change</label></span>
+      <input class="form-control" type="number" id="dbDmZm" name="dynmapZoom" placeholder="Good value: 6">
+    </div>
+  </div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="dbDmLn">Dynmap Map</label>
+    <div class="col-sm-10">
+    <div class="input-group">
+      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmLnU"><input type="checkbox" id="dbDmLnU" name="update[]" value="dynmapMap">Change</label></span>
+      <input class="form-control" type="text" id="dbDmLn" name="dynmapMap" placeholder="Common maps: flat, surface, or cave">
     </div>
   </div>
 </div>

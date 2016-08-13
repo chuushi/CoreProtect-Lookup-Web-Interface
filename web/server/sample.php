@@ -19,5 +19,5 @@
   // For dynmap configuration, visit .json file by the same name.
   //   link:    Link to the Dynmap page
   //   zoom:    Deafult Zoom level
-  //   map:     Deafult map type. Available: flat, surface, or cave
+  //   map:     Deafult map type. Common: flat, surface, or cave
 )?>
