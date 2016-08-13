@@ -16,7 +16,7 @@
 // bool logout ( void )
 //   returns true at all times.
 // Constants:
-// Login::PERM_FULL
+// Login::PERM_SETUP
 // Login::PERM_PURGE
 // Login::PERM_LOOKUP
 

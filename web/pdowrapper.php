@@ -1,9 +1,10 @@
 <?php
-// function pdoWrapper
-// (c) SimonOrJ, 2015-2016
+// CoLWI v0.9.0
+// pdoWrapper PHP Function
+// Copyright (c) 2015-2016 SimonOrJ
 
-// Parameter @array database
-//   returns @PDO on success or @PDOException on failure.
+// Parameter array database
+//   returns PDO on success or PDOException on failure.
 
 function pdoWrapper($d) {
     try {

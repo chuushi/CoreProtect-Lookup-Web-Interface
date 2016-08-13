@@ -3,11 +3,11 @@
 // WebTemplate PHP class
 // Copyright (c) 2015-2016 SimonOrJ
 
-// __construct ( @array &Configuration[, @string Username, @string PageTitle] )
+// __construct ( array &Configuration[, string Username[, string PageTitle]] )
 //   returns nothing.
-// head ( @void )
+// head ( void )
 //   returns header DOM as string.
-// navbar ( @void )
+// navbar ( void )
 //   returns navbar DOM as string.
 
 class WebTemplate {

@@ -3,7 +3,7 @@
 // CacheCtrl PHP class
 // Copyright (c) 2015-2016 SimonOrJ
 
-// __construct ( @string server, @PDO codb, @string co_, @boolean legacySupport )
+// __construct ( string server, PDO codb, string co_, boolean legacySupport )
 //   returns nothing.
 // ... four more member functions.
 
