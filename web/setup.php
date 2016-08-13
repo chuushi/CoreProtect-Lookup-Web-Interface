@@ -17,6 +17,7 @@ error_reporting(-1);ini_set('display_errors', 'On');
 
 // Load configuration
 $c = require "config.php";
+$cj = json_decode(file_get_contents("config.json"), true);
 
 // Login and permission check
 require "res/php/login.php";
@@ -30,7 +31,7 @@ include "pdowrapper.php";
 
 // Check if config is editable and set it to a variable;
 //   and check if GET of submit is set.
-if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty($_GET['submit'])) {
+if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_writable("server/")) && !empty($_GET['submit'])) {
     // Out variable
     $out = array(0);
 
@@ -57,12 +58,16 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                 break;
             }
             
-            $file = "server/".$file.".php";
+            $file = "server/".$file;
             
             if (isset($_POST['delete']) && $_POST['delete'] === "on") {
-                if (file_exists($file)) {
+                if (file_exists($file.".php")) {
+                    // Check for JSON file
+                    if (file_exists($file.".json")) {
+                        unlink($file.".json");
+                    }
                     // get rid of the server file.
-                    unlink($file);
+                    unlink($file.".php");
                 } else {
                     $out = array(1, "Server does not exist.");
                 }
@@ -126,7 +131,8 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             
             if (empty($_POST['name'])) {
                 // New server
-                if (!file_exists($file)) {
+                if (!file_exists($file.".php")) {
+                    // Database
                     if ($_POST['type'] === "mysql") {
                         $s = array(
                             'db' => array (
@@ -149,13 +155,20 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
 
                     $s['co'] = $_POST['prefix'];
                     $s['legacy'] = $legacy;
-                    $s['dynmap'] = empty($_POST['dynmap']['link'])
-                            ? false 
-                            : array(
-                                'link' => $_POST['dynmap']['link'],
-                                'zoom' => $_POST['dynmap']['zoom'],
-                                'map'  => $_POST['dynmap']['map']
-                            );
+                    
+                    // Dynmap setup
+                    if (empty($_POST['dynmap']['link'])) {
+                        // No dynmap setup
+                        $sj = array('dynmap' => array(false));
+                    } else {
+                        // Dynmap setup
+                        $sj = array('dynmap' => array(
+                            'link' => $_POST['dynmap']['link'],
+                            'zoom' => $_POST['dynmap']['zoom'],
+                            'map'  => $_POST['dynmap']['map']
+                        ));
+                    }
+                    
                 } else {
                     // Server with that name exists already.
                     $out = array(5, "Server with this name already exists.");
@@ -189,13 +202,20 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                             );
                             // TODO: Re-evaluate legacy variable.
                     if (in_array("prefix",$_POST['update'],true)) $s['co'] = $_POST['prefix'];
-                    if (in_array("dynmap",$_POST['update'],true)) $s['dynmap'] = empty($_POST['dynmap']['link'])
-                            ? false
-                            : array(
+                    if (in_array("dynmap",$_POST['update'],true)) {
+                        if (empty($_POST['dynmap']['link'])) {
+                            // TODO: Don't just write "false" on the json.
+                            // No dynmap setup
+                            $sj = array('dynmap' => array(false));
+                        } else {
+                            // Dynmap setup
+                            $sj = array('dynmap' => array(
                                 'link' => $_POST['dynmap']['link'],
                                 'zoom' => $_POST['dynmap']['zoom'],
                                 'map'  => $_POST['dynmap']['map']
-                            );
+                            ));
+                        }
+                    }
                 } else {
                     // Server with that name does not exist.
                     $out = array(5, "Server with this name does not exist.");
@@ -204,7 +224,8 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
             }
             
             // Save file
-            file_put_contents($file,"<?php return ".var_export($s,true).";?>");
+            file_put_contents($file.".php","<?php return ".var_export($s,true).";?>");
+            file_put_contents($file.".json",json_encode($sj, JSON_PRETTY_PRINT));
             
             break;
         case "user":
@@ -217,21 +238,23 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
                 'Home' => '/',
             );
             
-            if (!empty($_POST['dateFormat']))   $c['form']['dateFormat']   = $_POST['dateFormat'];
-            if (!empty($_POST['timeFormat']))   $c['form']['timeFormat']   = $_POST['timeFormat'];
-            if (!empty($_POST['timeDividor']))  $c['form']['timeDividor']  = intval($_POST['timeDividor']);
-            if (!empty($_POST['pageInterval'])) $c['form']['pageInterval'] = intval($_POST['pageInterval']);
-            if (!empty($_POST['bukkitToMc']))   $c['form']['bukkitToMc']   = $_POST['pageInterval'] === true;
+            $cj = array('form'=>array());
+            if (!empty($_POST['dateFormat']))   $cj['form']['dateFormat']   = $_POST['dateFormat'];
+            if (!empty($_POST['timeFormat']))   $cj['form']['timeFormat']   = $_POST['timeFormat'];
+            if (!empty($_POST['timeDividor']))  $cj['form']['timeDividor']  = intval($_POST['timeDividor']);
+            if (!empty($_POST['pageInterval'])) $cj['form']['pageInterval'] = intval($_POST['pageInterval']);
+            if (!empty($_POST['bukkitToMc']))   $c['flag']['bukkitToMc']   = $_POST['pageInterval'] === true;
             if (!empty($_POST['copyright']))    $c['copyright']            = $_POST['copyright'];
             
             // Save file
-            file_put_contents("config.php","<?php return ".var_export($c,true).";?>");
+            file_put_contents("config.php", "<?php return ".var_export($c,true).";?>");
+            file_put_contents("config.json", json_encode($cj));
 
             break;
     }
     
     // If js works, return JSON of $out
-    if ($_POST['js'] !== "disabled") {
+    if (isset($_POST['js']) && $_POST['js'] !== "disabled") {
         header('Content-type:application/json;charset=utf-8');
         echo json_encode($out,JSON_PARTIAL_OUTPUT_ON_ERROR);
         exit();
@@ -239,18 +262,20 @@ if (($writePerm = is_writable("config.php") && is_writable("server/")) && !empty
 } elseif (!empty($_GET['server'])) {
     // Get Server Config
     // TODO: Write this.
-        $file = "server/".$_GET['server'].".php";
-        if (file_exists($file)) {
-            $c = require $file;
+        $file = "server/".$_GET['server'];
+        if (file_exists($file.".php")) {
+            $d = require $file.".php";
+            $dj = json_decode(file_get_contents($file.".json"), true);
             
-            // To avoid database settings snooping
-            unset($c['db']);
+            // To avoid database credentials leak
+            unset($d['db']);
         } else {
             // Empty array
-            $c = array();
+            $d = array();
         }
+        
         header('Content-type:application/json;charset=utf-8');
-        echo json_encode($c,JSON_PARTIAL_OUTPUT_ON_ERROR);
+        echo json_encode(array_merge($d,$dj),JSON_PARTIAL_OUTPUT_ON_ERROR);
 
         exit();
 }
@@ -275,7 +300,7 @@ $template = new WebTemplate($c, $login->getUsername(), "Setup &bull; CoLWI");
 <!-- Server Settings -->
 <div class="container">
 <?php if (!$writePerm):?>
-<p>Please make sure the webserver has write permissions to the <code>config.php</code> file and <code>server/</code> directory.</p>
+<p>Please make sure the webserver has write permissions to the <code>config.php</code>, <code>config.json</code> and, <code>server/</code> files and directory.</p>
 <?php else:?>
 <div id="setupDbForm" class="card">
 <div class="card-header"><span class="h4 card-title">Server Configuration</span></div>
@@ -402,26 +427,26 @@ foreach ($sv as $fi) {
 <input class="jsCheck" type="hidden" name="js" value="!disabled">
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfDate">Date Format</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="cfDate" name="dateFormat" placeholder="ll" value="<?php echo $c['form']['dateFormat'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="text" id="cfDate" name="dateFormat" placeholder="ll" value="<?php echo $cj['form']['dateFormat'] ?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfTime">Time Format</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="cfTime" name="timeFormat" placeholder="LTS" value="<?php echo $c['form']['timeFormat'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="text" id="cfTime" name="timeFormat" placeholder="LTS" value="<?php echo $cj['form']['timeFormat'] ?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfTDiv">Tab Interval (s)</label>
-  <div class="col-sm-10"><input class="form-control" type="number" id="cfTdiv" name="timeDividor" placeholder="300" value="<?php echo $c['form']['timeDividor'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfTdiv" name="timeDividor" placeholder="300" value="<?php echo $cj['form']['timeDividor'] ?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfPage">Page Interval</label>
-  <div class="col-sm-10"><input class="form-control" type="number" id="cfPage" name="pageInterval" placeholder="25" value="<?php echo $c['form']['pageInterval'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfPage" name="pageInterval" placeholder="25" value="<?php echo $cj['form']['pageInterval'] ?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfCopy">Item names</label> 
   <div class="col-sm-10">
     <select class="form-control" id="cfCopy" name="bukkitToMc">
-      <option value="true"<?php if ($c['form']['bukkitToMc']) echo " selected";?>>Mincraft item names</option>
-      <option value="false"<?php if (!$c['form']['bukkitToMc']) echo " selected";?>>Bukkit item names</option>
+      <option value="true"<?php if ($c['flag']['bukkitToMc']) echo " selected";?>>Mincraft item names</option>
+      <option value="false"<?php if (!$c['flag']['bukkitToMc']) echo " selected";?>>Bukkit item names</option>
     </select>
   </div>
 </div>

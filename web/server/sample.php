@@ -1,9 +1,10 @@
-<?php return array(
-  // If you want to configure server databases on your own, you can duplicate
-  //   this file and write some configuration.
-  
-  // If you set things up on the web UI and want to input passwords manually,
-  //   you will have to visit this directory and configure the password.
+<?php return array (
+// If you want to configure server databases on your own, you can duplicate
+//   this file and write some configuration.
+
+// If you set things up on the web UI and want to input passwords manually,
+//   you will have to visit this directory and configure the password.
+
   'db' =>
   array (
     'type' => 'sqlite',         // Type of database: mysql or sqlite
@@ -15,10 +16,8 @@
   ),
   'co'     => 'co_',            // Prefix.
   'legacy' => false,            // Did this start logging below CP v2.11?
-  'dynmap' =>                   // If no dynmap, erase/comment out the array
   // For dynmap configuration, visit .json file by the same name.
   //   link:    Link to the Dynmap page
   //   zoom:    Deafult Zoom level
   //   map:     Deafult map type. Available: flat, surface, or cave
-  ),
 )?>
