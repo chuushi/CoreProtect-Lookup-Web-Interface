@@ -4,40 +4,76 @@
 // Copyright (c) 2015-2016 SimonOrJ
 
 // This uses jQuery.
+// TODO: Merge this with form-handler.js
 
 "use strict";
+
+// All the used DOM references in an object
+var $lookup     = $("#lookupForm"),
+    $date       = $("#lT"),
+    $submit     = $("#lSubmit"),
+    $moreLookup = $("#loadMoreForm"),
+    $moreSubmit = $("#mSubmit"),
+    $pages      = $("#row-pages");
+
+// Variables
 var resCt,intCt;
-// Main Submit
-$("#lookup").submit(function($thislookup) {
-    $thislookup.preventDefault();
+
+// On lookup form submit
+$lookup.submit(function(e) {
+    e.preventDefault();
     $.ajax("conn.php",{
-      beforeSend:function(xhr,s){$("#submitBtn").prop("disabled",true);if($("#date").val()!==""){s.data+="&t="+moment($("#date").val(),$dateFormat+" "+$timeFormat).format("X");}},
-      data:$("#lookup").serialize(),
-      dataType:"json",
-      method:"POST",
-      complete:function(){$("#submitBtn").prop("disabled",false);},
-      success:function(data){$("#row-pages").html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li><li class="nav-item"><a class="nav-link" href="#row-0">0</a></li>');reachedLimit(false);$lastDataTime = Date.now();resCt=1;intCt=$pageInterval;phraseReturn(data);},
-      error: function(){$("#row-pages").html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li>');phraseReturn([{
-        status:7,
-        reason:"The lookup script was unable to send a proper response."
-      }]);}
+        beforeSend: function(xhr,s){
+            // Disable submit button
+            $submit.prop("disabled",true);
+            // Get the time in UNIX
+            if ($date.val()!=="") {
+                s.data += "&t="
+                    + moment($date.val(),$dateFormat+" "+$timeFormat).format("X");
+            }
+        },
+        data:       $lookup.serialize(),
+        dataType:   "json",
+        method:     "POST",
+        complete:   function(){
+            // Upon submit
+            $submit.prop("disabled",false);
+        },
+        success:function(data){
+            // Start the page count on bottom bar
+            $pages.html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li><li class="nav-item"><a class="nav-link" href="#rRow-0">0</a></li>');reachedLimit(false);
+            $lastDataTime = Date.now();
+            resCt=1;
+            intCt=c.form.pageInterval;
+            phraseReturn(data);
+        },
+        error: function(){
+            $pages.html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li>');
+            phraseReturn([{
+                status:7,
+                reason:"The lookup script was unable to send a proper response."
+            }]);
+        }
     });
 });
 
-// More Submit
-$("#loadMore").submit(function($thislookup) {
-    $thislookup.preventDefault();
+// on Load More submit
+$moreLookup.submit(function(a) {
+    a.preventDefault();
     $.ajax("conn.php",{
-      data:$("#loadMore").serialize(),
-      dataType:"json",
-      method:"POST",
-      complete:function(){},
-      success:function(data){phraseReturn(data,1);},
+        data:$moreLookup.serialize(),
+        dataType:"json",
+        method:"POST",
+        complete:function(){},
+        success:function(data){
+            phraseReturn(data,1);
+        },
     });
 });
 
+// Limit function
 function reachedLimit(toggle) {
-  $("#loadMoreBtn").prop("disabled",toggle);
+  $moreSubmit.prop("disabled",toggle);
   if(toggle) {
       return '<i>No more results</i>';
   }
@@ -53,42 +89,61 @@ function if_exist(value,if_not) {
 $("#output").on("show.bs.dropdown",".rDrop",function(){
     if(!$(this).hasClass("dropdown")) {
         $(this).addClass("dropdown");
-        if($(this).hasClass("t")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer t Asc">Search ascending</span><span class="dropdown-item cPointer t Desc">Search descending</span></div>');}
-        else if($(this).hasClass("u")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>');}
-        else if($(this).hasClass("c")){
+        if ($(this).hasClass("t")) {
+            // Time
+            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer t Asc">Search ascending</span><span class="dropdown-item cPointer t Desc">Search descending</span></div>');
+        } else if($(this).hasClass("u")) {
+            // Username
+            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>');
+        } else if($(this).hasClass("c")) {
+            // Coordinates
             $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+($dynmapURL?'<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>':"")+'</div>');
+        } else if($(this).hasClass("b")) {
+            // Block
+            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');
+        } else {
+            // should not reach this point...
+            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">derp</span></div>');
         }
-        else if($(this).hasClass("b")){$(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');}
-        else{$(this).append('<div class="dropdown-menu"><span class="dropdown-header">derp</span></div>');}
     }
 });
 
 // Displaying sign data function
-$("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){$(this).next().collapse("toggle");});
+$("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){
+    $(this).next().collapse("toggle");
+});
 
-// returns data in table format
+// Returns data in table format
 var spanSign = '<span class="collapse-toggle" data-toggle="collapse-next" aria-expanded="false">',
-divSignData = function(Lines) {return '<div class="mcSign">'+Lines.join("&nbsp;\n&nbsp;")+"</div>";},
+divSignData = function(Lines) {
+    return '<div class="mcSign">'+Lines.join("\n")+"</div>";
+},
 spanDToggle =  '<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">',
 $lastDataTime;
 function phraseReturn(obj,more) {
     $("#genTime").text("Request generated in "+Math.round(obj[0].duration*1000)+"ms");
     var o;
-    if (obj[0].status) { // If failed
+    if (obj[0].status !== 0) { // If an error exists
         o = '<tr class="text-'+(obj[0].status===1?"info":"danger")+'"><th scope="row">'+(obj[0].status===1?"--":"E")+'</th><td colspan="7"';
+        
+        // Error type
         switch(obj[0].status) {
             case 1:
+                // End of result
                 o += ' class="text-xs-center">'+reachedLimit(true);
             break;
             case 2:
+                // SQL unsuccessful
                 o += '><b>The request did not go through properly.</b></td></tr><tr><th scope="row">-</th><td>'+obj[1][0]+"</td><td>"+obj[1][1]+'</td><td colspan="7">Error '+obj[1][2];
                 reachedLimit(true);
             break;
             case 3:
-                o += '><b>The webserver could not establish a connection to the database.</b> Please check your settings.</td></tr><tr><th scope="row">-</th><td colspan="7">PDO Exception: '+obj[1];
+                // Database Connection failed (PDOException)
+                o += '><b>The webserver could not establish a connection to the database.</b> Please check your settings.</td></tr><tr><th scope="row">-</th><td colspan="7">PDOException: '+obj[1];
                 
             break;
             case 4:
+                // Some searches by blocks and usernames does not exist
                 o += "><b>The following value does not exist in the CoreProtect's database:</b>";
                 for(var j=0; j<obj[1].length;j++) {
                     o += '</td></tr><tr><th scope="row">-</th><td>';
@@ -107,14 +162,19 @@ function phraseReturn(obj,more) {
                 }
                 reachedLimit(true);
                 break;
+            case 5:
+                // Configuration error
+                break;
+            case 6:
+                // Something else.
             default:
                 o += '><b>Unexpected Error '+obj[0].status+":</b> "+obj[0].reason;
                 reachedLimit(true);
                 break;
         }
         o += '</td></tr>';
-    }
-    else { // Success
+    } else {
+        // Success
         if(more){$("#offset").val(parseInt($("#offset").val())+parseInt(if_exist($("#moreLim").val(),30)));}
         else { // Set form values for offset lookup
             $("#SQL").val(obj[0].SQL);
@@ -127,17 +187,17 @@ function phraseReturn(obj,more) {
         for (i = 0; i<r.length; i++) {
             // UNIX to JS Date
             r[i].time *= 1000;
-            if($timeDividor < Math.abs($lastDataTime-r[i].time)||!moment($lastDataTime).isSame(r[i].time,"day")){o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'+moment(r[i].time).calendar(null,{
-                sameDay: "[Today at] "+$timeFormat,
-                lastDay: "[Yesterday at] "+$timeFormat,
-                lastWeek: "[Last] dddd, "+$dateFormat+" "+$timeFormat,
-                sameElse: $dateFormat+" "+$timeFormat
+            if(c.form.timeDividor < Math.abs($lastDataTime-r[i].time)||!moment($lastDataTime).isSame(r[i].time,"day")){o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'+moment(r[i].time).calendar(null,{
+                sameDay: "[Today at] " + c.form.timeFormat,
+                lastDay: "[Yesterday at] " + c.form.timeFormat,
+                lastWeek: "[Last] dddd, " + c.form.dateFormat + " " + c.form.timeFormat,
+                sameElse: c.form.dateFormat+" " + c.form.timeFormat
             })+"</th></tr>";}
-            o += '<tr id="row-'+resCt+'"';
+            o += '<tr id="rRow-'+resCt+'"';
             if (r[i].rolled_back === "1"){o += ' class="table-success"';}
 
             // Time, Username, Action
-            o += '><th scope="row">'+resCt+'</th><td class="rDrop t" title="'+moment(r[i].time).format($dateFormat)+'" data-time="'+r[i].time+'">'+spanDToggle+moment(r[i].time).format($timeFormat)+'</span></td><td class="rDrop u">'+spanDToggle+r[i].user+'</span></td><td>'+r[i].table+'</td><td';
+            o += '><th scope="row">'+resCt+'</th><td class="rDrop t" title="'+moment(r[i].time).format(c.form.dateFormat)+'" data-time="'+r[i].time+'">'+spanDToggle+moment(r[i].time).format(c.form.timeFormat)+'</span></td><td class="rDrop u">'+spanDToggle+r[i].user+'</span></td><td>'+r[i].table+'</td><td';
             $lastDataTime = r[i].time;
             switch(r[i].table) {
                 case "click":
@@ -165,15 +225,16 @@ function phraseReturn(obj,more) {
                 case "username_log":
                     // Message/UUID
                     o += ' colspan="4">'+r[i].data;
+                    break;
             }
             o +='</td></tr>';
             resCt++;
         }
     }
-    if(more){$("#mainTbl").append(o);}
-    else{$("#mainTbl").html(o);}
-    for(intCt;intCt<resCt;intCt=intCt+$pageInterval){
-      $("#row-pages").append('<li class="nav-item"><a class="nav-link" href="#row-'+intCt+'">'+intCt+'</a></li>');
+    if (more) {$("#mainTbl").append(o);}
+    else {$("#mainTbl").html(o);}
+    for (intCt; intCt < resCt; intCt = intCt + c.form.pageInterval) {
+        $pages.append('<li class="nav-item"><a class="nav-link" href="#rRow-'+intCt+'">'+intCt+'</a></li>');
     }
 
 /* Smooth scrolling by mattsince87 from http://codepen.io/mattsince87/pen/exByn
@@ -186,5 +247,4 @@ function phraseReturn(obj,more) {
         return false;
     });
 }
-}
-outTable();
+}())

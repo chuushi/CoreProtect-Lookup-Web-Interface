@@ -4,92 +4,125 @@
 // Copyright (c) 2015-2016 SimonOrJ
 
 // this uses jQuery and jQuery UI.
+
 "use strict";
-$("#date").datetimepicker({format:$dateFormat+" "+$timeFormat});
-$("[for=abl]").addClass("active");
+
+// All the used DOM references in an object
+var $lookup     = $("#lookup"),
+    $coord      = {
+        c1Label:    $("#lCorner1"),
+        c2Label:    $("#lCorner2"),
+        radiusHide: $(".lRadiusHide"),
+        c1:         $("#lC1"),
+        c2:         $("#lC2"),
+        x2:         $("#lX2"),
+        y2:         $("#lY2"),
+        z2:         $("#lZ2")
+    },
+    $date       = $("#lT"),
+    $server     = $("#lServer"),
+    $submit     = $("#lSubmit"),
+    $moreSubmit = $("#mSubmit"),
+    $table      = $("#outputTable"),
+    $pages      = $("#row-pages"),
+    c;
+
+// Get configuration first, then load the configuration-variable-sensetitive things.
+$.getJSON("config.json", function(data) {
+    c = data;
+    window.c = c;
+    $date.datetimepicker({format:c.form.dateFormat+" "+c.form.timeFormat});
+});
+
 $('[data-toggle="tooltip"]').tooltip();
-
-// If URL contains lookup data
-if($fm){
-    // Most of the checking is done in buttons.js.
-    if(($("#y2").val()!=="")||($("#z2").val()!=="")) {radius(true);}
-
-    if($PHP_$t){$("#date").val(moment($PHP_$t).format($dateFormat+" "+$timeFormat));}
-}
 
 // Radius/Corners toggle
 function radius(boolCorner) {
-    if(($("#corner1").text() === "Center")||boolCorner) {
-        $("#corner1").text("Corner 1");
-        $("#corner2").text("Corner 2");
-        $("#c2>div").addClass("input-group");
-        $(".c2").show();
-        $("#x2").attr("placeholder","x");
+    if(($coord.c1Label.text() === "Center")||boolCorner) {
+        $coord.c1Label.text("Corner 1");
+        $coord.c2Label.text("Corner 2");
+        $coord.c2.addClass("input-group");
+        $coord.radiusHide.show();
+        $coord.x2.attr("placeholder","x");
     }
     else {
-        $("#corner1").text("Center");
-        $("#corner2").text("Radius");
-        $("#c2>div").removeClass("input-group");
-        $(".c2").val("");
-        $(".c2").hide();
-        $("#x2").attr("placeholder","Radius");
+        $coord.c1Label.text("Center");
+        $coord.c2Label.text("Radius");
+        $coord.c2.removeClass("input-group");
+        $coord.y2.val("");
+        $coord.z2.val("");
+        $coord.radiusHide.hide();
+        $coord.x2.attr("placeholder","Radius");
     }
 }
-$("#rcToggle").click(function(){radius();});
+$("#lRCToggle").click(function(){radius();});
 
 // Some CSV Function
-function csvAppend(csv,add) {
-    var a = csv.split(/, ?/);
-    return $.inArray(add,a)===-1?csv+", "+add:csv;
+var csv = {
+    append: function (value, add) {
+        var a = value.split(/, ?/);
+        return $.inArray(add,a) === -1 ? csv + ", " + add : csv;
+    },
+    array: function (value) {
+        return value.split(/, ?/);
+    },
+    joinArray: function (array) {
+        return array.join(", ");
+    }
 }
 
 // Autocomplete
-var qftr;
-$( ".autocomplete" )
+var queryTable;
+$(".autocomplete")
     // don't navigate away from the field on tab when selecting an item
-    .bind( "keydown", function( event ) {
-      if ( event.keyCode === $.ui.keyCode.TAB &&
-          $( this ).autocomplete( "instance" ).menu.active ) {
-        event.preventDefault();
-      }
-      qftr = $(this).attr("data-qftr");
+    .bind( "keydown", function( e ) {
+        queryTable = this.getAttribute("data-query-table");
+        if ( e.keyCode === $.ui.keyCode.TAB &&
+            $( this ).autocomplete( "instance" ).menu.active ) {
+            e.preventDefault();
+        }
     })
     .autocomplete({
         source: function( request, response ){
-            var a = request.term.split(/, ?/);
+            var a = csv.array(request.term);
             $.ajax("autocomplete.php",{
-              data: {
-                a : qftr,
-                b : a.pop(),
-                e : a,
-                l : 6
-              },
-              dataType:"json",
-              method:"POST",
-              success:function(data){
-                  response(data);
-              }
+                data: {
+                    s : $server.val(),
+                    a : queryTable,
+                    b : a.pop(),
+                    e : a,
+                    l : 6
+                },
+                dataType: "json",
+                method: "POST",
+                success: function(data){
+                    response(data);
+                }
             });
         },
-        focus: function( event, ui ) {
-            var terms = this.value.split(/, ?/);
+        focus: function( e, ui ) {
+            var terms = csv.array(this.value);
             terms.pop();
             terms.push( ui.item.value );
-            this.value = terms.join( ", " );
+            this.value = csv.joinArray(terms);
             return false;
         },
-        select: function( event, ui ) {
-            var terms = this.value.split(/, ?/);
+        select: function( e, ui ) {
+            var terms = csv.array(this.value);
             terms.pop();
             terms.push( ui.item.value );
-            this.value = terms.join( ", " );
+            this.value = csv.joinArray(terms);
             return false;
         }
     });
 
 // Dropdown Menu Listener
-$("#output").on("click",".rDrop .cPointer",function(){
-    var $par = $(this).parent(),val,nVal;
+$table.on("click", ".rDrop .cPointer", function(){
+    var $this = $(this),
+        $par = $(this).parent(),
+        val,
+        nVal;
+    
     if($(this).hasClass("t")) {
         nVal = moment($par.parent().attr("data-time"),["x"]).format($dateFormat+" "+$timeFormat);
         if($(this).hasClass("Asc")) {
@@ -113,7 +146,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#usr").val(nVal);
             }
             else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(csvAppend(val,nVal));}
+            else {$("#usr").val(csv.append(val,nVal));}
         }
         else if($(this).hasClass("ESch")) {
             if(!$("#eus").prop("checked")){
@@ -122,7 +155,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#usr").val(nVal);
             }
             else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(csvAppend(val,nVal));}
+            else {$("#usr").val(csv.append(val,nVal));}
         }
     }
     else if($(this).hasClass("c")) {
@@ -154,7 +187,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#blk").val(nVal);
             }
             else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(csvAppend(val,nVal));}
+            else {$("#blk").val(csv.append(val,nVal));}
         }
         else if($(this).hasClass("ESch")) {
             if(!$("#ebl").prop("checked")){
@@ -163,7 +196,7 @@ $("#output").on("click",".rDrop .cPointer",function(){
                 $("#blk").val(nVal);
             }
             else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(csvAppend(val,nVal));}
+            else {$("#blk").val(csv.append(val,nVal));}
         }
     }
 });
