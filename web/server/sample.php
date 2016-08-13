@@ -16,10 +16,9 @@
   'co'     => 'co_',            // Prefix.
   'legacy' => false,            // Did this start logging below CP v2.11?
   'dynmap' =>                   // If no dynmap, erase/comment out the array
-                                //   below and set this to false.
-  array(
-    'link' => 'http://127.0.0.1:8123/', // Dynmap link
-    'zoom' => 6,                        // Zoom
-    'map'  => 'flat',                   // Available: flat, surface, or cave
+  // For dynmap configuration, visit .json file by the same name.
+  //   link:    Link to the Dynmap page
+  //   zoom:    Deafult Zoom level
+  //   map:     Deafult map type. Available: flat, surface, or cave
   ),
 )?>

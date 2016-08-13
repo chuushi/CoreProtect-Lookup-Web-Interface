@@ -50,14 +50,11 @@
     'BanManager' => '../banmanager/',
     'Dynmap' => 'http://127.0.0.1:8123/',
   ),
-  # Optional: configure this just by using this file.
-  'form' => 
+  # Optional: configure rest of the files.
+  'flag' => 
   array (
-    'dateFormat'   => 'll',
-    'timeFormat'   => 'LTS',
-    'timeDividor'  => 300,
-    'pageInterval' => 25,
-    'bukkitToMc'   => true,     // Translate Bukkit block/item names to MC name
+    'bukkitToMc'   => true, // Translate Bukkit block/item names to MC name
   ),
   'copyright' => 'SimonOrJ, 2015-%year%',
+  # Optional: make more configuration changes in `config.json` file.
 );?>

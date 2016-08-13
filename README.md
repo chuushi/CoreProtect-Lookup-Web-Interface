@@ -42,14 +42,14 @@ chmod 777 cache
 
 If you want to be able to make configuration changes from web UI (by `web/setup.php`):
 ```sh
-chmod 777 config.php server
+chmod 777 config.php config.json server
 ```
 
 (If you're an advanced user, you can just find a way for the webserver to have write access to the files.)
 
 ## Configuration
 
-You **must** edit `config.php` and make account changes first.  Follow the instructions inside.  If you decided to make configuraiton manually (by editing the configuration files), then configure the rest of the file.
+You **must** edit `config.php` and make account changes first.  Follow the instructions inside.  If you decided to make configuraiton manually (by editing the configuration files), then configure the rest of the file and `config.json`.
 
 If you want to set up the server infomation using the web UI, then you can follow the instructions in it.
 

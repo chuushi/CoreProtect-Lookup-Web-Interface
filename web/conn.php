@@ -103,7 +103,7 @@ if (is_a($codb, "PDOException")) {
 
 // Module Classes
 $Cc = new CacheCtrl($_REQUEST['server'], $codb, $server['co'], $server['legacy']);
-$Cm = ($c['form']['bukkitToMc']) ? new BukkitToMinecraft() : new KeepBukkit();
+$Cm = ($c['flag']['bukkitToMc']) ? new BukkitToMinecraft() : new KeepBukkit();
 
 // Special Material list
 $signBlocks = ["minecraft:standing_sign","minecraft:wall_sign"];
