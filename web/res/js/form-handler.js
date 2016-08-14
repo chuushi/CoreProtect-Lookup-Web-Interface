@@ -15,9 +15,12 @@ var $lookup     = $("#lookup"),
         radiusHide: $(".lRadiusHide"),
         c1:         $("#lC1"),
         c2:         $("#lC2"),
-        x2:         $("#lX2"),
-        y2:         $("#lY2"),
-        z2:         $("#lZ2")
+        x1:         $("#lCX"),
+        y1:         $("#lCY"),
+        z1:         $("#lCZ"),
+        x2:         $("#lCX2"),
+        y2:         $("#lCY2"),
+        z2:         $("#lCZ2")
     },
     $world      = $("#lWorld"),
     $user       = $("#lU"),
@@ -169,17 +172,17 @@ $table.on("click", ".rDrop .cPointer", function(){
     else if($this.hasClass("c")) {
         nVal = $par.prev().text().split(" ");
         if($this.hasClass("Fl1")) {
-            $("#x1").val(nVal[0]);
-            $("#y1").val(nVal[1]);
-            $("#z1").val(nVal[2]);
-            $("#wid").val(nVal[3]);
+            $coord.x1.val(nVal[0]);
+            $coord.y1.val(nVal[1]);
+            $coord.z1.val(nVal[2]);
+            $world.val(nVal[3]);
         }
         else if($this.hasClass("Fl2")) {
             radius(true);
-            $("#x2").val(nVal[0]);
-            $("#y2").val(nVal[1]);
-            $("#z2").val(nVal[2]);
-            $("#wid").val(nVal[3]);
+            $coord.x2.val(nVal[0]);
+            $coord.y2.val(nVal[1]);
+            $coord.z2.val(nVal[2]);
+            $world.val(nVal[3]);
         }
         else if($this.hasClass("DMap")) {
             window.open(s.dynmap.URL+"?worldname="+nVal[3]+"&mapname="+s.dynmap.map+"&zoom="+s.dynmap.zoom+"&x="+nVal[0]+"&y="+nVal[1]+"&z="+nVal[2],"CoLWI-dmap");

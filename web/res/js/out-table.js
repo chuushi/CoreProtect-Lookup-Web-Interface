@@ -15,6 +15,7 @@ var $lookup     = $("#lookupForm"),
     $submit     = $("#lSubmit"),
     $moreLookup = $("#loadMoreForm"),
     $moreSubmit = $("#mSubmit"),
+    $table      = $("#outputTable"),
     $pages      = $("#row-pages"),
     s           = {server: ""};
 
@@ -104,7 +105,7 @@ function if_exist(value,if_not) {
 }
 
 // Dropdown menu creation function
-$("#output").on("show.bs.dropdown",".rDrop",function(){
+$table.on("show.bs.dropdown",".rDrop",function(){
     if(!$(this).hasClass("dropdown")) {
         $(this).addClass("dropdown");
         if ($(this).hasClass("t")) {
@@ -115,7 +116,7 @@ $("#output").on("show.bs.dropdown",".rDrop",function(){
             $(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>');
         } else if($(this).hasClass("c")) {
             // Coordinates
-            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+($dynmapURL?'<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>':"")+'</div>');
+            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+(s.dynmap.URL ? '<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>' : "")+'</div>');
         } else if($(this).hasClass("b")) {
             // Block
             $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');
@@ -127,14 +128,14 @@ $("#output").on("show.bs.dropdown",".rDrop",function(){
 });
 
 // Displaying sign data function
-$("#output").on("click.collapse-next.data-api",".collapse-toggle",function(){
+$table.on("click.collapse-next.data-api",".collapse-toggle",function(){
     $(this).next().collapse("toggle");
 });
 
 // Returns data in table format
 var spanSign = '<span class="collapse-toggle" data-toggle="collapse-next" aria-expanded="false">',
 divSignData = function(Lines) {
-    return '<div class="mcSign">'+Lines.join("\n")+"</div>";
+    return '<div class="mcSign">&nbsp;'+Lines.join("&nbsp;\n&nbsp;")+"&nbsp;</div>";
 },
 spanDToggle =  '<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">',
 $lastDataTime;
