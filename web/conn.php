@@ -4,8 +4,22 @@
 // Copyright (c) 2015-2016 SimonOrJ
 
 // Request parameters:
-// a   = action
-// (too many to list in a short time)
+// server   = server name (Required)
+// a        = actions in array of strings (Defaults to "block" when undefined).
+// b        = blocks in array of strings.
+// e        = excludes in array of single character (reverse search "b" or "u" request parameter).
+// u        = users in array of strings.
+// t        = time in integer or string.
+// unixtime = is time in unixtime? (will probably be deprecated)
+// asendt   = reverse time (asending order) in boolean.
+// wid      = world to search in string.
+// xyz      = coordinates, either a center or a corner, in array of integers.
+// r        = radius in integer.
+// xyz2     = second corner coordinates in array of integers.  Turns into integer if only first is defined.
+// rollback = rollback flag boolean ("on" or "").
+// lim      = limit query integer.
+// offset   = query offset integer.
+// keyword  = keyword search for chat and commands (and signs in the future) in string.
 
 /* Database tables to use:
 block (a: block, click, kill)
@@ -72,11 +86,6 @@ if (empty($_REQUEST['server'])) {
     $out[0]["reason"] = "Server variable does not exist.";
     exit();
 }
-if (empty($_REQUEST['a'])) {
-    $out[0]["status"] = 1;
-    $out[0]["reason"] = "No action to lookup.";
-    exit();
-}
 
 // Check if server exists
 if (!file_exists($server = "server/".$_REQUEST['server'].".php")) {
@@ -108,13 +117,13 @@ $Cm = ($c['flag']['bukkitToMc']) ? new BukkitToMinecraft() : new KeepBukkit();
 // Special Material list
 $signBlocks = ["minecraft:standing_sign","minecraft:wall_sign"];
 
-
 // Variables
 $VARS = array(
-    array("a","b","e","u"), // Arrays
-    array("t","wid"), // Strings
-    array("r","rollback","lim","offset"), // Integers
-    array("unixtime","asendt")  // Booleans
+    array("a","b","e","u"),                 // Array of strings
+    array("xyz", "xyz2")                    // Array of integers
+    array("t","wid"),                       // String
+    array("r","rollback","lim","offset"),   // Integer
+    array("unixtime","asendt"),             // Boolean
 );
 
 // Query
@@ -128,32 +137,33 @@ foreach ($_REQUEST as $key => $val) {
     if (is_string($val) && $val === "") continue; // String
     elseif (is_array($val) && empty(array_filter($val,function($k){return $k !== "";}))) continue; // Empty String in array
     if (in_array($key, $VARS[0], true)) {
-        // Array
+        // Array of strings
         if (is_array($val))
             // It's already written as an array (from the web form)
             $q[$key] = $val;
         elseif (is_string($val) && $val !== "")
             // Comma-separated values (from MC)
             $q[$key] = explode(',',str_replace(' ', '', $val));
-    } elseif (in_array($key, $VARS[1],true)) {
-        // String
-        $q[$key] = $val;
-    } elseif (in_array($key, $VARS[1],true)) {
-        // Integer
-        $q[$key] = intval($val);
-    } elseif (in_array($key, $VARS[3],true)) {
-        // Boolean
-        if ($val !== "off") $q[$key] = true;
-    } elseif ($key === "xyz2" || $key === "xyz") {
-        // xyz2: second corner or radius
+    } elseif (in_array($key, $VARS[1], true)) {
         if (is_array($val)) {
-            if ($key !== "xyz" && $val[0] !== "" && $val[1] === "" && $val[2] === "")
+            if ($key === "xyz2" && $val[0] !== "" && $val[1] === "" && $val[2] === "")
+                // xyz2: second corner or radius
                 $q['r'] = intval($val[0]);
             else
                 $q[$key] = array_map('intval', $val);
         }
         elseif (is_string($val) && $val !== "")
             $q[$key] = (is_array($val))?$val:explode(',', $val);
+    } elseif (in_array($key, $VARS[2], true)) {
+        // String
+        $q[$key] = $val;
+    } elseif (in_array($key, $VARS[3], true)) {
+        // Integer only when set
+        if ($q[$key] !== "")
+            $q[$key] = intval($val);
+    } elseif (in_array($key, $VARS[4], true)) {
+        // Boolean
+        if ($val !== "off") $q[$key] = true;
     } elseif ($key === "keyword") {
         // keyword search
         if ($val !== "") $q[$key] = str_getcsv($val);
@@ -161,8 +171,8 @@ foreach ($_REQUEST as $key => $val) {
 }
 
 // Defaults if the query or required parts of the query is empty:
-if (empty($q['a']))         $q['a'] = ["block"];
-if (empty($q['lim']))       $q['lim'] = 30;
+if (empty($q['a']))         $q['a'] = array("block");
+if (!isset($q['lim']))      $q['lim'] = 30;
 if (!isset($q['asendt']))   $q['asendt'] = false;
 if (!isset($q['unixtime'])) $q['unixtime'] = false;
 
@@ -255,8 +265,8 @@ if (isset($q['u'])) {
 else $filter['userid'] = false;
 
 // Rollback flag block, kill, container
-if(isset($q['meta']['rbflag'])) {
-    $filter['meta']['rbflag'] = "rolled_back=".(($q['meta']['rbflag']) ? "1" : "0");
+if(isset($q['rollback'])) {
+    $filter['meta']['rbflag'] = "rolled_back=".(($q['rollback']) ? "1" : "0");
 }
 else $filter['meta']['rbflag'] = false;
 
