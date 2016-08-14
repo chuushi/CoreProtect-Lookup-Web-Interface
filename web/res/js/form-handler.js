@@ -19,7 +19,13 @@ var $lookup     = $("#lookup"),
         y2:         $("#lY2"),
         z2:         $("#lZ2")
     },
+    $world      = $("#lWorld"),
+    $user       = $("#lU"),
+    $userRev    = $("label[for=lUEx]"),
+    $block      = $("#lB"),
+    $blockRev   = $("label[for=lBEx]"),
     $date       = $("#lT"),
+    $dateRev    = $("label[for=lTRv]"),
     $server     = $("#lServer"),
     $submit     = $("#lSubmit"),
     $moreSubmit = $("#mSubmit"),
@@ -30,6 +36,7 @@ var $lookup     = $("#lookup"),
 // Get configuration first, then load the configuration-variable-sensetitive things.
 $.getJSON("config.json", function(data) {
     c = data;
+    // so out-table can use it
     window.c = c;
     $date.datetimepicker({format:c.form.dateFormat+" "+c.form.timeFormat});
 });
@@ -117,29 +124,30 @@ $(".autocomplete")
     });
 
 // Dropdown Menu Listener
+// TODO: Fix this
 $table.on("click", ".rDrop .cPointer", function(){
     var $this = $(this),
-        $par = $(this).parent(),
+        $par = $this.parent(),
         val,
         nVal;
     
-    if($(this).hasClass("t")) {
-        nVal = moment($par.parent().attr("data-time"),["x"]).format($dateFormat+" "+$timeFormat);
-        if($(this).hasClass("Asc")) {
+    if($this.hasClass("t")) {
+        nVal = moment($par.parent().attr("data-time"),["x"]).format(c.form.dateFormat+" "+c.form.timeFormat);
+        if($this.hasClass("Asc")) {
             $("#trv").prop("checked",true);
             $("[for=trv]").addClass("active");
             $("#date").val(nVal);
         }
-        else if($(this).hasClass("Desc")) {
+        else if($this.hasClass("Desc")) {
             $("#trv").prop("checked",false);
             $("[for=trv]").removeClass("active");
             $("#date").val(nVal);
         }
     }
-    else if($(this).hasClass("u")) {
+    else if($this.hasClass("u")) {
         val = $("#usr").val();
         nVal = $par.prev().text();
-        if($(this).hasClass("Sch")) {
+        if($this.hasClass("Sch")) {
             if($("#eus").prop("checked")){
                 $("#eus").prop("checked",false);
                 $("[for=eus]").removeClass("active");
@@ -148,7 +156,7 @@ $table.on("click", ".rDrop .cPointer", function(){
             else if(val === ""){$("#usr").val(nVal);}
             else {$("#usr").val(csv.append(val,nVal));}
         }
-        else if($(this).hasClass("ESch")) {
+        else if($this.hasClass("ESch")) {
             if(!$("#eus").prop("checked")){
                 $("#eus").prop("checked",true);
                 $("[for=eus]").addClass("active");
@@ -158,29 +166,29 @@ $table.on("click", ".rDrop .cPointer", function(){
             else {$("#usr").val(csv.append(val,nVal));}
         }
     }
-    else if($(this).hasClass("c")) {
+    else if($this.hasClass("c")) {
         nVal = $par.prev().text().split(" ");
-        if($(this).hasClass("Fl1")) {
+        if($this.hasClass("Fl1")) {
             $("#x1").val(nVal[0]);
             $("#y1").val(nVal[1]);
             $("#z1").val(nVal[2]);
             $("#wid").val(nVal[3]);
         }
-        else if($(this).hasClass("Fl2")) {
+        else if($this.hasClass("Fl2")) {
             radius(true);
             $("#x2").val(nVal[0]);
             $("#y2").val(nVal[1]);
             $("#z2").val(nVal[2]);
             $("#wid").val(nVal[3]);
         }
-        else if($(this).hasClass("DMap")) {
-            window.open($dynmapURL+"?worldname="+nVal[3]+"&mapname="+$dynmapMapName+"&zoom="+$dynmapZoom+"&x="+nVal[0]+"&y="+nVal[1]+"&z="+nVal[2],"CoLWI-dmap");
+        else if($this.hasClass("DMap")) {
+            window.open(s.dynmap.URL+"?worldname="+nVal[3]+"&mapname="+s.dynmap.map+"&zoom="+s.dynmap.zoom+"&x="+nVal[0]+"&y="+nVal[1]+"&z="+nVal[2],"CoLWI-dmap");
         }
     }
-    else if($(this).hasClass("b")) {
+    else if($this.hasClass("b")) {
         val = $("#blk").val();
         nVal = $par.parent().attr("data-block");
-        if($(this).hasClass("Sch")) {
+        if($this.hasClass("Sch")) {
             if($("#ebl").prop("checked")){
                 $("#ebl").prop("checked",false);
                 $("[for=ebl]").removeClass("active");
@@ -189,7 +197,7 @@ $table.on("click", ".rDrop .cPointer", function(){
             else if(val === ""){$("#blk").val(nVal);}
             else {$("#blk").val(csv.append(val,nVal));}
         }
-        else if($(this).hasClass("ESch")) {
+        else if($this.hasClass("ESch")) {
             if(!$("#ebl").prop("checked")){
                 $("#ebl").prop("checked",true);
                 $("[for=ebl]").addClass("active");

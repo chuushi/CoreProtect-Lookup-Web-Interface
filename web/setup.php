@@ -158,7 +158,7 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
                     $s['legacy'] = $legacy;
                     
                     // Dynmap setup
-                    $sj['dynmap']['link'] = $_POST['dynmapLink'];
+                    $sj['dynmap']['URL'] = $_POST['dynmapURL'];
                     $sj['dynmap']['zoom'] = $_POST['dynmapZoom'] ? $_POST['dynmapZoom'] : 6;
                     $sj['dynmap']['map'] = $_POST['dynmapMap'] ? $_POST['dynmapMap'] : "flat";
                 } else {
@@ -194,7 +194,7 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
                             );
                     // TODO: make it possible to re-evaluate legacy variable.
                     if (in_array("prefix",$_POST['update'],true))       $s['co'] = $_POST['prefix'];
-                    if (in_array("dynmapLink",$_POST['update'],true))   $sj['dynmap']['link'] = $_POST['dynmapLink'];
+                    if (in_array("dynmapURL",$_POST['update'],true))   $sj['dynmap']['URL'] = $_POST['dynmapURL'];
                     if (in_array("dynmapZoom",$_POST['update'],true))   $sj['dynmap']['zoom'] = $_POST['dynmapZoom'] ? $_POST['dynmapZoom'] : 6;
                     if (in_array("dynmapMap",$_POST['update'],true))    $sj['dynmap']['map'] = $_POST['dynmapMap'] ? $_POST['dynmapMap'] : "flat";
                 } else {
@@ -386,29 +386,29 @@ foreach ($sv as $fi) {
   </div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="dbDmLn">Dynmap Link</label>
+  <label class="col-sm-2 form-control-label" for="dbDmURL">Dynmap URL</label>
     <div class="col-sm-10">
     <div class="input-group">
-      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmLnU"><input type="checkbox" id="dbDmLnU" name="update[]" value="dynmapLink">Change</label></span>
-      <input class="form-control" type="text" id="dbDmLn" name="dynmapLink" placeholder="http://127.0.0.1:8123/, empty for no Dynmap">
+      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmURLC"><input type="checkbox" id="dbDmURLC" name="update[]" value="dynmapURL">Change</label></span>
+      <input class="form-control" type="text" id="dbDmURL" name="dynmapURL" placeholder="http://127.0.0.1:8123/, empty for no Dynmap">
     </div>
   </div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="dbDmLn">Dynmap Zoom</label>
+  <label class="col-sm-2 form-control-label" for="dbDmZoom">Dynmap Zoom</label>
     <div class="col-sm-10">
     <div class="input-group">
-      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmLnU"><input type="checkbox" id="dbDmLnU" name="update[]" value="dynmapZoom">Change</label></span>
-      <input class="form-control" type="number" id="dbDmZm" name="dynmapZoom" placeholder="Good value: 6">
+      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmZoomC"><input type="checkbox" id="dbDmZoomC" name="update[]" value="dynmapZoom">Change</label></span>
+      <input class="form-control" type="number" id="dbDmZoom" name="dynmapZoom" placeholder="Good value: 6">
     </div>
   </div>
 </div>
 <div class="form-group row">
-  <label class="col-sm-2 form-control-label" for="dbDmLn">Dynmap Map</label>
+  <label class="col-sm-2 form-control-label" for="dbDmMap">Dynmap Map</label>
     <div class="col-sm-10">
     <div class="input-group">
-      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmLnU"><input type="checkbox" id="dbDmLnU" name="update[]" value="dynmapMap">Change</label></span>
-      <input class="form-control" type="text" id="dbDmLn" name="dynmapMap" placeholder="Common maps: flat, surface, or cave">
+      <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmMapC"><input type="checkbox" id="dbDmMapC" name="update[]" value="dynmapMap">Change</label></span>
+      <input class="form-control" type="text" id="dbDmMap" name="dynmapMap" placeholder="Common maps: flat, surface, or cave">
     </div>
   </div>
 </div>

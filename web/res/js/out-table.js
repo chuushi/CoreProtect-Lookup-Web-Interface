@@ -11,13 +11,30 @@
 // All the used DOM references in an object
 var $lookup     = $("#lookupForm"),
     $date       = $("#lT"),
+    $server     = $("#lServer"),
     $submit     = $("#lSubmit"),
     $moreLookup = $("#loadMoreForm"),
     $moreSubmit = $("#mSubmit"),
-    $pages      = $("#row-pages");
+    $pages      = $("#row-pages"),
+    s           = {server: ""};
 
 // Variables
 var resCt,intCt;
+
+// Load dynmap information
+function loadDynmapConfig (server) {
+    if (server !== s.server) {
+        $.getJSON("server/"+server+".json", function (data) {
+            s = data;
+            s.server = server;
+        }).error(function () {
+            s = {server: server};
+        }).complete(function() {
+            // So form-handler can use it
+            window.s = s;
+        });
+    }
+}
 
 // On lookup form submit
 $lookup.submit(function(e) {
@@ -35,9 +52,10 @@ $lookup.submit(function(e) {
         data:       $lookup.serialize(),
         dataType:   "json",
         method:     "POST",
-        complete:   function(){
+        complete:   function() {
             // Upon submit
             $submit.prop("disabled",false);
+            loadDynmapConfig($server.val());
         },
         success:function(data){
             // Start the page count on bottom bar
