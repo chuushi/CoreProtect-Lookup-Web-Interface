@@ -120,10 +120,10 @@ $signBlocks = ["minecraft:standing_sign","minecraft:wall_sign"];
 // Variables
 $VARS = array(
     array("a","b","e","u"),                 // Array of strings
-    array("xyz", "xyz2")                    // Array of integers
+    array("xyz", "xyz2"),                   // Array of integers
     array("t","wid"),                       // String
     array("r","rollback","lim","offset"),   // Integer
-    array("unixtime","asendt"),             // Boolean
+    array("unixtime","asendt")              // Boolean
 );
 
 // Query
