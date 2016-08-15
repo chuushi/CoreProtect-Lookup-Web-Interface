@@ -47,7 +47,7 @@ $lookup.submit(function(e) {
             // Get the time in UNIX
             if ($date.val()!=="") {
                 s.data += "&t="
-                    + moment($date.val(),$dateFormat+" "+$timeFormat).format("X");
+                    + moment($date.val(),c.form.dateFormat+" "+c.form.timeFormat).format("X");
             }
         },
         data:       $lookup.serialize(),

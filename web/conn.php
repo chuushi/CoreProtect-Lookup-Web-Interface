@@ -159,11 +159,11 @@ foreach ($_REQUEST as $key => $val) {
         $q[$key] = $val;
     } elseif (in_array($key, $VARS[3], true)) {
         // Integer only when set
-        if ($q[$key] !== "")
+        if ($val !== "")
             $q[$key] = intval($val);
     } elseif (in_array($key, $VARS[4], true)) {
         // Boolean
-        if ($val !== "off") $q[$key] = true;
+        if ($val !== "false" || $val !==  "off") $q[$key] = true;
     } elseif ($key === "keyword") {
         // keyword search
         if ($val !== "") $q[$key] = str_getcsv($val);
@@ -238,7 +238,7 @@ if (isset($q['t'])) {
     }
     
     $filter['time'] = "time"
-            .($q['asendt']) ? ">=" : "<="
+            .(($q['asendt']) ? ">=" : "<=")
             .$filter['meta']['t'];
     unset($filter['meta']['t']);
 }
@@ -410,9 +410,16 @@ if(($out[0]["SQLqs"]=count($sql)) > 1) foreach($sql as $key => $val) {
     if($key) $tables .= " UNION ALL ";
     $tables .= "SELECT * FROM (".$val." ORDER BY time ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?) AS T".$key;
 }
+
 $lookup = $codb->prepare($sql = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY time ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?,?;");
 $out[0]["SQL"] = $sql;
 
+if ($lookup === false) {
+    // Lookup query is invalid.
+    $out[0]["status"] = 2;
+    $out[0]["reason"] = "The script returned an invalid SQL statement.";
+    exit();
+}
 
 if($out[0]["SQLqs"] > 1) for($i = 1; $i <= $out[0]["SQLqs"]; $i++) {
     $lookup->bindValue($i, (isset($q["offset"]) ? $q["offset"] : 0) + $q["lim"], PDO::PARAM_INT);
