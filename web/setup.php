@@ -224,8 +224,10 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
             if (!empty($_POST['timeFormat']))   $cj['form']['timeFormat']   = $_POST['timeFormat'];
             if (!empty($_POST['timeDividor']))  $cj['form']['timeDividor']  = intval($_POST['timeDividor']);
             if (!empty($_POST['pageInterval'])) $cj['form']['pageInterval'] = intval($_POST['pageInterval']);
-            if (!empty($_POST['bukkitToMc']))   $c['flag']['bukkitToMc']   = $_POST['pageInterval'] === true;
-            if (!empty($_POST['copyright']))    $c['copyright']            = $_POST['copyright'];
+            if (!empty($_POST['limit']))        $c['form']['limit']         = intval($_POST['limit']);
+            if (!empty($_POST['moreLimit']))    $c['form']['loadMoreLimit'] = intval($_POST['moreLimit']);
+            if (!empty($_POST['bukkitToMc']))   $c['flag']['bukkitToMc']    = $_POST['pageInterval'] === true;
+            if (!empty($_POST['copyright']))    $c['copyright']             = $_POST['copyright'];
             
             // Save file
             file_put_contents("config.php", "<?php return ".var_export($c,true).";?>");
@@ -426,19 +428,27 @@ foreach ($sv as $fi) {
 <input class="jsCheck" type="hidden" name="js" value="!disabled">
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfDate">Date Format</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="cfDate" name="dateFormat" placeholder="ll" value="<?php echo $cj['form']['dateFormat'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="text" id="cfDate" name="dateFormat" placeholder="ll" value="<?php echo $cj['form']['dateFormat'];?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfTime">Time Format</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="cfTime" name="timeFormat" placeholder="LTS" value="<?php echo $cj['form']['timeFormat'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="text" id="cfTime" name="timeFormat" placeholder="LTS" value="<?php echo $cj['form']['timeFormat'];?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfTDiv">Tab Interval (s)</label>
-  <div class="col-sm-10"><input class="form-control" type="number" id="cfTdiv" name="timeDividor" placeholder="300" value="<?php echo $cj['form']['timeDividor'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfTdiv" name="timeDividor" placeholder="300" value="<?php echo $cj['form']['timeDividor'];?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfPage">Page Interval</label>
-  <div class="col-sm-10"><input class="form-control" type="number" id="cfPage" name="pageInterval" placeholder="25" value="<?php echo $cj['form']['pageInterval'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfPage" name="pageInterval" placeholder="25" value="<?php echo $cj['form']['pageInterval'];?>"></div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="cfLimit">Query Limit</label>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfLimit" name="limit" placeholder="30" value="<?php echo $c['form']['limit'];?>"></div>
+</div>
+<div class="form-group row">
+  <label class="col-sm-2 form-control-label" for="cfMoreLimit">Load More Limit</label>
+  <div class="col-sm-10"><input class="form-control" type="number" id="cfMoreLimit" name="moreLimit" placeholder="10" value="<?php echo $c['form']['loadMoreLimit'];?>"></div>
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfCopy">Item names</label> 
@@ -451,7 +461,7 @@ foreach ($sv as $fi) {
 </div>
 <div class="form-group row">
   <label class="col-sm-2 form-control-label" for="cfCopy">Copyright</label>
-  <div class="col-sm-10"><input class="form-control" type="text" id="cfCopy" name="copyright" placeholder="SimonOrJ, 2015-%year%" value="<?php echo $c['copyright'] ?>"></div>
+  <div class="col-sm-10"><input class="form-control" type="text" id="cfCopy" name="copyright" placeholder="SimonOrJ, 2015-%year%" value="<?php echo $c['copyright'];?>"></div>
 </div>
 <div class="row">
   <div class="offset-sm-2 col-sm-10">

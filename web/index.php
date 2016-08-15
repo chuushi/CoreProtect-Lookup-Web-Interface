@@ -231,7 +231,7 @@ foreach ($sv as $fi) {
             <input type="hidden" name="unixtime" value="on">
             <label class="col-sm-2 form-control-label" for="lLimit">Limit</label>
             <div class="col-lg-4 col-sm-10">
-              <input class="form-control" type="number" id="lLimit" name="lim" min="1" placeholder="30"<?php if ($gr && $_GET['lim']) echo ' value="'.$_GET['lim'].'"';?>>
+              <input class="form-control" type="number" id="lLimit" name="lim" min="1" placeholder="<?php echo $c['form']['limit'];?>"<?php if ($gr && $_GET['lim']) echo ' value="'.$_GET['lim'].'"';?>>
             </div>
           </div>
           <div class="row">
@@ -264,7 +264,7 @@ echo isset($mainTbl) ? $mainTbl : '<tr><th scope="row">-</th><td colspan="7">Ple
       <div class="row">
         <div class="col-sm-offset-2 col-sm-8 form-group input-group">
           <label class="input-group-addon" for="mLimit">load next </label>
-          <input id="mLimit" class="form-control" type="number" name="lim" min="1" placeholder="10">
+          <input id="mLimit" class="form-control" type="number" name="lim" min="1" placeholder="<?php echo $c['form']['loadMoreLimit'];?>">
         </div>
       </div>
       <div class="form-group row">

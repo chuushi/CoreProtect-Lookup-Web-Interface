@@ -179,9 +179,9 @@ if (!isset($q['unixtime'])) $q['unixtime'] = false;
 if (!isset($q['offset']))   $q['offset'] = 0;
 if (!isset($q['lim'])) {
     if (isset($q['offset']) && $q['offset'] !== 0)
-        $q['lim'] = 10;
+        $q['lim'] = $c['default']['loadMoreLimit'];
     else
-        $q['lim'] = 30;
+        $q['lim'] = $c['default']['limit'];
 }
 
 // coord xyz, xyz2, r

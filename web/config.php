@@ -55,6 +55,11 @@
   array (
     'bukkitToMc'   => true, // Translate Bukkit block/item names to MC name
   ),
+  'form' =>
+  array (
+    'limit' => 30,
+    'loadMoreLimit' => 10,
+  ),
   'copyright' => 'SimonOrJ, 2015-%year%',
   # Optional: make more configuration changes in `config.json` file.
 );?>
