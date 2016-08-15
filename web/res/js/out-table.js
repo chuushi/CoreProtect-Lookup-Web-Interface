@@ -9,18 +9,22 @@
 "use strict";
 
 // All the used DOM references in an object
-var $lookup     = $("#lookupForm"),
+var $form       = $("#lookupForm"),
     $date       = $("#lT"),
     $server     = $("#lServer"),
+    $limit      = $("#lLimit"),
     $submit     = $("#lSubmit"),
-    $moreLookup = $("#loadMoreForm"),
+    $moreForm   = $("#loadMoreForm"),
+    $moreLimit  = $("#mLimit"),
+    $moreOffset = $("#mOffset"),
     $moreSubmit = $("#mSubmit"),
     $table      = $("#outputTable"),
     $pages      = $("#row-pages"),
     s           = {server: ""};
 
 // Variables
-var resCt,intCt;
+var formData = window.location.href.split('?',2)[1],
+    resCt, intCt;
 
 // Load dynmap information
 function loadDynmapConfig (server) {
@@ -38,29 +42,42 @@ function loadDynmapConfig (server) {
 }
 
 // On lookup form submit
-$lookup.submit(function(e) {
+$form.submit(function(e) {
     e.preventDefault();
     $.ajax("conn.php",{
         beforeSend: function(xhr,s){
             // Disable submit button
             $submit.prop("disabled",true);
+            
             // Get the time in UNIX
             if ($date.val()!=="") {
                 s.data += "&t="
                     + moment($date.val(),c.form.dateFormat+" "+c.form.timeFormat).format("X");
             }
+            
+            // Set offset
+            $moreOffset.val($limit.val() !== "" ? parseInt($limit.val()) : 30);
+            
+            // Set the Load More action
+            var lim = "lim";
+            formData = $.param($.grep($form.serializeArray(),function(e){return e.name !== lim}));
         },
-        data:       $lookup.serialize(),
+        data:       $form.serialize(),
         dataType:   "json",
         method:     "POST",
         complete:   function() {
             // Upon submit
             $submit.prop("disabled",false);
+            $moreSubmit.prop("disabled",false);
             loadDynmapConfig($server.val());
         },
         success:function(data){
             // Start the page count on bottom bar
-            $pages.html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li><li class="nav-item"><a class="nav-link" href="#rRow-0">0</a></li>');reachedLimit(false);
+            $pages.html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li><li class="nav-item"><a class="nav-link" href="#rRow-0">0</a></li>');
+            reachedLimit(false);
+            
+            // Revise "action" to the loadMore form
+            $moreForm[0].setAttribute("action","./?"+formData)
             $lastDataTime = Date.now();
             resCt=1;
             intCt=c.form.pageInterval;
@@ -77,14 +94,25 @@ $lookup.submit(function(e) {
 });
 
 // on Load More submit
-$moreLookup.submit(function(a) {
-    a.preventDefault();
-    $.ajax("conn.php",{
-        data:$moreLookup.serialize(),
+$moreForm.submit(function(e) {
+    e.preventDefault();
+    $.ajax("conn.php?" + $moreForm.attr("action").split("?",2)[1],{
+        beforeSend: function() {
+            // Disable submit button
+            $submit.prop("disabled",true);
+            $moreSubmit.prop("disabled",true);
+            
+            // Add Offset
+            $moreOffset.val(parseInt($moreOffset.val()) + ($moreLimit.val() !== "" ? parseInt($moreLimit.val()) : 10));
+        },
+        data:$moreForm.serialize(),
         dataType:"json",
         method:"POST",
-        complete:function(){},
-        success:function(data){
+        complete:function(){
+            $submit.prop("disabled",false);
+            $moreSubmit.prop("disabled",false);
+        },
+        success:function(data) {
             phraseReturn(data,1);
         },
     });
@@ -158,12 +186,12 @@ function phraseReturn(obj,more) {
             break;
             case 3:
                 // Database Connection failed (PDOException)
-                o += '><b>The webserver could not establish a connection to the database.</b> Please check your settings.</td></tr><tr><th scope="row">-</th><td colspan="7">PDOException: '+obj[1];
+                o += '><b>The webserver could not establish a connection to the database.</b> Please check your configuration.</td></tr><tr><th scope="row">-</th><td colspan="7">PDOException: '+obj[1];
                 
             break;
             case 4:
                 // Some searches by blocks and usernames does not exist
-                o += "><b>The following value does not exist in the CoreProtect's database:</b>";
+                o += "><b>The following value does not exist in the database:</b>";
                 for(var j=0; j<obj[1].length;j++) {
                     o += '</td></tr><tr><th scope="row">-</th><td>';
                     switch(obj[1][j][0]) {
@@ -196,8 +224,6 @@ function phraseReturn(obj,more) {
         // Success
         if(more){$("#offset").val(parseInt($("#offset").val())+parseInt(if_exist($("#moreLim").val(),30)));}
         else { // Set form values for offset lookup
-            $("#SQL").val(obj[0].SQL);
-            $("#SQLqs").val(obj[0].SQLqs);
             $("#offset").val(parseInt(if_exist($("#lim").val(),30)));
         }
         var r = obj[1];

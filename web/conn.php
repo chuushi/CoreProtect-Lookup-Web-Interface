@@ -172,9 +172,17 @@ foreach ($_REQUEST as $key => $val) {
 
 // Defaults if the query or required parts of the query is empty:
 if (empty($q['a']))         $q['a'] = array("block");
-if (!isset($q['lim']))      $q['lim'] = 30;
 if (!isset($q['asendt']))   $q['asendt'] = false;
 if (!isset($q['unixtime'])) $q['unixtime'] = false;
+
+// Integer defaults
+if (!isset($q['offset']))   $q['offset'] = 0;
+if (!isset($q['lim'])) {
+    if (isset($q['offset']) && $q['offset'] !== 0)
+        $q['lim'] = 10;
+    else
+        $q['lim'] = 30;
+}
 
 // coord xyz, xyz2, r
 if ((isset($q['xyz']) && (isset($q['r']) || isset($q['xyz2']))) || isset($q['wid'])) {
@@ -192,7 +200,7 @@ if ((isset($q['xyz']) && (isset($q['r']) || isset($q['xyz2']))) || isset($q['wid
                 ." AND "
                 .($q['xyz'][2] + $q['r'])
                 .")";
-    if (isset($q['xyz']) && isset($q['xyz2']))
+    elseif (isset($q['xyz']) && isset($q['xyz2']))
         $filter['coord'] = "(x BETWEEN "
                 .min($q['xyz'][0], $q['xyz2'][0])
                 ." AND "
@@ -426,7 +434,7 @@ if($out[0]["SQLqs"] > 1) for($i = 1; $i <= $out[0]["SQLqs"]; $i++) {
 }
 else $out[0]["SQLqs"] = 0;
 
-$lookup->bindValue($out[0]["SQLqs"]+1, (isset($q["offset"]) ? $q["offset"] : 0), PDO::PARAM_INT);
+$lookup->bindValue($out[0]["SQLqs"]+1, $q["offset"], PDO::PARAM_INT);
 $lookup->bindValue($out[0]["SQLqs"]+2, $q["lim"], PDO::PARAM_INT);
 
 if ($lookup->execute()) {

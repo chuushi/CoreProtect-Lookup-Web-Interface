@@ -8,7 +8,7 @@
 "use strict";
 
 // All the used DOM references in an object
-var $lookup     = $("#lookup"),
+var $form     = $("#lookup"),
     $coord      = {
         c1Label:    $("#lCorner1"),
         c2Label:    $("#lCorner2"),

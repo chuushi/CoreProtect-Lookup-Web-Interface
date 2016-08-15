@@ -260,9 +260,11 @@ echo isset($mainTbl) ? $mainTbl : '<tr><th scope="row">-</th><td colspan="7">Ple
 
     <!-- Load More form -->
     <form class="container" id="loadMoreForm" method="post" action="./<?php if (!empty($moreQuery)) echo "?".http_build_query($moreQuery);?>">
+      <input id="mOffset" type="hidden" name="offset" value="0">
       <div class="row">
         <div class="col-sm-offset-2 col-sm-8 form-group input-group">
-          <label class="input-group-addon" for="mLim">load next </label><input class="form-control" type="number" id="mLim" name="lim" min="1" placeholder="10">
+          <label class="input-group-addon" for="mLimit">load next </label>
+          <input id="mLimit" class="form-control" type="number" name="lim" min="1" placeholder="10">
         </div>
       </div>
       <div class="form-group row">
