@@ -156,15 +156,15 @@ foreach ($sv as $fi) {
               <button class="btn btn-secondary" type="button" id="lRCToggle">Radius/Corners</button>
               <span class="dtButtons btn-group">
                 <label class="btn btn-outline-success" for="lRY">
-                  <input type="radio" id="lRY" name="rollback" value="1"<?php if ($gr && $_GET["rollback"] === "1") echo " checked";?>>
+                  <input type="radio" id="lRY" name="rollback" value="1"<?php if ($gr && isset($_GET["rollback"]) && $_GET["rollback"] === "1") echo " checked";?>>
                   <span class="glyphicon glyphicon-ok"></span>
                 </label>
                 <label class="btn btn-secondary" for="lR">
-                  <input type="radio" id="lR" name="rollback" value=""<?php if (!$gr || $_GET["rollback"] === "") echo " checked";?>>
+                  <input type="radio" id="lR" name="rollback" value=""<?php if (!$gr || (isset($_GET["rollback"]) && $_GET["rollback"] === "")) echo " checked";?>>
                   Rollback
                 </label>
                 <label class="btn btn-outline-secondary" for="lRN">
-                  <input type="radio" id="lRN" name="rollback" value="0"<?php if ($gr && $_GET["rollback"] === "0") echo " checked";?>>
+                  <input type="radio" id="lRN" name="rollback" value="0"<?php if ($gr && isset($_GET["rollback"]) && $_GET["rollback"] === "0") echo " checked";?>>
                   <span class="glyphicon glyphicon-minus"></span>
                 </label>
               </span>
@@ -247,7 +247,7 @@ foreach ($sv as $fi) {
             <input type="hidden" name="unixtime" value="on">
             <label class="col-sm-2 form-control-label" for="lLimit">Limit</label>
             <div class="col-lg-4 col-sm-10">
-              <input class="form-control" type="number" id="lLimit" name="lim" min="1" placeholder="<?php echo $c['form']['limit'];?>"<?php if ($gr && $_GET['lim']) echo ' value="'.$_GET['lim'].'"';?>>
+              <input class="form-control" type="number" id="lLimit" name="lim" min="1" placeholder="<?php echo $c['form']['limit'];?>"<?php if ($gr && isset($_GET['lim'])) echo ' value="'.$_GET['lim'].'"';?>>
             </div>
           </div>
           <div class="row">
