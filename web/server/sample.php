@@ -18,7 +18,7 @@
   'legacy' => false,            // Did this start logging below CP v2.11?
   // For dynmap configuration, visit the .json file by the same name.
   //  dynmap:
-  //    link:   Link to the Dynmap page
+  //    URL:   Link to the Dynmap page
   //    zoom:   Deafult Zoom level
   //    map:    Deafult map type. Common: flat, surface, or cave
 )?>

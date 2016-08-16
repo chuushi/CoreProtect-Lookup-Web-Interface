@@ -329,34 +329,15 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
     document.getElementById("lCorner2").innerHTML = "Radius";
     document.getElementById("lC2").className = "";
     a = document.getElementsByClassName("lRadiusHide");
-    for(var i = 0; i < a.length; i++) a[i].style.display = "none";
+    for (var i = 0; i < a.length; i++) a[i].style.display = "none";
     document.getElementById("lCX2").setAttribute("placeholder","Radius");
     
     // Add data-toggle attribute to checkboxes (and radio buttons) with dtButtons class
     a = document.getElementsByClassName("dtButtons");
-    for(var i = 0; i < a.length; i++) a[i].setAttribute("data-toggle","buttons");
+    for (var i = 0; i < a.length; i++) a[i].setAttribute("data-toggle","buttons");
     document.getElementById("lT").setAttribute("placeholder","")
     document.getElementById("lT").setAttribute("type","text");
     document.getElementById("lT").removeAttribute("name");
-    
-    // Get variables from the settings
-    // TODO: Don't conflict the variables with jQuery pointer variables.
-    /*
-    var $config = <?php echo json_encode($c);?>;
-    $dateFormat = "<?php echo $c['form']['dateFormat'];?>";
-    $timeFormat = "<?php echo $c['form']['timeFormat'];?>";
-    $timeDividor = <?php echo $c['form']['timeDividor'];?>*1000;
-    
-    // TODO: Make these update when server selection happens.
-    //   Default to the first or specified server first.
-    $dynmapURL = "<?php echo $c['dynmapURL'];?>";
-    $dynmapZoom = "<?php echo $c['dynmapZoom'];?>";
-    $dynmapMapName = "<?php echo $c['dynmapMapName'];?>";
-    
-    $pageInterval = <?php echo $c['form']['pageInterval'];?>;
-    $fm = <?php echo $gr?"true":"false";?>;
-    $PHP_$t = <?php echo ($gr&&$_GET["t"]!=="")?' value="'.$_GET["t"].'"':"false";?>;
-    */
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">// JQuery</script>
     <script src="res/js/buttons.js"></script>
