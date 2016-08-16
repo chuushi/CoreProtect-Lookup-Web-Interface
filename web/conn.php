@@ -1,6 +1,6 @@
 <?php
 // CoLWI v0.9.0
-// Conn JSON application / "includable" File
+// Conn JSON application (/ "includable" File)
 // Copyright (c) 2015-2016 SimonOrJ
 
 // Request parameters:
