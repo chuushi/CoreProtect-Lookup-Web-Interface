@@ -1,5 +1,5 @@
-CoreProtect Lookup Web Interface (CoLWI)
-========================================
+[CoreProtect Lookup Web Interface (CoLWI)](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface)
+========================================================================================================
 A flexible lookup web interface for CoreProtect 2.
 
 **Version:** v0.9.0 - Beta!
