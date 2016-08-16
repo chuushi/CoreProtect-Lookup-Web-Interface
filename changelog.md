@@ -1,5 +1,28 @@
-Changes:
+Changelog:
 ================================================================================
+
+v0.9.0 - August 16, 2016
+------------------------
+- New Features:
+ - You can make a lookup from multiple servers/databases! #2
+ - You can make configuration changes using the web browser.
+ - You can make multiple accounts with varying permissions. (#3) Those include: 
+  - Full permission
+  - Cache Purge Permission
+  - Usage Permission
+- Fixes:
+ - Load More has been re-enabled without any possible SQL injection problems.
+ - Fixed "minecraft:" not appearing on old lookup block data.
+- Technical:
+ - Login script was re-written into a separate class.
+  - Login script and login page are now separated.
+ - PDO connection is now a function file.
+ - JavaScript files have been re-written.
+  - They are surrounded by an anonymous function to prevent possible global variable overwrites and allow cleaner codes.
+  - Uses better use of jQuery.
+ - Uses more-standard file, class, variable and function naming.
+ - Fixes name for "co2mc".  CoreProtect actually uses Bukkit block names for old blocks.  Renamed to "BukkitToMinecraft" class.
+- **Configuration must be re-made in order to use this!**  This is not compatible with `settings.php` file anymore.
 
 v0.8.2.1 - August 7, 2016
 -------------------------
