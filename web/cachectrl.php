@@ -1,8 +1,23 @@
 <?php
-// Code by SimonOrJ
-// Class for things with cache.
-// users, blocks, arts, images, entities,
-// TODO: Make this update usernames somehow.
+// CoLWI v0.9.0
+// CacheCtrl PHP class
+// Copyright (c) 2015-2016 SimonOrJ
+
+// __construct ( string server, PDO codb, array serverConfig )
+//   returns nothing.
+// __destruct ( void )
+//   returns nothing.
+// array error
+//   contains error data when error happens. (To be replaced with "getStatus")
+// getValue ( string from, int id )
+//   returns corresponding value in string
+// getId ( string from, string value )
+//   returns corresponding id in integer
+
+// Available "string from" values:
+// art, entity, material, user, world
+
+// TODO: Make this update username changes somehow.
 class CacheCtrl {
     private $ALL = ["art","entity","material","user","world"],
             $artDb = [],
@@ -15,26 +30,31 @@ class CacheCtrl {
             $material, $materialLookup,
             $user, $userLookup,
             $world, $worldLookup,
-            $codb, $co_, $legacy;
+            $fr, $codb, $co_, $legacy;
     
-    function __construct($codb,$co_,$legacySupport) {
-        // Load 
-        foreach($this->ALL as $d) if(file_exists(__DIR__."/cache/".$d.".php")) {
-            $e = $d."Db";
-            $this->$e = require("cache/".$d.".php");
-        }
+    public function __construct($server, $codb, $serverConfig) {
+        // Set variables
+        $this->fr = "cache/".$server."/"; // FileRoot
         $this->codb = $codb;
-        $this->co_ = $co_;
-        $this->legacy = $legacySupport;
+        $this->co_ = $serverConfig['co'];
+        $this->legacy = $serverConfig['legacy'];
+        
+        // Load 
+        foreach($this->ALL as $d) if(file_exists($this->fr.$d.".php")) {
+            $e = $d."Db";
+            $this->$e = require($this->fr.$d.".php");
+        }
     }
     
-    function __destruct() {
+    public function __destruct() {
+        if (!is_dir(__DIR__.'/'.$this->fr))
+            mkdir(__DIR__.'/'.$this->fr);
         foreach($this->ALL as $v) {
             $e = $v."Lookup";
             if(!empty($this->$v) || !empty($this->$e)) {
                 // Save $db to file
                 $d = $v."Db";
-                file_put_contents(__DIR__."/cache/".$v.".php","<?php return ".var_export($this->$d,true).";?>");
+                file_put_contents(__DIR__.'/'.$this->fr.$v.".php","<?php return ".var_export($this->$d,true).";?>");
             }
         }
     }
@@ -42,7 +62,7 @@ class CacheCtrl {
     public $error = [];
     
     // Function for id to value retrieval
-    function getValue($id,$from) {
+    public function getValue($id,$from) {
         $lookup = $from."Lookup";
         $ac = $from."Db";
         $ac =& $this->$ac;
@@ -57,11 +77,11 @@ class CacheCtrl {
             }
             $ret = $u[0];
         }
-        return (($from == "material") && ((strpos(":",$ret) !== false)) ? "minecraft:".$ret : $ret);
+        return $from === "material" && strpos($ret,':') === false ? "minecraft:".$ret : $ret;
     }
     
     // Function for value to id retrieval
-    function getId($value,$from) {
+    public function getId($value,$from) {
         $ac = $from."Db";
         $ac =& $this->$ac;
         if ($id = array_search(strtolower($value),array_map("strtolower",$ac),true)) return $id;

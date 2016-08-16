@@ -1,4 +1,11 @@
 <?php
+// CoLWI v0.9.0
+// pdoWrapper PHP Function
+// Copyright (c) 2015-2016 SimonOrJ
+
+// pdoWrapper (array database)
+//   returns PDO on success or PDOException on failure.
+
 function pdoWrapper($d) {
     try {
         $p = ($d["type"] === "mysql")

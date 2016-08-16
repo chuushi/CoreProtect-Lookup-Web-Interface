@@ -1,0 +1,8 @@
+{
+    "form": {
+        "dateFormat": "ll",
+        "timeFormat": "LTS",
+        "timeDividor": 300,
+        "pageInterval": 25
+    }
+}
