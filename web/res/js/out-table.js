@@ -48,8 +48,9 @@ $form.submit(function(e) {
     e.preventDefault();
     $.ajax("conn.php",{
         beforeSend: function(xhr,s){
-            // Disable submit button
+            // Upon submit
             $submit.prop("disabled",true);
+            $moreSubmit.prop("disabled",true);
             
             // Get the time in UNIX
             if ($date.val() !== "") {
