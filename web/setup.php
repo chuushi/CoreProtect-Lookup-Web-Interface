@@ -31,12 +31,16 @@ include "pdowrapper.php";
 
 // Check if config is editable and set it to a variable;
 //   and check if GET of submit is set.
-if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_writable("server/")) && !empty($_REQUEST['submit'])) {
+if (!empty($_REQUEST['submit'])) {
     // Out variable
     $out = array(0);
 
     switch ($_REQUEST['submit']) {
         case "server":
+            if (!is_writable("server/")) {
+                $out = array(5, "server/ directory is not writable..");
+                break;
+            }
             // Possible: delete, new, update
             
             // Check for empty name, then set and check file name
@@ -100,7 +104,11 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
             //   goes the verification...
             
             // TODO: Make verificaiton on the tool for hand-written server info.
-            if (empty($_POST['nodb']) || $_POST['nodb'] !== "on") {
+            
+            // Logic Gates are awesome!
+            if (
+                (empty($_POST['name']) || (!empty($_POST['update']) && in_array("db",$_POST['update'],true))) && (empty($_POST['nodb']) || $_POST['nodb'] !== "on")
+            ) {
                 // Connect to the server.
                 $codb = pdoWrapper($_POST);
 
@@ -222,6 +230,10 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
             break;
         case "config":
         default:
+            if (!is_writable("config.php") || !is_writable("config.json")) {
+                $out = array(5, "config.php and/or config.json files are not writable..");
+                break;
+            }
             // TODO: make this work.
             if (!empty($_POST['navbar']))$c['navbar'] = array (
                 'Home' => '/',
@@ -253,23 +265,23 @@ if (($writePerm = is_writable("config.php") && is_writable("config.json") && is_
 } elseif (!empty($_REQUEST['server'])) {
     // Get Server Config
     // TODO: Write this.
-        $file = "server/".$_REQUEST['server'];
-        if (file_exists($file.".php")) {
-            $d = require $file.".php";
-            $dj = json_decode(file_get_contents($file.".json"), true);
-            $d['dbtype'] = $d['db']['type'];
-            
-            // To avoid database credentials leak
-            unset($d['db']);
-        } else {
-            // Empty array
-            $d = array();
-        }
+    $file = "server/".$_REQUEST['server'];
+    if (file_exists($file.".php")) {
+        $d = require $file.".php";
+        $dj = json_decode(file_get_contents($file.".json"), true);
+        $d['dbtype'] = $d['db']['type'];
         
-        header('Content-type:application/json;charset=utf-8');
-        echo json_encode(array_merge($d,$dj), JSON_PARTIAL_OUTPUT_ON_ERROR);
+        // To avoid database credentials leak
+        unset($d['db']);
+    } else {
+        // Empty array
+        $d = array();
+    }
+    
+    header('Content-type:application/json;charset=utf-8');
+    echo json_encode(array_merge($d,$dj), JSON_PARTIAL_OUTPUT_ON_ERROR);
 
-        exit();
+    exit();
 }
 
 $c = include "config.php";
@@ -294,11 +306,13 @@ $template = new WebTemplate($c, $login->getUsername(), "Setup &bull; CoLWI");
 
     <!-- Server Settings -->
     <div class="container">
-      <?php if (!$writePerm):?>
-      <p>Please make sure the webserver has write permissions to the <code>config.php</code>, <code>config.json</code> and, <code>server/</code> files and directory.</p>
-      <?php else:?>
       <div id="setupDbForm" class="card">
         <div class="card-header"><span class="h4 card-title">Server Configuration</span></div>
+        <?php if (!is_writable("server/")):?>
+        <div class="card-block">
+          <p>Please make sure the webserver has write permissions to the <code>server/</code> directory.</p>
+        </div>
+        <?php else:?>
         <form id="setupDb" class="card-block" role="form" method="post" action="./setup.php?submit=server">
           <input class="jsCheck" type="hidden" name="js" value="disabled">
           <input type="hidden" name="submit" value="server">
@@ -324,10 +338,13 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-xs-3 col-sm-2 form-control-label">Database</div>
-            <div class="col-xs-9 col-sm-10">
+            <div class="col-md-2 form-control-label">Database</div>
+            <div class="col-md-10">
               <span class="dtButtons btn-group">
-                <label class="btn btn-secondary" for="dbMySQL"><input type="radio" id="dbMySQL" name="type" value="mysql" checked>MySQL</label>
+                <label class="btn btn-secondary" for="dbMySQL">
+                  <input type="radio" id="dbMySQL" name="type" value="mysql" checked>
+                  MySQL
+                </label>
                 <label class="btn btn-secondary" for="dbSQLite"><input type="radio" id="dbSQLite" name="type" value="sqlite">SQLite</label>
               </span>
               <span class="dtButtons btn-group">
@@ -336,58 +353,49 @@ foreach ($sv as $fi) {
               <span class="dtButtons btn-group">
                 <label class="btn btn-outline-danger" for="dbDelS"><input type="checkbox" id="dbDelS" name="delete"> Delete Server</label>
               </span>
+              <span class="dtButtons btn-group">
+                <label class="btn btn-outline-warning updateButton" for="dbHostU">
+                  <input type="checkbox" id="dbHostU" name="update[]" value="db">
+                  Change
+                </label>
+              </span>
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
             <label class="col-sm-2 form-control-label" for="dbHost">Host/IP(:port)</label>
             <div class="col-sm-10">
-              <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbHostU"><input type="checkbox" id="dbHostU" name="update[]" value="host">Change</label></span>
-                <input class="form-control" type="text" id="dbHost" name="host" placeholder="127.0.0.1">
-              </div>
+              <input class="form-control" type="text" id="dbHost" name="host" placeholder="127.0.0.1">
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
             <label class="col-sm-2 form-control-label" for="dbUser">Username</label>
             <div class="col-sm-10">
-              <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbUserU"><input type="checkbox" id="dbUserU" name="update[]" value="user">Change</label></span>
-                <input class="form-control" type="text" id="dbUser" name="user" placeholder="Username">
-              </div>
+              <input class="form-control" type="text" id="dbUser" name="user" placeholder="Username">
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
             <label class="col-sm-2 form-control-label" for="dbPass">Password</label>
             <div class="col-sm-10">
-              <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbPassU"><input type="checkbox" id="dbPassU" name="update[]" value="pass">Change</label></span>
-                <input class="form-control" type="password" id="dbPass" name="pass" placeholder="Password">
-              </div>
+              <input class="form-control" type="password" id="dbPass" name="pass" placeholder="Password">
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
             <label class="col-sm-2 form-control-label" for="dbData">Database</label>
             <div class="col-sm-10">
-              <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDataU"><input type="checkbox" id="dbDataU" name="update[]" value="data">Change</label></span>
-                <input class="form-control" type="text" id="dbData" name="data" placeholder="CoreProtect">
-              </div>
+              <input class="form-control" type="text" id="dbData" name="data" placeholder="CoreProtect">
             </div>
           </div>
           <div class="form-group row" id="dbCheckSQLite">
             <label class="col-sm-2 form-control-label" for="dbPath">Path</label>
-              <div class="col-sm-10">
-              <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbPathU"><input type="checkbox" id="dbPathU" name="update[]" value="path">Change</label></span>
-                <input class="form-control" type="text" id="dbPath" name="path" value="<?php echo __DIR__ ?>">
-              </div>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="dbPath" name="path" value="<?php echo __DIR__ ?>">
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-2 form-control-label" for="dbPrefix">Prefix</label>
             <div class="col-sm-10">
               <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbPrefixU"><input type="checkbox" id="dbPrefixU" name="update[]" value="prefix">Change</label></span>
+                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbPrefixU"><input type="checkbox" id="dbPrefixU" name="update[]" value="prefix">Change</label></span>
                 <input class="form-control" type="text" id="dbPrefix" name="prefix" placeholder="co_" value="co_" required>
               </div>
             </div>
@@ -396,7 +404,7 @@ foreach ($sv as $fi) {
             <label class="col-sm-2 form-control-label" for="dbDmURL">Dynmap URL</label>
               <div class="col-sm-10">
               <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmURLC"><input type="checkbox" id="dbDmURLC" name="update[]" value="dynmapURL">Change</label></span>
+                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbDmURLC"><input type="checkbox" id="dbDmURLC" name="update[]" value="dynmapURL">Change</label></span>
                 <input class="form-control" type="text" id="dbDmURL" name="dynmapURL" placeholder="http://127.0.0.1:8123/, empty for no Dynmap">
               </div>
             </div>
@@ -405,7 +413,7 @@ foreach ($sv as $fi) {
             <label class="col-sm-2 form-control-label" for="dbDmZoom">Dynmap Zoom</label>
               <div class="col-sm-10">
               <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmZoomC"><input type="checkbox" id="dbDmZoomC" name="update[]" value="dynmapZoom">Change</label></span>
+                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbDmZoomC"><input type="checkbox" id="dbDmZoomC" name="update[]" value="dynmapZoom">Change</label></span>
                 <input class="form-control" type="number" id="dbDmZoom" name="dynmapZoom" placeholder="Good value: 6">
               </div>
             </div>
@@ -414,7 +422,7 @@ foreach ($sv as $fi) {
             <label class="col-sm-2 form-control-label" for="dbDmMap">Dynmap Map</label>
               <div class="col-sm-10">
               <div class="input-group">
-                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-secondary" for="dbDmMapC"><input type="checkbox" id="dbDmMapC" name="update[]" value="dynmapMap">Change</label></span>
+                <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbDmMapC"><input type="checkbox" id="dbDmMapC" name="update[]" value="dynmapMap">Change</label></span>
                 <input class="form-control" type="text" id="dbDmMap" name="dynmapMap" placeholder="Common maps: flat, surface, or cave">
               </div>
             </div>
@@ -425,10 +433,16 @@ foreach ($sv as $fi) {
             </div>
           </div>
         </form>
+        <?php endif;?>
       </div>
 
       <div id="setupCfForm" class="card">
         <div class="card-header"><span class="h4 card-title">General Configuration</span></div>
+        <?php if (!is_writable("config.php") || !is_writable("config.json")):?>
+        <div class="card-block">
+          <p>Please make sure the webserver has write permissions to the <code>config.php</code> and <code>config.json</code> files.</p>
+        </div>
+        <?php else:?>
         <form id="setupCf" class="card-block" role="form" method="post" action="./setup.php?submit=config">
           <input class="jsCheck" type="hidden" name="js" value="disabled">
           <input type="hidden" name="submit" value="config">
@@ -475,8 +489,9 @@ foreach ($sv as $fi) {
             </div>
           </div>
         </form>
+        <?php endif;?>
       </div>
-
+      <p class="text-muted center">User configuration is not available through the web UI.  Please edit the <code>config.php</code> file and look for "user" array, which should be right after "login" array.</p>
     </div>
     <script>
     // Remove all "change" buttons (Default: new server)
@@ -496,8 +511,7 @@ foreach ($sv as $fi) {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous">// Bootstrap (Alpha!)</script>
     <script src="res/js/setup.js"></script>
 
-    <?php endif;
-    if (empty($_GET["fromLookup"])):?>
+    <?php if (empty($_GET["fromLookup"])):?>
 
   </body>
 </html>

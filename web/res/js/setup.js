@@ -94,7 +94,6 @@ $serverSelect.change(function() {
             data: "server="+$serverSelect.val(),
             method: "POST",
             success: function(d) {
-                console.log("Success");
                 if (d.dbtype === "mysql") {
                     $dbRadio.mysql.button.addClass("active");
                     $dbRadio.mysql.checkbox.addClass("checked", true);
@@ -123,7 +122,7 @@ $serverSelect.change(function() {
 var newServer;
 function errorOnSubmit(obj) {
     if (obj[0] === 3) {
-        alert("Error 3:\nThe server wasn't able to connect to the configured database. Please correct the Server Configuration and try again.")
+        alert("Error 3:\n"+(obj[1] === null ? "The server wasn't able to connect to the configured database. Please correct the Server Configuration and try again." : "PDOException: "+obj[1]));
     } else {
         alert("Error "+obj[0]+":\n"+obj[1]);
     }
@@ -148,6 +147,8 @@ $dbForm.submit(function(e) {
                 alert("The server has been successfully "+(newServer ? "added" : "updated")+"!");
                 if (newServer) {
                     $serverSelect.append("<option>"+newServer+"</option>");
+                    $serverSelect.val(newServer);
+                    $newServerInput.val("");
                 }
             } else {
                 errorOnSubmit(data);
