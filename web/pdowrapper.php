@@ -3,7 +3,7 @@
 // pdoWrapper PHP Function
 // Copyright (c) 2015-2016 SimonOrJ
 
-// Parameter array database
+// pdoWrapper (array database)
 //   returns PDO on success or PDOException on failure.
 
 function pdoWrapper($d) {

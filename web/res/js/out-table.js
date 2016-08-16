@@ -18,7 +18,9 @@ var $form       = $("#lookupForm"),
     $moreLimit  = $("#mLimit"),
     $moreOffset = $("#mOffset"),
     $moreSubmit = $("#mSubmit"),
-    $table      = $("#outputTable"),
+    $queryTime  = $("#queryTime"),
+    $table      = $("#mainTable"),
+    $output     = $("#outputTable"),
     $pages      = $("#row-pages"),
     s           = {server: ""};
 
@@ -50,7 +52,7 @@ $form.submit(function(e) {
             $submit.prop("disabled",true);
             
             // Get the time in UNIX
-            if ($date.val()!=="") {
+            if ($date.val() !== "") {
                 s.data += "&t="
                     + moment($date.val(),c.form.dateFormat+" "+c.form.timeFormat).format("X");
             }
@@ -71,14 +73,14 @@ $form.submit(function(e) {
             $moreSubmit.prop("disabled",false);
             loadDynmapConfig($server.val());
         },
-        success:function(data){
+        success:function(data) {
             // Start the page count on bottom bar
             $pages.html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li><li class="nav-item"><a class="nav-link" href="#rRow-0">0</a></li>');
             reachedLimit(false);
             
             // Revise "action" to the loadMore form
             $moreForm[0].setAttribute("action","./?"+formData)
-            $lastDataTime = Date.now();
+            lastDataTime = Date.now()/1000;
             resCt=1;
             intCt=c.form.pageInterval;
             phraseReturn(data);
@@ -134,23 +136,24 @@ function if_exist(value,if_not) {
 
 // Dropdown menu creation function
 $table.on("show.bs.dropdown",".rDrop",function(){
-    if(!$(this).hasClass("dropdown")) {
-        $(this).addClass("dropdown");
-        if ($(this).hasClass("t")) {
+    var $this = $(this);
+    if(!$this.hasClass("dropdown")) {
+        $this.addClass("dropdown");
+        if ($this.hasClass("t")) {
             // Time
-            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer t Asc">Search ascending</span><span class="dropdown-item cPointer t Desc">Search descending</span></div>');
-        } else if($(this).hasClass("u")) {
+            $this.append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer t Asc">Search ascending</span><span class="dropdown-item cPointer t Desc">Search descending</span></div>');
+        } else if($this.hasClass("u")) {
             // Username
-            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>');
-        } else if($(this).hasClass("c")) {
+            $this.append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>');
+        } else if($this.hasClass("c")) {
             // Coordinates
-            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+(s.dynmap.URL ? '<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>' : "")+'</div>');
-        } else if($(this).hasClass("b")) {
+            $this.append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+(s.dynmap.URL ? '<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>' : "")+'</div>');
+        } else if($this.hasClass("b")) {
             // Block
-            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');
+            $this.append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');
         } else {
             // should not reach this point...
-            $(this).append('<div class="dropdown-menu"><span class="dropdown-header">derp</span></div>');
+            $this.append('<div class="dropdown-menu"><span class="dropdown-header">derp</span></div>');
         }
     }
 });
@@ -162,13 +165,13 @@ $table.on("click.collapse-next.data-api",".collapse-toggle",function(){
 
 // Returns data in table format
 var spanSign = '<span class="collapse-toggle" data-toggle="collapse-next" aria-expanded="false">',
-divSignData = function(Lines) {
-    return '<div class="mcSign">&nbsp;'+Lines.join("&nbsp;\n&nbsp;")+"&nbsp;</div>";
-},
-spanDToggle =  '<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">',
-$lastDataTime;
+    divSignData = function(Lines) {
+        return '<div class="mcSign">&nbsp;'+Lines.join("&nbsp;\n&nbsp;")+"&nbsp;</div>";
+    },
+    spanDToggle =  '<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">',
+    lastDataTime;
 function phraseReturn(obj,more) {
-    $("#genTime").text("Request generated in "+Math.round(obj[0].duration*1000)+"ms");
+    $queryTime.text("Request generated in "+Math.round(obj[0].duration*1000)+"ms");
     var o;
     if (obj[0].status !== 0) { // If an error exists
         o = '<tr class="text-'+(obj[0].status===1?"info":"danger")+'"><th scope="row">'+(obj[0].status===1?"--":"E")+'</th><td colspan="7"';
@@ -222,28 +225,34 @@ function phraseReturn(obj,more) {
         o += '</td></tr>';
     } else {
         // Success
-        if(more){$("#offset").val(parseInt($("#offset").val())+parseInt(if_exist($("#moreLim").val(),30)));}
-        else { // Set form values for offset lookup
-            $("#offset").val(parseInt(if_exist($("#lim").val(),30)));
-        }
         var r = obj[1];
         o = "";
-        var i;
+        var i, jsTime;
         for (i = 0; i<r.length; i++) {
             // UNIX to JS Date
-            r[i].time *= 1000;
-            if(c.form.timeDividor < Math.abs($lastDataTime-r[i].time)||!moment($lastDataTime).isSame(r[i].time,"day")){o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'+moment(r[i].time).calendar(null,{
-                sameDay: "[Today at] " + c.form.timeFormat,
-                lastDay: "[Yesterday at] " + c.form.timeFormat,
-                lastWeek: "[Last] dddd, " + c.form.dateFormat + " " + c.form.timeFormat,
-                sameElse: c.form.dateFormat+" " + c.form.timeFormat
-            })+"</th></tr>";}
+            if(c.form.timeDividor < Math.abs(lastDataTime-r[i].time) || !moment(lastDataTime,"X").isSame(r[i].time*1000, "day")) {
+                o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'
+                    + moment(r[i].time, "X").calendar(null,{
+                        sameDay: "[Today at] " + c.form.timeFormat,
+                        lastDay: "[Yesterday at] " + c.form.timeFormat,
+                        lastWeek: "[Last] dddd, " + c.form.dateFormat + " " + c.form.timeFormat,
+                        sameElse: c.form.dateFormat+" " + c.form.timeFormat
+                    })
+                    + "</th></tr>";
+            }
             o += '<tr id="rRow-'+resCt+'"';
             if (r[i].rolled_back === "1"){o += ' class="table-success"';}
 
             // Time, Username, Action
-            o += '><th scope="row">'+resCt+'</th><td class="rDrop t" title="'+moment(r[i].time).format(c.form.dateFormat)+'" data-time="'+r[i].time+'">'+spanDToggle+moment(r[i].time).format(c.form.timeFormat)+'</span></td><td class="rDrop u">'+spanDToggle+r[i].user+'</span></td><td>'+r[i].table+'</td><td';
-            $lastDataTime = r[i].time;
+            o += '><th scope="row">' + resCt
+                + '</th><td class="rDrop t" title="'
+                + moment(r[i].time, "X").format(c.form.dateFormat)
+                + '" data-time="' + r[i].time + '">'
+                + spanDToggle+moment(r[i].time, "X").format(c.form.timeFormat)
+                + '</span></td><td class="rDrop u">'
+                + spanDToggle + r[i].user
+                + '</span></td><td>' + r[i].table + '</td><td';
+            lastDataTime = r[i].time;
             switch(r[i].table) {
                 case "click":
                 case "session":
@@ -276,20 +285,24 @@ function phraseReturn(obj,more) {
             resCt++;
         }
     }
-    if (more) {$("#mainTbl").append(o);}
-    else {$("#mainTbl").html(o);}
+    if (more) {
+        $output.append(o);
+    }
+    else {
+        $output.html(o);
+    }
     for (intCt; intCt < resCt; intCt = intCt + c.form.pageInterval) {
         $pages.append('<li class="nav-item"><a class="nav-link" href="#rRow-'+intCt+'">'+intCt+'</a></li>');
     }
+}
 
 /* Smooth scrolling by mattsince87 from http://codepen.io/mattsince87/pen/exByn
 // ------------------------------
 // http://twitter.com/mattsince87
 // ------------------------------
 */
-    $('.nav a').click(function(){  
-        $('html,body').stop().animate({scrollTop:$($(this).attr('href')).offset().top},380);
-        return false;
-    });
-}
+$('.nav').on("click", "a", function(){  
+    $('html,body').stop().animate({scrollTop:$($(this).attr('href')).offset().top},380);
+    return false;
+});
 }())

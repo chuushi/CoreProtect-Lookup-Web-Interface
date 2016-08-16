@@ -15,7 +15,6 @@
   array(
     'required' => true, // True to require login, false for optional.
     'baseperm' => 2,    // If login not required, base permission to use.
-                        //   (if login is not required)
     'duration' => 21,   // "Remember me" duration in days
   ),
   'user' => 
@@ -61,5 +60,12 @@
     'loadMoreLimit' => 10,
   ),
   'copyright' => 'SimonOrJ, 2015-%year%',
-  # Optional: make more configuration changes in `config.json` file.
+  // For additional form configuration, visit the `config.json` file.
+  //  form:
+  //    dateFormat:     Date format to use based on Moment.js.
+  //    timeFormat:     Time format to use based on Moment.js.
+  //                      Link:  http://momentjs.com/docs/#/displaying/format/
+  //    timeDividor:    Time difference between two results in seconds before
+  //                      a time separator comes in.
+  //    pageInterval:   Interval before a page separator is made at the bottom.
 );?>

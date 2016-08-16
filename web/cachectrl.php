@@ -3,15 +3,21 @@
 // CacheCtrl PHP class
 // Copyright (c) 2015-2016 SimonOrJ
 
-// __construct ( string server, PDO codb, string co_, boolean legacySupport )
+// __construct ( string server, PDO codb, array serverConfig )
 //   returns nothing.
-// ... four more member functions.
+// __destruct ( void )
+//   returns nothing.
+// array error
+//   contains error data when error happens. (To be replaced with "getStatus")
+// getValue ( string from, int id )
+//   returns corresponding value in string
+// getId ( string from, string value )
+//   returns corresponding id in integer
 
-// Class for things with cache.
-// users, blocks, arts, images, entities,
+// Available "string from" values:
+// art, entity, material, user, world
 
-
-// TODO: Make this update usernames somehow.
+// TODO: Make this update username changes somehow.
 class CacheCtrl {
     private $ALL = ["art","entity","material","user","world"],
             $artDb = [],
@@ -26,12 +32,12 @@ class CacheCtrl {
             $world, $worldLookup,
             $fr, $codb, $co_, $legacy;
     
-    public function __construct($server, $codb, $co_, $legacySupport) {
+    public function __construct($server, $codb, $serverConfig) {
         // Set variables
         $this->fr = "cache/".$server."/"; // FileRoot
         $this->codb = $codb;
-        $this->co_ = $co_;
-        $this->legacy = $legacySupport;
+        $this->co_ = $serverConfig['co'];
+        $this->legacy = $serverConfig['legacy'];
         
         // Load 
         foreach($this->ALL as $d) if(file_exists($this->fr.$d.".php")) {
@@ -71,7 +77,7 @@ class CacheCtrl {
             }
             $ret = $u[0];
         }
-        return (($from == "material") && ((strpos(":",$ret) !== false)) ? "minecraft:".$ret : $ret);
+        return $from === "material" && strpos($ret,':') === false ? "minecraft:".$ret : $ret;
     }
     
     // Function for value to id retrieval

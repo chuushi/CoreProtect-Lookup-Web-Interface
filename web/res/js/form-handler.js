@@ -8,7 +8,7 @@
 "use strict";
 
 // All the used DOM references in an object
-var $form     = $("#lookup"),
+var $form       = $("#lookup"),
     $coord      = {
         c1Label:    $("#lCorner1"),
         c2Label:    $("#lCorner2"),
@@ -24,11 +24,22 @@ var $form     = $("#lookup"),
     },
     $world      = $("#lWorld"),
     $user       = $("#lU"),
-    $userRev    = $("label[for=lUEx]"),
     $block      = $("#lB"),
-    $blockRev   = $("label[for=lBEx]"),
     $date       = $("#lT"),
-    $dateRev    = $("label[for=lTRv]"),
+    $reverse    = {
+        user: {
+            button: $("label[for=lUEx]"),
+            box: $("#lUEx")
+        },
+        block: {
+            button: $("label[for=lBEx]"),
+            box: $("#lBEx")
+        },
+        date: {
+            button: $("label[for=lTRv]"),
+            box: $("#lTRv")
+        }
+    },
     $server     = $("#lServer"),
     $submit     = $("#lSubmit"),
     $moreSubmit = $("#mSubmit"),
@@ -41,6 +52,10 @@ $.getJSON("config.json", function(data) {
     c = data;
     // so out-table can use it
     window.c = c;
+    
+    $date.val(moment($date.val(), ["X", "YYYY-MM-DDTHH:mm", c.form.dateFormat+" "+c.form.timeFormat], true)
+        .format(c.form.dateFormat+" "+c.form.timeFormat));
+    
     $date.datetimepicker({format:c.form.dateFormat+" "+c.form.timeFormat});
 });
 
@@ -54,8 +69,7 @@ function radius(boolCorner) {
         $coord.c2.addClass("input-group");
         $coord.radiusHide.show();
         $coord.x2.attr("placeholder","x");
-    }
-    else {
+    } else {
         $coord.c1Label.text("Center");
         $coord.c2Label.text("Radius");
         $coord.c2.removeClass("input-group");
@@ -69,14 +83,13 @@ $("#lRCToggle").click(function(){radius();});
 
 // Some CSV Function
 var csv = {
-    append: function (value, add) {
-        var a = value.split(/, ?/);
-        return $.inArray(add,a) === -1 ? csv + ", " + add : csv;
+    append: function (text, value) {
+        return $.inArray(value, text.split(/, ?/)) === -1 ? text + ", " + value : text;
     },
     array: function (value) {
         return value.split(/, ?/);
     },
-    joinArray: function (array) {
+    join: function (array) {
         return array.join(", ");
     }
 }
@@ -114,14 +127,14 @@ $(".autocomplete")
             var terms = csv.array(this.value);
             terms.pop();
             terms.push( ui.item.value );
-            this.value = csv.joinArray(terms);
+            this.value = csv.join(terms);
             return false;
         },
         select: function( e, ui ) {
             var terms = csv.array(this.value);
             terms.pop();
             terms.push( ui.item.value );
-            this.value = csv.joinArray(terms);
+            this.value = csv.join(terms);
             return false;
         }
     });
@@ -133,40 +146,39 @@ $table.on("click", ".rDrop .cPointer", function(){
         $par = $this.parent(),
         val,
         nVal;
-    
     if($this.hasClass("t")) {
-        nVal = moment($par.parent().attr("data-time"),["x"]).format(c.form.dateFormat+" "+c.form.timeFormat);
+        nVal = moment($par.parent().attr("data-time"),"X").format(c.form.dateFormat+" "+c.form.timeFormat);
         if($this.hasClass("Asc")) {
-            $("#trv").prop("checked",true);
-            $("[for=trv]").addClass("active");
-            $("#date").val(nVal);
+            $reverse.date.box.prop("checked",true);
+            $reverse.date.button.addClass("active");
+        } else if($this.hasClass("Desc")) {
+            $reverse.date.box.prop("checked",false);
+            $reverse.date.button.removeClass("active");
         }
-        else if($this.hasClass("Desc")) {
-            $("#trv").prop("checked",false);
-            $("[for=trv]").removeClass("active");
-            $("#date").val(nVal);
-        }
-    }
-    else if($this.hasClass("u")) {
-        val = $("#usr").val();
+        $date.val(nVal);
+    } else if($this.hasClass("u")) {
+        val = $user.val();
         nVal = $par.prev().text();
         if($this.hasClass("Sch")) {
-            if($("#eus").prop("checked")){
-                $("#eus").prop("checked",false);
-                $("[for=eus]").removeClass("active");
-                $("#usr").val(nVal);
+            if($reverse.user.box.prop("checked")){
+                $reverse.user.box.prop("checked",false);
+                $reverse.user.button.removeClass("active");
+                $user.val(nVal);
+            } else if(val === ""){
+                $user.val(nVal);
+            } else {
+                $user.val(csv.append(val,nVal));
             }
-            else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(csv.append(val,nVal));}
-        }
-        else if($this.hasClass("ESch")) {
-            if(!$("#eus").prop("checked")){
-                $("#eus").prop("checked",true);
-                $("[for=eus]").addClass("active");
-                $("#usr").val(nVal);
+        } else if($this.hasClass("ESch")) {
+            if(!$reverse.user.box.prop("checked")){
+                $reverse.user.box.prop("checked",true);
+                $reverse.user.button.addClass("active");
+                $user.val(nVal);
+            } else if(val === ""){
+                $user.val(nVal);
+            } else {
+                $user.val(csv.append(val,nVal));
             }
-            else if(val === ""){$("#usr").val(nVal);}
-            else {$("#usr").val(csv.append(val,nVal));}
         }
     }
     else if($this.hasClass("c")) {
@@ -176,38 +188,40 @@ $table.on("click", ".rDrop .cPointer", function(){
             $coord.y1.val(nVal[1]);
             $coord.z1.val(nVal[2]);
             $world.val(nVal[3]);
-        }
-        else if($this.hasClass("Fl2")) {
+        } else if($this.hasClass("Fl2")) {
             radius(true);
             $coord.x2.val(nVal[0]);
             $coord.y2.val(nVal[1]);
             $coord.z2.val(nVal[2]);
             $world.val(nVal[3]);
-        }
-        else if($this.hasClass("DMap")) {
+        } else if($this.hasClass("DMap")) {
             window.open(s.dynmap.URL+"?worldname="+nVal[3]+"&mapname="+s.dynmap.map+"&zoom="+s.dynmap.zoom+"&x="+nVal[0]+"&y="+nVal[1]+"&z="+nVal[2],"CoLWI-dmap");
         }
     }
     else if($this.hasClass("b")) {
-        val = $("#blk").val();
+        val = $block.val();
         nVal = $par.parent().attr("data-block");
         if($this.hasClass("Sch")) {
-            if($("#ebl").prop("checked")){
-                $("#ebl").prop("checked",false);
-                $("[for=ebl]").removeClass("active");
-                $("#blk").val(nVal);
+            if($reverse.block.box.prop("checked")){
+                $reverse.block.box.prop("checked",false);
+                $reverse.block.button.removeClass("active");
+                $block.val(nVal);
+            } else if (val === "") {
+                $block.val(nVal);
+            } else {
+                $block.val(csv.append(val,nVal));
             }
-            else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(csv.append(val,nVal));}
         }
         else if($this.hasClass("ESch")) {
-            if(!$("#ebl").prop("checked")){
-                $("#ebl").prop("checked",true);
-                $("[for=ebl]").addClass("active");
-                $("#blk").val(nVal);
+            if(!$reverse.block.box.prop("checked")){
+                $reverse.block.box.prop("checked",true);
+                $reverse.block.button.addClass("active");
+                $block.val(nVal);
+            } else if (val === "") {
+                $block.val(nVal);
+            } else {
+                $block.val(csv.append(val,nVal));
             }
-            else if(val === ""){$("#blk").val(nVal);}
-            else {$("#blk").val(csv.append(val,nVal));}
         }
     }
 });

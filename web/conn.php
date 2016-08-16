@@ -1,6 +1,6 @@
 <?php
 // CoLWI v0.9.0
-// Conn JSON application
+// Conn JSON application / "includable" File
 // Copyright (c) 2015-2016 SimonOrJ
 
 // Request parameters:
@@ -20,6 +20,12 @@
 // lim      = limit query integer.
 // offset   = query offset integer.
 // keyword  = keyword search for chat and commands (and signs in the future) in string.
+
+// When including:
+// Read-only variable:
+//   $_REQUEST, $c
+// Written Variable:
+//   $Cc, $Cm, $codb, $filter, $out, $q, $status, $timer, $where
 
 /* Database tables to use:
 block (a: block, click, kill)
@@ -50,34 +56,38 @@ error_reporting(-1);ini_set('display_errors', 'On');
 $timer = microtime(true);
 
 // Code to run right before code terminates
-function _shutdown() {
-    global $out,$timer,$searchSession;
-    
-    // Set type to application/json
-    header('Content-type:application/json;charset=utf-8');
-    
-    if(!isset($out[0]["status"])) {
-        $out[0]["status"] = 6;
-        $out[0]["reason"] = "Uncaught error has made the script terminate too early.";
-    }
-    $out[0]["duration"] = microtime(true) - $timer;
-    echo json_encode($out, JSON_PARTIAL_OUTPUT_ON_ERROR);
-}
-register_shutdown_function("_shutdown");
+// if used as a web application ($c is not set)
+if (!isset($c))
+    register_shutdown_function(function () {
+        global $out,$timer;
+        
+        // Set type to application/json
+        header('Content-type:application/json;charset=utf-8');
+        
+        if(!isset($out[0]["status"]))
+            $out = array(array(
+                'status' => 6,
+                'reason' => "Uncaught error has made the script terminate too early."
+            ));
+        $out[0]["duration"] = microtime(true) - $timer;
+        echo json_encode($out, JSON_PARTIAL_OUTPUT_ON_ERROR);
+    });
 
-// Load config
-$c = require "config.php";
+// Load config if loaded as JSON application (when $c is not defined)
+if (!isset($c))
+    $c = require "config.php";
+
 
 // Login check
-require "res/php/login.php";
-$login = new Login($c);
+if (!isset($login)) {
+    require "res/php/login.php";
+    $login = new Login($c);
+}
 if (!$login->permission(Login::PERM_LOOKUP)) {
     $out[0]["status"] = 5;
     $out[0]["reason"] = "Insufficient permission.";
     exit();
 }
-unset($login);
-
 
 // Check for required variables
 if (empty($_REQUEST['server'])) {
@@ -111,7 +121,7 @@ if (is_a($codb, "PDOException")) {
 }
 
 // Module Classes
-$Cc = new CacheCtrl($_REQUEST['server'], $codb, $server['co'], $server['legacy']);
+$Cc = new CacheCtrl($_REQUEST['server'], $codb, $server);
 $Cm = ($c['flag']['bukkitToMc']) ? new BukkitToMinecraft() : new KeepBukkit();
 
 // Special Material list
@@ -179,9 +189,9 @@ if (!isset($q['unixtime'])) $q['unixtime'] = false;
 if (!isset($q['offset']))   $q['offset'] = 0;
 if (!isset($q['lim'])) {
     if (isset($q['offset']) && $q['offset'] !== 0)
-        $q['lim'] = $c['default']['loadMoreLimit'];
+        $q['lim'] = $c['form']['loadMoreLimit'];
     else
-        $q['lim'] = $c['default']['limit'];
+        $q['lim'] = $c['form']['limit'];
 }
 
 // coord xyz, xyz2, r
@@ -259,7 +269,7 @@ if (isset($q['u'])) {
         $q['u'][$key] = $Cc->getId($us,"user");
     
     $filter['userid'] = "user"
-            .(isset($q['e']) && in_array("u",$q['e'],true) ? " NOT " : " ")
+            .($filter['meta']['uNot'] = isset($q['e']) && in_array("u",$q['e'],true) ? " NOT " : " ")
             ."IN ('"
             .implode("','",$q['u'])
             ."')";
@@ -267,8 +277,9 @@ if (isset($q['u'])) {
     if(in_array("username",$q['a'],true)) {
         foreach($q['u'] as $us)
             $us = $Cc->getValue($us,"user"); // for capitalization purposes
-        $filter['username'] = "user".$NOT."IN ('".implode("','",$q['u'])."')";
+        $filter['username'] = "user".$filter['meta']['uNot']."IN ('".implode("','",$q['u'])."')";
     }
+    unset($filter['meta']['uNot']);
 }
 else $filter['userid'] = false;
 
@@ -312,9 +323,8 @@ if(in_array("block",$q['a'],true) || in_array("click",$q['a'],true) || in_array(
                 ."IN ('"
                 .implode("','",$q['b'])
                 ."')";
-    }
-    else $filter['block'] = false;
-}
+    } else $filter['block'] = false;
+} else $filter['block'] = false;
 
 // Error checking
 if(!empty($cc->error)) {
@@ -369,9 +379,21 @@ function sqlreq($table) {
                 $select .= ",type,data";
                 if($table == ("block")) {
                     $select .= sel(0,"amount");
-                    if($filter['meta']['a'][0]) $whereB[] = "action IN (".implode(",",$filter['meta']['a'][0]).")".(($filter['block']) ? " AND ".$filter['block'] : "").(($filter['meta']['rbflag']) ? " AND ".$filter['meta']['rbflag'] : "");
-                    if($filter['meta']['a'][1]) $whereB[] = "action=2".(($filter['block']) ? " AND ".$filter['block'] : "");
-                    if($filter['meta']['a'][2]) $whereB[] = "action=3".(($filter['meta']['rbflag']) ? " AND ".$filter['meta']['rbflag'] : "");
+                    if($filter['meta']['a'][0])
+                        $whereB[] = "action IN ("
+                            . implode(",",$filter['meta']['a'][0])
+                            . ")"
+                            . ($filter['block']
+                                ? " AND " . $filter['block']
+                                : "")
+                            . (($filter['meta']['rbflag'])
+                                ? " AND " . $filter['meta']['rbflag']
+                                : ""
+                            );
+                    if($filter['meta']['a'][1])
+                        $whereB[] = "action=2".(($filter['block']) ? " AND ".$filter['block'] : "");
+                    if($filter['meta']['a'][2])
+                        $whereB[] = "action=3".(($filter['meta']['rbflag']) ? " AND ".$filter['meta']['rbflag'] : "");
                     if(!empty($whereB)) $where[] = "(".implode(") OR (",$whereB).")";
                 }
                 else {
@@ -446,7 +468,7 @@ if ($lookup->execute()) {
         if ($r["table"] !== "username_log") $r["user"] = $Cc->getValue($r["user"],"user");
         if ($r["table"] == "block" || $r["table"] == "container") {
             if ($r["action"] == 3) {
-                $r["type"] = $cc->getValue($r["type"],"entity");
+                $r["type"] = $Cc->getValue($r["type"],"entity");
                 $r["table"] = "kill";
                 }
             else {

@@ -34,7 +34,23 @@ if ($gr = !empty($_GET['a'])) { // I forgot what "gr" stands for...
         $moreQuery['offet'] = $_GET['lim'];
         unset($moreQuery['lim']);
     }
+    /*
+    // Get output from conn.php
+    include "conn.php";
+    
+    // The code from conn.php's shutdown function that never got to run
+    if(!isset($out[0]["status"]))
+        $out = array(array(
+            'status' => 6,
+            'reason' => "Uncaught error has made the script terminate too early."
+        ));
+    $out[0]["duration"] = microtime(true) - $timer;
+    
+    // TODO: Port JS to PHP
+    $tableOutput = $out;
+    */
 }
+// TODO: Automatically get result thingies.
 ?><!-- CoreProtect LWI by SimonOrJ. All Rights Reserved. -->
 <!DOCTYPE html>
 <html>
@@ -143,8 +159,8 @@ foreach ($sv as $fi) {
                   <input type="radio" id="lRY" name="rollback" value="1"<?php if ($gr && $_GET["rollback"] === "1") echo " checked";?>>
                   <span class="glyphicon glyphicon-ok"></span>
                 </label>
-                <label class="btn btn-secondary active" for="lR">
-                  <input type="radio" id="lR" name="rollback" value=""<?php if (!$gr || empty($_GET["rollback"])) echo " checked";?>>
+                <label class="btn btn-secondary" for="lR">
+                  <input type="radio" id="lR" name="rollback" value=""<?php if (!$gr || $_GET["rollback"] === "") echo " checked";?>>
                   Rollback
                 </label>
                 <label class="btn btn-outline-secondary" for="lRN">
@@ -188,7 +204,7 @@ foreach ($sv as $fi) {
               <div class="input-group">
                 <span class="dtButtons input-group-btn">
                   <label class="btn btn-secondary" for="lUEx">
-                    <input type="checkbox" id="lUEx" name="e[]" value="u"<?php if ($gr && $e = !empty($_GET['e']) && in_array("u",$_GET["e"])) echo " checked";?>>
+                    <input type="checkbox" id="lUEx" name="e[]" value="u"<?php if ($gr && !empty($_GET['e']) && in_array("u",$_GET["e"])) echo " checked";?>>
                     Exclude
                   </label>
                 </span>
@@ -202,7 +218,7 @@ foreach ($sv as $fi) {
               <div class="input-group">
                 <span class="dtButtons input-group-btn">
                   <label class="btn btn-secondary" for="lBEx">
-                    <input type="checkbox" id="lBEx" name="e[]" value="b"<?php if ($gr && $e && in_array("b",$_GET["e"])) echo " checked";?>>
+                    <input type="checkbox" id="lBEx" name="e[]" value="b"<?php if ($gr && !empty($_GET['e']) && in_array("b",$_GET["e"])) echo " checked";?>>
                     Exclude
                   </label>
                 </span>
@@ -245,16 +261,16 @@ foreach ($sv as $fi) {
 
     <!-- Output table -->
     <div class="container-fluid">
-      <table id="outputTable" class="table table-sm table-striped">
-        <caption id="genTime"></caption>
+      <table id="mainTable" class="table table-sm table-striped">
         <thead class="thead-inverse">
           <tr id="row-0"><th>#</th><th>Time</th><th>User</th><th>Action</th><th>Coordinates / World</th><th>Block/Item:Data</th><th>Amount</th><th>Rollback</th></tr>
         </thead>
-        <tbody id="mainTbl">
+        <tbody id="outputTable">
           <?php
-echo isset($mainTbl) ? $mainTbl : '<tr><th scope="row">-</th><td colspan="7">Please submit a lookup.</td></tr>';
+echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan="7">Please submit a lookup.</td></tr>';
           ?>
         </tbody>
+        <caption id="queryTime"></caption>
       </table>
     </div>
 
@@ -290,12 +306,13 @@ echo isset($mainTbl) ? $mainTbl : '<tr><th scope="row">-</th><td colspan="7">Ple
         </div>
       </div>
       <?php endif;?>
-      <p>If you encounter any issues, please open an issue on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.<br>This webserver is running PHP <?php echo phpversion();?>.</p>
+      <p>If you encounter any issues, please open an issue on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.
+      <br>This webserver is running PHP <?php echo phpversion();?>.</p>
     </div>
 
     <!-- Copyright Message -->
     <div class="container-fluid">
-    <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?> &mdash; CoreProtect LWI version 0.9.0-beta<br>Created by <a href="http://simonorj.com/">SimonOrJ</a>.</p>
+      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.0-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
     </div>
 
     <!-- All the scripting needs -->

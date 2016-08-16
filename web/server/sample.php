@@ -16,8 +16,9 @@
   ),
   'co'     => 'co_',            // Prefix.
   'legacy' => false,            // Did this start logging below CP v2.11?
-  // For dynmap configuration, visit .json file by the same name.
-  //   link:    Link to the Dynmap page
-  //   zoom:    Deafult Zoom level
-  //   map:     Deafult map type. Common: flat, surface, or cave
+  // For dynmap configuration, visit the .json file by the same name.
+  //  dynmap:
+  //    link:   Link to the Dynmap page
+  //    zoom:   Deafult Zoom level
+  //    map:    Deafult map type. Common: flat, surface, or cave
 )?>
