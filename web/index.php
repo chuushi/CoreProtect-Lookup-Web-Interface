@@ -1,5 +1,5 @@
 <?php
-// CoLWI v0.9.0
+// CoLWI v0.9.1
 // Index page
 // Copyright (c) 2015-2016 SimonOrJ
 
@@ -312,7 +312,7 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
 
     <!-- Copyright Message -->
     <div class="container-fluid">
-      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.0-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
+      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.1-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
     </div>
 
     <!-- All the scripting needs -->
