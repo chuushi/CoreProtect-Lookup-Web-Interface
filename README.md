@@ -21,7 +21,7 @@ In addition, this plugin makes it possible to:
 * View what was written on the signs
 * Search by keywords
 
-This plugin requires a Minecraft server running CoreProtect 2.11+ and a webserver running PHP 5.4+.  It can fetch data logged by CoreProtect through the MySQL server or the sqlite (database.db) file.
+This plugin requires a Minecraft server running CoreProtect 2.11.0+ and a webserver running PHP 5.3.0+.  It can fetch data logged by CoreProtect through the MySQL server or the sqlite (database.db) file.
 
 # Setup
 
@@ -55,7 +55,7 @@ chmod 777 config.php config.json server
 
 ## Configuration
 
-You **must** edit `config.php` and make account changes before you can do anything else.  Follow the instructions in the file.  If you decided to make all configuraiton manually (by editing the configuration files), then configure the rest of the file and `config.json`.
+You **must** edit `config.php` and make account changes before you can do anything else.  Follow the instructions in the file.  If you decided to make all configuration manually (by editing the configuration files), then configure the rest of the file and `config.json`.
 
 If you are an advanced user and want to set up server information manually, you should do so now using the `server/sample.php` and `server/sample.json` files.  The two files may be copied or renamed to better suit your needs.
 
