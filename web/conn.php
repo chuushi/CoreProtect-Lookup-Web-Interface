@@ -433,15 +433,15 @@ foreach($q['a'] as $pa) {
             break;
     }
 }
-// SELECT time,'block' AS 'table',user,wid,x,y,z,type,data,NULL AS amount,action,rolled_back FROM co_block where type LIKE ($signBlocks) AND x= AND y= AND z= AND time<=1454881758 ORDER BY time DESC LIMIT 1;
-// SELECT time,user,x,y,z,wid from co_sign where (line like '%stuff%') ORDER BY time DESC LIMIT 1;
+// SELECT time,'block' AS 'table',user,wid,x,y,z,type,data,NULL AS amount,action,rolled_back FROM co_block where type LIKE ($signBlocks) AND x= AND y= AND z= AND time<=1454881758 ORDER BY rowid DESC LIMIT 1;
+// SELECT time,user,x,y,z,wid from co_sign where (line like '%stuff%') ORDER BY rowid DESC LIMIT 1;
 $tables = "";
 if(($out[0]["SQLqs"]=count($sql)) > 1) foreach($sql as $key => $val) {
     if($key) $tables .= " UNION ALL ";
-    $tables .= "SELECT * FROM (".$val." ORDER BY time ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?) AS T".$key;
+    $tables .= "SELECT * FROM (".$val." ORDER BY rowid ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?) AS T".$key;
 }
 
-$lookup = $codb->prepare($sql = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY time ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?,?;");
+$lookup = $codb->prepare($sql = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY rowid ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?,?;");
 $out[0]["SQL"] = $sql;
 
 if ($lookup === false) {
@@ -475,7 +475,7 @@ if ($lookup->execute()) {
                 if ($r["action"] == 2) $r["table"] = "click";
                 $r["type"] = $Cm->getMc($Cc->getValue($r["type"],"material"));
                 if(in_array($r["type"],$signBlocks,true)) {
-                    $sign = $codb->query("SELECT line_1,line_2,line_3,line_4 FROM ".$server['co']."sign WHERE x=".$r["x"]." AND y=".$r["y"]." AND z=".$r["z"]." AND time".(($r["action"]=="0")?"<":">=").$r["time"]." ORDER BY time ".(($r["action"]=="0")?"DESC":"ASC")." LIMIT 1;")->fetch(PDO::FETCH_NUM);
+                    $sign = $codb->query("SELECT line_1,line_2,line_3,line_4 FROM ".$server['co']."sign WHERE x=".$r["x"]." AND y=".$r["y"]." AND z=".$r["z"]." AND time".(($r["action"]=="0")?"<":">=").$r["time"]." ORDER BY rowid ".(($r["action"]=="0")?"DESC":"ASC")." LIMIT 1;")->fetch(PDO::FETCH_NUM);
                     if($sign!=NULL)foreach($sign as $val) {
                         if(trim($val)!="") {
                             $r["signdata"]=$sign;

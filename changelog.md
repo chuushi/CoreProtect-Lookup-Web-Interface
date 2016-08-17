@@ -1,6 +1,12 @@
 Changelog:
 ================================================================================
 
+v0.9.1 - August 17, 2016
+------------------------
+- Optimization
+ - GOOD GRACIOUS THERE WAS AN "ORDER BY ROWID" OPTION???!??!!
+  - The lookup has been optimized infinitely by sorting results by rowid instead of by time.
+
 v0.9.0 - August 16, 2016
 ------------------------
 - New Features:
