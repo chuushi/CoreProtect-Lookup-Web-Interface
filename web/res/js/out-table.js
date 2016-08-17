@@ -1,5 +1,5 @@
 (function(){
-// CoLWI v0.9.0
+// CoLWI v0.9.1
 // Table-formatting JavaScript
 // Copyright (c) 2015-2016 SimonOrJ
 
@@ -53,17 +53,19 @@ $form.submit(function(e) {
             $moreSubmit.prop("disabled",true);
             
             // Get the time in UNIX
+            var time = "&t=";
             if ($date.val() !== "") {
-                s.data += "&t="
-                    + moment($date.val(),c.form.dateFormat+" "+c.form.timeFormat).format("X");
+                time += moment($date.val(),c.form.dateFormat+" "+c.form.timeFormat).format("X");
+            } else {
+                time += moment(Date.now()).format("X");
             }
-            
+            s.data += time;
             // Set offset
             $moreOffset.val($limit.val() !== "" ? parseInt($limit.val()) : 30);
             
             // Set the Load More action
             var lim = "lim";
-            formData = $.param($.grep($form.serializeArray(),function(e){return e.name !== lim}));
+            formData = $.param($.grep($form.serializeArray(),function(e){return e.name !== lim})) + time;
         },
         data:       $form.serialize(),
         dataType:   "json",
@@ -81,6 +83,7 @@ $form.submit(function(e) {
             
             // Revise "action" to the loadMore form
             $moreForm[0].setAttribute("action","./?"+formData)
+            
             lastDataTime = Date.now()/1000;
             resCt=1;
             intCt=c.form.pageInterval;

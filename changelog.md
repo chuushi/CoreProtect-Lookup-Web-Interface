@@ -6,6 +6,8 @@ v0.9.1 - August 17, 2016
 - Optimization
  - GOOD GRACIOUS THERE WAS AN "ORDER BY ROWID" OPTION???!??!!
   - The lookup has been optimized infinitely by sorting results by rowid instead of by time.
+- Fix:
+ - Loading more after time is set (or not while server is being too active) will not create any duplicate data anymore.
 
 v0.9.0 - August 16, 2016
 ------------------------
