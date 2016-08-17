@@ -2,7 +2,7 @@
 ========================================================================================================
 A flexible lookup web interface for CoreProtect 2.
 
-**Version:** [v0.9.0 - Beta](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface/releases/latest)!
+**Version:** [v0.9.1 - Beta](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface/releases/latest)!
 
 This is a _feature-packed_ web application that gives you the power to look up anything CoreProtect is capable of logging in the most efficient way.  [CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/) is developed by Intellii.
 
