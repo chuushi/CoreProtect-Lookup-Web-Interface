@@ -7,9 +7,9 @@ v0.9.2 - August 17, 2016
   - Now using minecraft.woff and a sign image to display sign data to better
     replicate the sign in-game.
   - Making a lookup will update the URL to make the output look the same even
-    when you give the link to someone else and they make a lookup with it right
-    away.
+    when you give the link to someone else and they make a lookup with it.
 - Fix:
+  - Form labels has been centered again.
   - Container option is fixed.
   - The date ordering for multiple action search is fixed.
 - Code:

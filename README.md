@@ -2,13 +2,13 @@
 ===============================================================================
 A flexible lookup web interface for CoreProtect 2.
 
-**Version:** [v0.9.2 - Beta](https://github.com/SimonOrJ/CoreProtect-Lookup-Web
--Interface/releases/latest)!
+**Version:**
+[v0.9.2 - Beta](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface/releases/latest)!
 
 This is a _feature-packed_ web application that gives you the power to look up
 anything CoreProtect is capable of logging in the most efficient way.
-[CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins
-/coreprotect/) is developed by Intellii.
+[CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/)
+is developed by Intellii.
 
 This plugin is capable of looking up logged data as if doing it from the game.
 Some filters are ported to this plugin, such as:
@@ -40,11 +40,11 @@ the MySQL server or the sqlite (database.db) file.
   - If using SQLite in real-time, you're advised to have the webserver run on
     the same machine as the Minecraft server.
 
-Download the [latest release from the releases tab](https://github.com/SimonOrJ
-/CoreProtect-Lookup-Web-Interface/releases/latest) or from the plugin page in
-dev.bukkit.org, and extract the `web/` directory into the directory accessible
-by the webserver.  You may rename the directory into something you find more
-useful (such as to `coreprotect/`).
+Download the
+[latest release from the releases tab](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface/releases/latest)
+or from the plugin page in dev.bukkit.org, and extract the `web/` directory
+into the directory accessible by the webserver.  You may rename the directory
+into something you find more useful (such as to `coreprotect/`).
 
 If you are an advanced user, you can just do
 ```sh
