@@ -108,6 +108,9 @@ well.
 
 #[Contributing](CONTRIBUTING.md)
 
-#[Plugin Page on Bukkit](http://dev.bukkit.org/bukkit-plugins/coreprotect-lwi/)
+# Plugin Links
+
+* [BukkitDev](//dev.bukkit.org/bukkit-plugins/coreprotect-lwi/)
+* [Spigot](//www.spigotmc.org/resources/coreprotect-lookup-web-interface.28033/)
 
 ~Simon
