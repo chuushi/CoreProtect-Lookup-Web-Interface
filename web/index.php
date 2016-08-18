@@ -94,7 +94,7 @@ endif;
         <div class="card-header"><span class="h4 card-title">Make a Lookup</span></div>
         <form id="lookupForm" class="card-block" role="form" method="get" action="./">
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="lServer">Server Name</label>
+            <label class="col-sm-2 col-form-label" for="lServer">Server Name</label>
             <div class="col-sm-10">
               <select class="form-control" id="lServer" name="server">
                 <?php
@@ -114,7 +114,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-lg-2 form-control-label">Actions</div>
+            <div class="col-lg-2 col-form-label">Actions</div>
             <div class="dtButtons btn-group col-lg-10">
               <label class="btn btn-secondary" for="lABl" data-toggle="tooltip" data-placement="top" title="Block manipulation">
                 <input type="checkbox" id="lABl" name="a[]" value="block"<?php if (!$gr || in_array("block",$_GET['a'])) echo " checked";?>>
@@ -151,7 +151,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-lg-2 form-control-label">Toggle</div>
+            <div class="col-lg-2 col-form-label">Toggle</div>
             <div class="col-lg-10">
               <button class="btn btn-secondary" type="button" id="lRCToggle">Radius/Corners</button>
               <span class="dtButtons btn-group">
@@ -171,7 +171,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-              <label id="lCorner1" class="col-sm-2 form-control-label" for="lCX">Center / Corner 1</label>
+              <label id="lCorner1" class="col-sm-2 col-form-label" for="lCX">Center / Corner 1</label>
               <div class="col-lg-4 col-sm-10 groups-line">
                 <div class="input-group" id="lC1">
                   <input class="form-control" type="number" id="lCX" name="xyz[]" placeholder="x"<?php if ($gr && isset($_GET["xyz"][0])) echo ' value="'.$_GET["xyz"][0].'"';?>>
@@ -181,7 +181,7 @@ foreach ($sv as $fi) {
                   <input class="form-control" type="number" id="lCZ" name="xyz[]" placeholder="z"<?php if ($gr && isset($_GET["xyz"][2])) echo ' value="'.$_GET["xyz"][2].'"';?>>
                 </div>
               </div>
-              <label id="lCorner2" class="col-sm-2 form-control-label" for="lCX2">Radius / Corner 2</label>
+              <label id="lCorner2" class="col-sm-2 col-form-label" for="lCX2">Radius / Corner 2</label>
               <div class="col-lg-4 col-sm-10">
                 <div class="input-group" id="lC2">
                   <input class="form-control" type="number" id="lCX2" name="xyz2[]" placeholder="Radius or x"<?php if ($gr && (isset($_GET["xyz"][0]) || isset($_GET["r"]))) echo ' value="'.(isset($_GET["xyz"][0]) ? $_GET["xyz2"][0] : $_GET["r"]).'"';?>>
@@ -193,13 +193,13 @@ foreach ($sv as $fi) {
               </div>
           </div>
           <div class="form-group row">
-            <label class="col-xs-2 form-control-label" for="lWorld">World</label>
+            <label class="col-xs-2 col-form-label" for="lWorld">World</label>
             <div class="col-xs-10">
               <input class="form-control autocomplete" data-query-table="world" type="text" id="lWorld" name="wid" placeholder="world"<?php if ($gr && isset($_GET["wid"])) echo ' value="'.$_GET["wid"].'"';?>>
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-lg-2 form-control-label" for="lU">Users</label>
+            <label class="col-lg-2 col-form-label" for="lU">Users</label>
             <div class="col-lg-10">
               <div class="input-group">
                 <span class="dtButtons input-group-btn">
@@ -213,7 +213,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-lg-2 form-control-label" for="lB">Blocks</label>
+            <label class="col-lg-2 col-form-label" for="lB">Blocks</label>
             <div class="col-lg-10">
               <div class="input-group">
                 <span class="dtButtons input-group-btn">
@@ -227,12 +227,12 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="lKeyword">Keyword</label>
+            <label class="col-sm-2 col-form-label" for="lKeyword">Keyword</label>
             <div class="col-sm-10">
               <input class="form-control" type="text" id="lKeyword" name="keyword"<?php if ($gr && isset($_GET["keyword"])) echo ' value="'.$_GET["keyword"].'"';?> data-toggle="tooltip" data-placement="top" title='Space [&nbsp;] for AND. Comma [,] for OR. Enclose terms in quotes [""] to escape spaces/commas. Only applies to chat and command.'></div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="lT">Date/Time</label>
+            <label class="col-sm-2 col-form-label" for="lT">Date/Time</label>
             <div class="col-lg-4 col-sm-10 groups-line">
               <div class="input-group">
                 <span class="dtButtons input-group-btn">
@@ -241,11 +241,11 @@ foreach ($sv as $fi) {
                     Reverse
                   </label>
                 </span>
-                <input class="form-control" type="datetime-local" id="lT" name="t" placeholder="0000-00-00T00:00:00"<?php if ($gr && isset($_GET["t"])) echo ' value="'.$_GET["t"].'"';?>>
+                <input class="form-control" type="<?php echo ($gr && isset($_GET["t"]) && is_numeric($_GET["t"])) ? "number" : "datetime-local";?>" id="lT" name="t" placeholder="0000-00-00T00:00:00"<?php if ($gr && isset($_GET["t"])) echo ' value="'.$_GET["t"].'"';?>>
               </div>
             </div>
             <input type="hidden" name="unixtime" value="on">
-            <label class="col-sm-2 form-control-label" for="lLimit">Limit</label>
+            <label class="col-sm-2 col-form-label" for="lLimit">Limit</label>
             <div class="col-lg-4 col-sm-10">
               <input class="form-control" type="number" id="lLimit" name="lim" min="1" placeholder="<?php echo $c['form']['limit'];?>"<?php if ($gr && isset($_GET['lim'])) echo ' value="'.$_GET['lim'].'"';?>>
             </div>
@@ -338,6 +338,9 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
     document.getElementById("lT").setAttribute("placeholder","")
     document.getElementById("lT").setAttribute("type","text");
     document.getElementById("lT").removeAttribute("name");
+    
+    document.getElementById("lSubmit").disabled = true;
+    document.getElementById("mSubmit").disabled = true;
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">// JQuery</script>
     <script src="res/js/buttons.js"></script>

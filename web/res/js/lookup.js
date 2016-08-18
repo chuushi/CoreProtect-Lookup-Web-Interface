@@ -63,6 +63,9 @@ $.getJSON("config.json", function(data) {
         .format(c.form.dateFormat+" "+c.form.timeFormat));
     
     $date.datetimepicker({format:c.form.dateFormat+" "+c.form.timeFormat});
+    
+    // Unlock the lookup button
+    $submit.prop("disabled", false);
 });
 
 $('[data-toggle="tooltip"]').tooltip();
@@ -294,7 +297,10 @@ $form.submit(function(e) {
             } else {
                 time += moment(Date.now()).format("X");
             }
-            s.data += time;
+            
+            // Set the URL and data
+            window.history.replaceState(null, "", "?" + (s.data += time))
+            
             // Set offset
             $moreOffset.val($limit.val() !== "" ? parseInt($limit.val()) : 30);
             

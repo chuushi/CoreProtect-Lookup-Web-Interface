@@ -311,7 +311,7 @@ $template = new WebTemplate($c, $login->getUsername(), "Setup &bull; CoLWI");
           <input class="jsCheck" type="hidden" name="js" value="disabled">
           <input type="hidden" name="submit" value="server">
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="dbSelect">Server Name</label>
+            <label class="col-sm-2 col-form-label" for="dbSelect">Server Name</label>
             <div class="col-sm-10">
               <div class="input-group">
                 <select class="form-control" id="dbSelect" name="name">
@@ -332,7 +332,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-md-2 form-control-label">Database</div>
+            <div class="col-md-2 col-form-label">Database</div>
             <div class="col-md-10">
               <span class="dtButtons btn-group">
                 <label class="btn btn-secondary" for="dbMySQL">
@@ -356,37 +356,37 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
-            <label class="col-sm-2 form-control-label" for="dbHost">Host/IP(:port)</label>
+            <label class="col-sm-2 col-form-label" for="dbHost">Host/IP(:port)</label>
             <div class="col-sm-10">
               <input class="form-control" type="text" id="dbHost" name="host" placeholder="127.0.0.1">
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
-            <label class="col-sm-2 form-control-label" for="dbUser">Username</label>
+            <label class="col-sm-2 col-form-label" for="dbUser">Username</label>
             <div class="col-sm-10">
               <input class="form-control" type="text" id="dbUser" name="user" placeholder="Username">
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
-            <label class="col-sm-2 form-control-label" for="dbPass">Password</label>
+            <label class="col-sm-2 col-form-label" for="dbPass">Password</label>
             <div class="col-sm-10">
               <input class="form-control" type="password" id="dbPass" name="pass" placeholder="Password">
             </div>
           </div>
           <div class="form-group row dbCheckMySQL">
-            <label class="col-sm-2 form-control-label" for="dbData">Database</label>
+            <label class="col-sm-2 col-form-label" for="dbData">Database</label>
             <div class="col-sm-10">
               <input class="form-control" type="text" id="dbData" name="data" placeholder="CoreProtect">
             </div>
           </div>
           <div class="form-group row" id="dbCheckSQLite">
-            <label class="col-sm-2 form-control-label" for="dbPath">Path</label>
+            <label class="col-sm-2 col-form-label" for="dbPath">Path</label>
             <div class="col-sm-10">
               <input class="form-control" type="text" id="dbPath" name="path" value="<?php echo __DIR__ ?>">
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="dbPrefix">Prefix</label>
+            <label class="col-sm-2 col-form-label" for="dbPrefix">Prefix</label>
             <div class="col-sm-10">
               <div class="input-group">
                 <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbPrefixU"><input type="checkbox" id="dbPrefixU" name="update[]" value="prefix">Change</label></span>
@@ -395,7 +395,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="dbDmURL">Dynmap URL</label>
+            <label class="col-sm-2 col-form-label" for="dbDmURL">Dynmap URL</label>
               <div class="col-sm-10">
               <div class="input-group">
                 <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbDmURLC"><input type="checkbox" id="dbDmURLC" name="update[]" value="dynmapURL">Change</label></span>
@@ -404,7 +404,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="dbDmZoom">Dynmap Zoom</label>
+            <label class="col-sm-2 col-form-label" for="dbDmZoom">Dynmap Zoom</label>
               <div class="col-sm-10">
               <div class="input-group">
                 <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbDmZoomC"><input type="checkbox" id="dbDmZoomC" name="update[]" value="dynmapZoom">Change</label></span>
@@ -413,7 +413,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="dbDmMap">Dynmap Map</label>
+            <label class="col-sm-2 col-form-label" for="dbDmMap">Dynmap Map</label>
               <div class="col-sm-10">
               <div class="input-group">
                 <span class="dtButtons updateButton input-group-btn"><label class="btn btn-outline-warning" for="dbDmMapC"><input type="checkbox" id="dbDmMapC" name="update[]" value="dynmapMap">Change</label></span>
@@ -441,31 +441,31 @@ foreach ($sv as $fi) {
           <input class="jsCheck" type="hidden" name="js" value="disabled">
           <input type="hidden" name="submit" value="config">
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfDate">Date Format</label>
+            <label class="col-sm-2 col-form-label" for="cfDate">Date Format</label>
             <div class="col-sm-10"><input class="form-control" type="text" id="cfDate" name="dateFormat" placeholder="ll" value="<?php echo $cj['form']['dateFormat'];?>"></div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfTime">Time Format</label>
+            <label class="col-sm-2 col-form-label" for="cfTime">Time Format</label>
             <div class="col-sm-10"><input class="form-control" type="text" id="cfTime" name="timeFormat" placeholder="LTS" value="<?php echo $cj['form']['timeFormat'];?>"></div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfTDiv">Tab Interval (s)</label>
+            <label class="col-sm-2 col-form-label" for="cfTDiv">Tab Interval (s)</label>
             <div class="col-sm-10"><input class="form-control" type="number" id="cfTdiv" name="timeDividor" placeholder="300" value="<?php echo $cj['form']['timeDividor'];?>"></div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfPage">Page Interval</label>
+            <label class="col-sm-2 col-form-label" for="cfPage">Page Interval</label>
             <div class="col-sm-10"><input class="form-control" type="number" id="cfPage" name="pageInterval" placeholder="25" value="<?php echo $cj['form']['pageInterval'];?>"></div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfLimit">Query Limit</label>
+            <label class="col-sm-2 col-form-label" for="cfLimit">Query Limit</label>
             <div class="col-sm-10"><input class="form-control" type="number" id="cfLimit" name="limit" placeholder="30" value="<?php echo $c['form']['limit'];?>"></div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfMoreLimit">Load More Limit</label>
+            <label class="col-sm-2 col-form-label" for="cfMoreLimit">Load More Limit</label>
             <div class="col-sm-10"><input class="form-control" type="number" id="cfMoreLimit" name="moreLimit" placeholder="10" value="<?php echo $c['form']['loadMoreLimit'];?>"></div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfCopy">Item names</label> 
+            <label class="col-sm-2 col-form-label" for="cfCopy">Item names</label> 
             <div class="col-sm-10">
               <select class="form-control" id="cfCopy" name="bukkitToMc">
                 <option value="true"<?php if ($c['flag']['bukkitToMc']) echo " selected";?>>Mincraft item names</option>
@@ -474,7 +474,7 @@ foreach ($sv as $fi) {
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 form-control-label" for="cfCopy">Copyright</label>
+            <label class="col-sm-2 col-form-label" for="cfCopy">Copyright</label>
             <div class="col-sm-10"><input class="form-control" type="text" id="cfCopy" name="copyright" placeholder="SimonOrJ, 2015-%year%" value="<?php echo $c['copyright'];?>"></div>
           </div>
           <div class="row">
