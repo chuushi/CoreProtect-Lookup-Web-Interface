@@ -1,19 +1,13 @@
 <?php
-// CoLWI v0.9.0
+// CoLWI v0.9.2
 // Setup JSON application or Page
 // Copyright (c) 2015-2016 SimonOrJ
 
 // POST parameters:
 // (To be populated...)
 
-/*
-Prereq:
-- Have write access to config.php
-- Recommend write access to cache/ directory
-*/
-
 // Testing script
-error_reporting(-1);ini_set('display_errors', 'On');
+//error_reporting(-1);ini_set('display_errors', 'On');
 
 // Load configuration
 $c = require "config.php";

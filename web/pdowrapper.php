@@ -1,5 +1,5 @@
 <?php
-// CoLWI v0.9.0
+// CoLWI v0.9.2
 // pdoWrapper PHP Function
 // Copyright (c) 2015-2016 SimonOrJ
 

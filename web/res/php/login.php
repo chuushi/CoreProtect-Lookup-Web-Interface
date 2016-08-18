@@ -1,5 +1,5 @@
 <?php 
-// CoLWI v0.9.0
+// CoLWI v0.9.2
 // Login PHP class
 // Copyright (c) 2015-2016 SimonOrJ
 

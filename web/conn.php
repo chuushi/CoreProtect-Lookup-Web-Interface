@@ -1,6 +1,6 @@
 <?php
-// CoLWI v0.9.1
-// Conn JSON application (/ "includable" File)
+// CoLWI v0.9.2
+// Conn JSON application
 // Copyright (c) 2015-2016 SimonOrJ
 
 // Request parameters:
@@ -27,30 +27,8 @@
 // Written Variable:
 //   $Cc, $Cm, $codb, $filter, $out, $q, $status, $timer, $where
 
-/* Database tables to use:
-block (a: block, click, kill)
-entity (for mob kills) (use with block table)
-sign (with block>data minecraft:sign and minecraft:wall_sign)
-skull (with block>data minecraft:skull)
-container (a: container) (maybe use with container blocks)
-chat (a: chat)
-command (a: command)
-session (a:session)
-username_log (a:username)
-
-Output status codes:
-    0 - Success
-    1 - No Results
-    2 - SQL Query Unsuccessful
-    3 - Database Connection Failed
-    4 - Values from cachectrl Not Found
-    5 - Settings Error
-    6 - No status code
-    7 - (JS-side) Invalid response
-*/
-
 // Testing script
-error_reporting(-1);ini_set('display_errors', 'On');
+//error_reporting(-1);ini_set('display_errors', 'On');
 
 // Record start time
 $timer = microtime(true);
@@ -302,7 +280,7 @@ if(in_array("block",$q['a'],true) || in_array("click",$q['a'],true) || in_array(
     }
     // clicks
     if(in_array("click",$q['a'],true)) {
-        if ($q['rbflag'])
+        if ($filter['meta']['rbflag'])
             $filter['meta']['a'][1] = true;
         else
             $filter['meta']['a'][0][] = 2;
@@ -415,13 +393,15 @@ function sqlreq($table) {
     return "SELECT time,'".$table."' AS 'table',user".$select." FROM ".$server['co'].$table.((empty($where)) ? "" : " where ".implode(" AND ",$where));
 }
 
+$filter['meta']['blockFlag'] = true;
+
 foreach($q['a'] as $pa) {
     switch($pa) {
         case "block":
         case "click":
         case "kill":
-            if(!isset($bflag)) {
-                $bflag = true;
+            if($filter['meta']['blockFlag']) {
+                $filter['meta']['blockFlag'] = false;
                 $sql[] = sqlreq("block");
             }
             break;
@@ -441,7 +421,11 @@ if(($out[0]["SQLqs"]=count($sql)) > 1) foreach($sql as $key => $val) {
     $tables .= "SELECT * FROM (".$val." ORDER BY rowid ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?) AS T".$key;
 }
 
-$lookup = $codb->prepare($sql = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])." ORDER BY rowid ".(($q['asendt'])?"ASC":"DESC")." LIMIT ?,?;");
+$lookup = $codb->prepare($sql = (($out[0]["SQLqs"] > 1)?$tables:$sql[0])
+    ." ORDER BY "
+    .(($out[0]["SQLqs"] > 1)?"time":"rowid")." "
+    .(($q['asendt'])?"ASC":"DESC")
+    ." LIMIT ?,?;");
 $out[0]["SQL"] = $sql;
 
 if ($lookup === false) {

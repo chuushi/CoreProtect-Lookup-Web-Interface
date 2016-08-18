@@ -1,5 +1,5 @@
 (function(){
-// CoLWI v0.9.0
+// CoLWI v0.9.2
 // buttons JavaScript
 // Copyright (c) 2015-2016 SimonOrJ
 

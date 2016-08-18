@@ -1,8 +1,8 @@
-[CoreProtect Lookup Web Interface (CoLWI)](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface)
-========================================================================================================
+# [CoreProtect Lookup Web Interface (CoLWI)](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface)
+
 A flexible lookup web interface for CoreProtect 2.
 
-**Version:** [v0.9.1 - Beta](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface/releases/latest)!
+**Version:** [v0.9.2 - Beta](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface/releases/latest)!
 
 This is a _feature-packed_ web application that gives you the power to look up anything CoreProtect is capable of logging in the most efficient way.  [CoreProtect, a Minecraft plugin,](http://dev.bukkit.org/bukkit-plugins/coreprotect/) is developed by Intellii.
 
@@ -37,7 +37,7 @@ If you are an advanced user, you can just do
 ```sh
 git clone https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface.git
 ```
-and clone this repository.  (This isn't really recommended since the "theme" files bloats the download.)
+and clone this repository.
 
 ## Write Permissions
 

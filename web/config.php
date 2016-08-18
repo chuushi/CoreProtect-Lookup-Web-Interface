@@ -25,7 +25,7 @@
       # 1. Set the password.
       'pass' => 'password',
       # 2. Set this to false to allow account access from the web.
-      'lock' => true,
+      'lock' => false,
       'perm' => 0, // 0 means full permission!
     ),
     # Optional: Configure other users here.  Create as many users as you want.

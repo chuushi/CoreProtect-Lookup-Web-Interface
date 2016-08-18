@@ -1,10 +1,10 @@
 <?php
-// CoLWI v0.9.1
+// CoLWI v0.9.2
 // Index page
 // Copyright (c) 2015-2016 SimonOrJ
 
 // Testing script
-error_reporting(-1);ini_set('display_errors', 'On');
+//error_reporting(-1);ini_set('display_errors', 'On');
 
 // Get the configuration variable.
 $c = require "config.php";
@@ -312,7 +312,7 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
 
     <!-- Copyright Message -->
     <div class="container-fluid">
-      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.1-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
+      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.2-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
     </div>
 
     <!-- All the scripting needs -->
@@ -346,7 +346,6 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous">// Bootstrap (Alpha!)</script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js">// datetime-picker dependency</script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">// Datetime Picker</script>
-    <script src="res/js/out-table.js"></script>
-    <script src="res/js/form-handler.js"></script>
+    <script src="res/js/lookup.js"></script>
   </body>
 </html>

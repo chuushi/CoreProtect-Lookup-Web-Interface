@@ -1,10 +1,10 @@
 <?php 
-// CoLWI v0.9.0
+// CoLWI v0.9.2
 // Login Page
 // Copyright (c) 2015-2016 SimonOrJ
 
 // Testing script
-error_reporting(-1);ini_set('display_errors', 'On');
+//error_reporting(-1);ini_set('display_errors', 'On');
 
 $c = require "config.php";
 

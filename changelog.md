@@ -1,6 +1,21 @@
 Changelog:
 ================================================================================
 
+v0.9.2 - August 17, 2016
+------------------------
+- New feature:
+ - Now using minecraft.woff and a sign image to display sign data to better replicate the sign in-game.
+- Fix:
+ - Container option is fixed.
+ - The date ordering for multiple action search is fixed.
+- Code:
+ - Removed bloaty comments.
+ - Disabled test scripts.
+- Git Repository-sepecific
+ - Removed the entire "theme" folder.  This is now clone-friendly.
+- Technical:
+ - Merged `form-handler.js` and `out-table.js` into `lookup.js`.
+
 v0.9.1 - August 17, 2016
 ------------------------
 - Optimization

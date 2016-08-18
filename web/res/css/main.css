@@ -1,5 +1,5 @@
 /*
- * CoLWI v0.9.0
+ * CoLWI v0.9.2
  * Setup JSON application or Page
  * Copyright (c) 2015-2016 SimonOrJ
  */
@@ -16,6 +16,27 @@ body {
 #top {
   margin-bottom:.75rem;
 }
+/* Minecraft font. All rights belongs to the creator which I don't exactly know.
+ * Please credit the person if you do know. */
+@font-face {
+    font-family: Minecraft;
+    src: url(../font/Minecraft.woff);
+}
+.mcSign {
+  display:inline-block;
+  width:12rem;
+  height:6rem;
+  padding:.5rem 0;
+  line-height:1.24rem;
+  text-align:center;
+  white-space:pre;
+  font-family: Minecraft;
+  background: #A88953 url("../img/sign.png") no-repeat;
+  background-size: cover;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
+}
 .center {
   text-align:center;
 }
@@ -25,7 +46,7 @@ body {
 form label {
   white-space:nowrap;
 }
-/* Style Overwrites */
+/* Bootstrap Style Overwrites */
 .btn {
   margin-bottom:0;
 }
@@ -80,14 +101,6 @@ form label {
   border-top: .3em solid;
   border-right: .3em solid transparent;
   border-left: .3em solid transparent;
-}
-.mcSign{
-  display:inline-block;
-  border:1px solid #ccc;
-  border-radius:.25rem;
-  min-width:11rem;
-  text-align:center;
-  white-space:pre;
 }
 @media(max-width:991px) {
 .groups-line {

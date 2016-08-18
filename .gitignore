@@ -1,7 +1,13 @@
-theme/
+# For my test server
+web/test.php
 aspnet_client/
-web/cache/*
-old/
-
 database.db
 
+# Prevent data leaks
+web/cache/*
+web/server/*
+web/config.php
+web/config.json
+
+# Old files
+old/
