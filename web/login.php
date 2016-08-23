@@ -1,5 +1,5 @@
 <?php 
-// CoLWI v0.9.2
+// CoLWI v0.9.3
 // Login Page
 // Copyright (c) 2015-2016 SimonOrJ
 
