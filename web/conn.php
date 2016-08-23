@@ -48,7 +48,7 @@ if (!isset($c))
                 'reason' => "Uncaught error has made the script terminate too early."
             ));
         $out[0]["duration"] = microtime(true) - $timer;
-        echo json_encode($out, JSON_PARTIAL_OUTPUT_ON_ERROR);
+        echo json_encode($out);
     });
 
 // Load config if loaded as JSON application (when $c is not defined)
@@ -122,9 +122,14 @@ $filter = array('meta' => array());
 
 // Get all the request into the query array.
 foreach ($_REQUEST as $key => $val) {
-    $emptyValTest = array_filter($val,function($k){return $k !== "";}); // empty() does not support functions for PHP versions under v5.5.0.
     if (is_string($val) && $val === "") continue; // String
-    elseif (is_array($val) && empty($emptyValTest)) continue; // Empty String in array
+    if (is_array($val)) {
+        // empty() does not support functions for PHP versions under v5.5.0.
+        $emptyValTest = array_filter($val,function($k){
+            return $k !== "";
+        });
+        if (empty($emptyValTest)) continue; // Empty String in array
+    }
     if (in_array($key, $VARS[0], true)) {
         // Array of strings
         if (is_array($val))
