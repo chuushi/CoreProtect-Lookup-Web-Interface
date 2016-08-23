@@ -122,7 +122,7 @@ $filter = array('meta' => array());
 
 // Get all the request into the query array.
 foreach ($_REQUEST as $key => $val) {
-    $emptyValTest = array_filter($val,function($k){return $k !== "";}) // empty() does not support functions for PHP versions under v5.5.0.
+    $emptyValTest = array_filter($val,function($k){return $k !== "";}); // empty() does not support functions for PHP versions under v5.5.0.
     if (is_string($val) && $val === "") continue; // String
     elseif (is_array($val) && empty($emptyValTest)) continue; // Empty String in array
     if (in_array($key, $VARS[0], true)) {
