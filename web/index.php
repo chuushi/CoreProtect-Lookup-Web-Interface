@@ -312,7 +312,7 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
 
     <!-- Copyright Message -->
     <div class="container-fluid">
-      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.2-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
+      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.3-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
     </div>
 
     <!-- All the scripting needs -->
