@@ -347,7 +347,7 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js">// Dropdown</script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js">// Bootstrap dependency</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous">// Bootstrap (Alpha!)</script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js">// datetime-picker dependency</script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js">// datetime-picker dependency</script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">// Datetime Picker</script>
     <script src="res/js/lookup.js"></script>
   </body>

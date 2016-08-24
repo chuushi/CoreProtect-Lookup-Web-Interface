@@ -59,10 +59,19 @@ var $form       = $("#lookupForm"),
 $.getJSON("config.json", function(data) {
     c = data;
     
-    $date.val(moment($date.val(), ["X", "YYYY-MM-DDTHH:mm", c.form.dateFormat+" "+c.form.timeFormat], true)
-        .format(c.form.dateFormat+" "+c.form.timeFormat));
+    // Set the locale and format
+    moment.locale(c.form.locale);
+    moment.updateLocale(c.form.locale, {calendar: {sameElse: "LLLL"}});
+    moment.defaultFormat = c.form.dateFormat+" "+c.form.timeFormat;
     
-    $date.datetimepicker({format:c.form.dateFormat+" "+c.form.timeFormat});
+    // Translate the date field
+    $date.val(moment($date.val(), ["X", "YYYY-MM-DDTHH:mm", c.form.dateFormat+" "+c.form.timeFormat], true).format());
+    
+    // Set datetimepicker
+    $date.datetimepicker({
+        locale: c.form.locale,
+        format: c.form.dateFormat+" "+c.form.timeFormat
+    });
     
     // Unlock the lookup button
     $submit.prop("disabled", false);
@@ -156,7 +165,7 @@ $output.on("click", ".rDrop .cPointer", function(){
         val,
         nVal;
     if($this.hasClass("t")) {
-        nVal = moment($par.parent().attr("data-time"),"X").format(c.form.dateFormat+" "+c.form.timeFormat);
+        nVal = moment($par.parent().attr("data-time"),"X").format();
         if($this.hasClass("Asc")) {
             $reverse.date.box.prop("checked",true);
             $reverse.date.button.addClass("active");
@@ -290,12 +299,12 @@ $form.submit(function(e) {
             // Get the time in UNIX
             var time = "&t=";
             if ($date.val() !== "") {
-                time += moment($date.val(),c.form.dateFormat+" "+c.form.timeFormat).format("X");
+                time += moment($date.val(),c.form.dateFormat+" "+c.form.timeFormat).unix();
             } else if ($reverse.date.box.prop("checked")){
                 // Reverse is clicked and date field is empty.  Don't account for time.
                 time = "";
             } else {
-                time += moment(Date.now()).format("X");
+                time += moment(Date.now()).unix();
             }
             
             // Set the URL and data
@@ -470,19 +479,14 @@ function phraseReturn(obj,more) {
         o += '</td></tr>';
     } else {
         // Success
-        var r = obj[1];
+        var r = obj[1],
+            i, jsTime;
         o = "";
-        var i, jsTime;
         for (i = 0; i<r.length; i++) {
             // UNIX to JS Date
             if(c.form.timeDividor < Math.abs(lastDataTime-r[i].time) || !moment(lastDataTime,"X").isSame(r[i].time*1000, "day")) {
                 o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'
-                    + moment(r[i].time, "X").calendar(null,{
-                        sameDay: "[Today at] " + c.form.timeFormat,
-                        lastDay: "[Yesterday at] " + c.form.timeFormat,
-                        lastWeek: "[Last] dddd, " + c.form.dateFormat + " " + c.form.timeFormat,
-                        sameElse: c.form.dateFormat+" " + c.form.timeFormat
-                    })
+                    + moment(r[i].time, "X").calendar()
                     + "</th></tr>";
             }
             o += '<tr id="rRow-'+resCt+'"';
