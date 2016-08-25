@@ -1,6 +1,16 @@
 Changelog:
 ===============================================================================
 
+v0.9.3 - August 24, 2016
+------------------------
+- Enhanced Feature:
+  - Time can be localized easily now.
+- Fixes:
+  - Webservers running PHP 5.4 and below wasn't able to use this tool due to an
+    error.  This now supports 5.4 properly.
+  - "Cache" directory is now included in the project itself.
+
+
 v0.9.2 - August 17, 2016
 ------------------------
 - New feature:
