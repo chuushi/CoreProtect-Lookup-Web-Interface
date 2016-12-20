@@ -1,6 +1,6 @@
 {
     "form": {
-		"locale": "en-US",
+        "locale": "en-US",
         "dateFormat": "ll",
         "timeFormat": "LTS",
         "timeDividor": 300,
