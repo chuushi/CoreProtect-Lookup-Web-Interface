@@ -46,6 +46,7 @@
   'navbar' => 
   array (
     'Home' => '/',
+    'Themes' => 'themes.php',
     'BanManager' => '../banmanager/',
     'Dynmap' => 'http://127.0.0.1:8123/',
   ),
