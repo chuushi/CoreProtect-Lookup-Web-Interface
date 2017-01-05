@@ -1,0 +1,43 @@
+Thanks for downloading my port of the Core Protect 2 Web Interface to support NamelessMC! <3 :D
+
+P.S. After installing the addon, you can just go to the settings of the addon to see these instructions in a much prettier fashion lmao ;)
+	
+																	Addon Installtion:
+
+
+Copy & paste ALL given folders (addons & coreprotect2) to the root of your NamlessMC website.
+Merge the addons folder when it requests for you to merge it.
+																	
+																	
+																	
+																	
+																	
+																	
+																	Web Interface Installation:
+																	Prerequisites
+
+Webserver running PHP 5.3.0 or above (This webserver is running PHP 5.6.23.)
+A MySQL or SQLite database used by a Minecraft server running CoreProtect 2.11 or above.
+If using SQLite in real-time, you're advised to have the webserver run on the same machine as the Minecraft server.
+
+																	Setup
+
+Extract the folder titled "coreprotect2" into your NamelessMC website root.
+
+																	Write Permissions
+
+The webserver should have write permission to the cache/ folder in order for this web application to work efficiently. Do this by running: chmod 777 cache or by editing permissions through an FTP program such as WinSCP.
+If you want to be able to make configuration changes from web UI (via web/setup.php): chmod 777 config.php config.json server or by editing permissions through an FTP program such as WinSCP.
+(If you're an advanced user, you can just find a way for the webserver to have write access to the files, or make configuration directly from those files.)
+
+																	Configuration
+
+You must edit config.php and make account changes before you can do anything else. Follow the instructions in the file. If you decided to make all configuration manually (by editing the configuration files), then configure the rest of the file and config.json.
+If you are an advanced user and want to set up server information manually, you should do so now using the server/sample.php and server/sample.json files. The two files may be copied or renamed to better suit your needs.
+
+
+
+
+For more information about this addon, such as theme switching & link location switching, head over to the addon's settings once you've installed it. Thanks! Enjoy! <3 :D
+
+- Muhsinun Chowdhury <3

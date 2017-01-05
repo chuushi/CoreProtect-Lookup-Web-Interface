@@ -64,13 +64,6 @@ if ($gr = !empty($_GET['a'])) { // I forgot what "gr" stands for...
     <?php
     $template->navbar();
     ?>
-    <nav id="scroll-nav" class="navbar navbar-dark bg-inverse navbar-fixed-bottom">
-      <div class="container-fluid">
-        <ul id="row-pages" class="nav navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="#top">Top</a></li>
-        </ul>
-      </div>
-    </nav>
 
     <div class="container">
       <?php
@@ -306,13 +299,12 @@ echo isset($tableOutput) ? $tableOutput : '<tr><th scope="row">-</th><td colspan
         </div>
       </div>
       <?php endif;?>
-      <p>If you encounter any issues, please open an issue on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.
-      <br>This webserver is running PHP <?php echo phpversion();?>.</p>
+	  <p><a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a></p>
     </div>
 
     <!-- Copyright Message -->
     <div class="container-fluid">
-      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.3-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>.</span></p>
+      <p>&copy; <?php echo str_replace("%year%", date("Y"),$c["copyright"]);?>. <span class="">CoreProtect LWI v0.9.3-beta &ndash; Created by <a href="http://simonorj.com/">SimonOrJ</a>, ported to <a href="https://www.spigotmc.org/resources/namelessmc.11434/">NamelessMC</a> by <a href="http://muhsinunc.ml/">MuhsinunC</a>.</span></p>
     </div>
 
     <!-- All the scripting needs -->
