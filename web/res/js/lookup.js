@@ -328,7 +328,7 @@ $form.submit(function(e) {
         },
         success:function(data) {
             // Start the page count on bottom bar
-            $pages.html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li><li class="nav-item"><a class="nav-link" href="#rRow-0">0</a></li>');
+            $pages.html('<li php="nav-item"><a php="nav-link active" href="#top">Top</a></li><li php="nav-item"><a php="nav-link" href="#rRow-0">0</a></li>');
             reachedLimit(false);
             
             // Revise "action" to the loadMore form
@@ -340,7 +340,7 @@ $form.submit(function(e) {
             phraseReturn(data);
         },
         error: function(){
-            $pages.html('<li class="nav-item"><a class="nav-link active" href="#top">Top</a></li>');
+            $pages.html('<li php="nav-item"><a php="nav-link active" href="#top">Top</a></li>');
             phraseReturn([{
                 status:7,
                 reason:"The lookup script was unable to send a proper response."
@@ -395,19 +395,19 @@ $table.on("show.bs.dropdown",".rDrop",function(){
         $this.addClass("dropdown");
         if ($this.hasClass("t")) {
             // Time
-            $this.append('<div class="dropdown-menu"><span class="dropdown-header">Date/Time</span><span class="dropdown-item cPointer t Asc">Search ascending</span><span class="dropdown-item cPointer t Desc">Search descending</span></div>');
+            $this.append('<div php="dropdown-menu"><span php="dropdown-header">Date/Time</span><span php="dropdown-item cPointer t Asc">Search ascending</span><span php="dropdown-item cPointer t Desc">Search descending</span></div>');
         } else if($this.hasClass("u")) {
             // Username
-            $this.append('<div class="dropdown-menu"><span class="dropdown-header">User</span><span class="dropdown-item cPointer u Sch">Search user</span><span class="dropdown-item cPointer u ESch">Exclusive Search</span></div>');
+            $this.append('<div php="dropdown-menu"><span php="dropdown-header">User</span><span php="dropdown-item cPointer u Sch">Search user</span><span php="dropdown-item cPointer u ESch">Exclusive Search</span></div>');
         } else if($this.hasClass("c")) {
             // Coordinates
-            $this.append('<div class="dropdown-menu"><span class="dropdown-header">Coordinates</span><span class="dropdown-item cPointer c Fl1">Center/Corner 1</span><span class="dropdown-item cPointer c Fl2">Corner 2</span>'+(s.dynmap.URL ? '<span class="dropdown-item cPointer c DMap">Open in Dynmap</span>' : "")+'</div>');
+            $this.append('<div php="dropdown-menu"><span php="dropdown-header">Coordinates</span><span php="dropdown-item cPointer c Fl1">Center/Corner 1</span><span php="dropdown-item cPointer c Fl2">Corner 2</span>'+(s.dynmap.URL ? '<span php="dropdown-item cPointer c DMap">Open in Dynmap</span>' : "")+'</div>');
         } else if($this.hasClass("b")) {
             // Block
-            $this.append('<div class="dropdown-menu"><span class="dropdown-header">Block</span><span class="dropdown-item cPointer b Sch">Search block</span><span class="dropdown-item cPointer b ESch">Exclusive Search</span></div>');
+            $this.append('<div php="dropdown-menu"><span php="dropdown-header">Block</span><span php="dropdown-item cPointer b Sch">Search block</span><span php="dropdown-item cPointer b ESch">Exclusive Search</span></div>');
         } else {
             // should not reach this point...
-            $this.append('<div class="dropdown-menu"><span class="dropdown-header">derp</span></div>');
+            $this.append('<div php="dropdown-menu"><span php="dropdown-header">derp</span></div>');
         }
     }
 });
@@ -418,23 +418,23 @@ $table.on("click.collapse-next.data-api",".collapse-toggle",function(){
 });
 
 // Returns data in table format
-var spanSign = '<span class="collapse-toggle" data-toggle="collapse-next" aria-expanded="false">',
+var spanSign = '<span php="collapse-toggle" data-toggle="collapse-next" aria-expanded="false">',
     divSignData = function(Lines) {
-        return '<div class="mcSign">&nbsp;'+Lines.join("&nbsp;\n&nbsp;")+"&nbsp;</div>";
+        return '<div php="mcSign">&nbsp;'+Lines.join("&nbsp;\n&nbsp;")+"&nbsp;</div>";
     },
-    spanDToggle =  '<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">',
+    spanDToggle =  '<span php="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">',
     lastDataTime;
 function phraseReturn(obj,more) {
     $queryTime.text("Request generated in "+Math.round(obj[0].duration*1000)+"ms");
     var o;
     if (obj[0].status !== 0) { // If an error exists
-        o = '<tr class="text-'+(obj[0].status===1?"info":"danger")+'"><th scope="row">'+(obj[0].status===1?"--":"E")+'</th><td colspan="7"';
+        o = '<tr php="text-'+(obj[0].status===1?"info":"danger")+'"><th scope="row">'+(obj[0].status===1?"--":"E")+'</th><td colspan="7"';
         
         // Error type
         switch(obj[0].status) {
             case 1:
                 // End of result
-                o += ' class="text-xs-center">'+reachedLimit(true);
+                o += ' php="text-xs-center">'+reachedLimit(true);
             break;
             case 2:
                 // SQL unsuccessful
@@ -485,20 +485,20 @@ function phraseReturn(obj,more) {
         for (i = 0; i<r.length; i++) {
             // UNIX to JS Date
             if(c.form.timeDividor < Math.abs(lastDataTime-r[i].time) || !moment(lastDataTime,"X").isSame(r[i].time*1000, "day")) {
-                o += '<tr class="table-section"><th scope="row">-</th><th colspan="7">'
+                o += '<tr php="table-section"><th scope="row">-</th><th colspan="7">'
                     + moment(r[i].time, "X").calendar()
                     + "</th></tr>";
             }
             o += '<tr id="rRow-'+resCt+'"';
-            if (r[i].rolled_back === "1"){o += ' class="table-success"';}
+            if (r[i].rolled_back === "1"){o += ' php="table-success"';}
 
             // Time, Username, Action
             o += '><th scope="row">' + resCt
-                + '</th><td class="rDrop t" title="'
+                + '</th><td php="rDrop t" title="'
                 + moment(r[i].time, "X").format(c.form.dateFormat)
                 + '" data-time="' + r[i].time + '">'
                 + spanDToggle+moment(r[i].time, "X").format(c.form.timeFormat)
-                + '</span></td><td class="rDrop u">'
+                + '</span></td><td php="rDrop u">'
                 + spanDToggle + r[i].user
                 + '</span></td><td>' + r[i].table + '</td><td';
             lastDataTime = r[i].time;
@@ -515,11 +515,11 @@ function phraseReturn(obj,more) {
                         else if(r[i].rolled_back === "1"){r[i].rolled_back = "Rolled.";}
                     }
                     // Coordinates, Type:Data, Amount, Rollback
-                    o += ' class="rDrop c">'+spanDToggle+r[i].x+' '+r[i].y+' '+r[i].z+' '+r[i].wid+"</span></td><td"+(r[i].table === "session"?">"
-                    :(r[i].signdata?' class="rColl">'+spanSign
-                    :' class="rDrop b" data-block="'+r[i].type+'">'+spanDToggle)+r[i].type+':'+r[i].data+"</span>"+(r[i].signdata? '<div class="rDrop b collapse" data-block="'+r[i].type+'">'+divSignData(r[i].signdata)+"<br>"+spanDToggle+r[i].type+':'+r[i].data+"</span></div>"
-                    :""))+'</td><td'+(r[i].action === "0"?' class="table-warning">-'
-                    :(r[i].action === "1"?' class="table-info">+'
+                    o += ' php="rDrop c">'+spanDToggle+r[i].x+' '+r[i].y+' '+r[i].z+' '+r[i].wid+"</span></td><td"+(r[i].table === "session"?">"
+                    :(r[i].signdata?' php="rColl">'+spanSign
+                    :' php="rDrop b" data-block="'+r[i].type+'">'+spanDToggle)+r[i].type+':'+r[i].data+"</span>"+(r[i].signdata? '<div php="rDrop b collapse" data-block="'+r[i].type+'">'+divSignData(r[i].signdata)+"<br>"+spanDToggle+r[i].type+':'+r[i].data+"</span></div>"
+                    :""))+'</td><td'+(r[i].action === "0"?' php="table-warning">-'
+                    :(r[i].action === "1"?' php="table-info">+'
                     :'>'))+(r[i].table === "container" ? r[i].amount
                     : '')+'</td><td>'+r[i].rolled_back;
                     break;
@@ -541,7 +541,7 @@ function phraseReturn(obj,more) {
         $output.html(o);
     }
     for (intCt; intCt < resCt; intCt = intCt + c.form.pageInterval) {
-        $pages.append('<li class="nav-item"><a class="nav-link" href="#rRow-'+intCt+'">'+intCt+'</a></li>');
+        $pages.append('<li php="nav-item"><a php="nav-link" href="#rRow-'+intCt+'">'+intCt+'</a></li>');
     }
 }
 

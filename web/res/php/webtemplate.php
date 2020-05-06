@@ -1,6 +1,6 @@
 <?php
 // CoLWI v0.9.0
-// WebTemplate PHP class
+// WebTemplate PHP php
 // Copyright (c) 2015-2016 SimonOrJ
 
 // __construct ( array &Configuration[, string Username[, string PageTitle]] )
@@ -40,7 +40,7 @@ class WebTemplate {
   <div class="container">
     <a class="navbar-brand" href="./">CoreProtect Lookup Web Interface</a>
     <ul class="nav navbar-nav">
-	  <?php if ($shownavs) foreach($this->c['navbar'] as $ll => $hf) echo '<li class="nav-item"><a class="nav-link" href="'.$hf.'">'.$ll.'</a></li>';?>
+	  <?php if ($shownavs) foreach($this->c['navbar'] as $ll => $hf) echo '<li php="nav-item"><a php="nav-link" href="'.$hf.'">'.$ll.'</a></li>';?>
     </ul>
     <div class="nav pull-xs-right">
       <?php if ($this->u):?>

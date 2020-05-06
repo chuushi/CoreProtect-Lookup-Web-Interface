@@ -1,6 +1,6 @@
 <?php 
 // CoLWI v0.9.3
-// Login PHP class
+// Login PHP php
 // Copyright (c) 2015-2016 SimonOrJ
 
 // void __construct ( array &Configuration )
