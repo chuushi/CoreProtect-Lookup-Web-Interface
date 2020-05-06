@@ -8,6 +8,17 @@ A flexible lookup web interface for CoreProtect 2.
 It's been 4 years, and I've learned much more over time.  This project is currently
 being rewritten!
 
+Installation:
+
+Make sure your webserver's PHP configuration has lines
+
+```ini
+extension_dir="ext"
+extension=php_pdo_sqlite.dll
+```
+
+uncommented in `php.ini`
+
 ***
 
 **Version:**

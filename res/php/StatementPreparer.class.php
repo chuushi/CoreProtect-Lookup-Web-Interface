@@ -14,7 +14,8 @@ class StatementPreparer {
     const A_SESSION       = 0x0100;
     const A_USERNAME      = 0x0200;
 
-    const A_BLOCK_TABLE = self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_CLICK | self::A_KILL;
+    const A_BLOCK_MATERIAL = self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_CLICK;
+    const A_BLOCK_TABLE = self::A_BLOCK_MATERIAL | self::A_KILL;
     const A_CONTAINER_TABLE = self::A_CONTAINER_IN | self::A_CONTAINER_OUT;
     const A_LOOKUP_TABLE = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_CHAT | self::A_COMMAND | self::A_SESSION | self::A_USERNAME;
 
@@ -31,13 +32,6 @@ class StatementPreparer {
     const COMMAND = "command";
     const SESSION = "session";
     const USERNAME = "username";
-
-    const SELECT_BLOCK = "SELECT c.rowid, 'block' AS `table`, c.time, u.user, c.action, w.world, c.x, c.y, c.z, IFNULL(mm.material, em.entity) AS `target`, IFNULL(dm.data, c.data) AS `data`, NULL as `amount`, c.rolled_back";
-    const SELECT_CONTAINER = "SELECT c.rowid, 'container' AS `table`, c.time, u.user, c.action, w.world, c.x, c.y, c.z, mm.material AS `target`, c.data, c.amount, c.rolled_back";
-    const SELECT_CHAT = "SELECT c.rowid, 'chat' AS `table`, c.time, u.user, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.message AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
-    const SELECT_COMMAND = "SELECT c.rowid, 'command' AS `table`, c.time, c.user, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.message AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
-    const SELECT_SESSION = "SELECT c.rowid, 'session' AS `table`, c.time, u.user, c.action, w.world, c.x, c.y, c.z, NULL AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
-    const SELECT_USERNAME = "SELECT c.rowid, 'username' AS `table`, c.time, u.user, c.uuid, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.user AS target, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
 
     const W_MATERIAL = "mm.material";
     const W_ENTITY = "em.entity";
@@ -89,7 +83,7 @@ class StatementPreparer {
         return $ifunset;
     }
 
-    public function preparedData() {
+    public function preparedStatementData() {
         $this->populate();
 
         if (sizeof($this->sqlFromWhere) == 0)
@@ -104,14 +98,22 @@ class StatementPreparer {
         $queries = [];
 
         foreach ($this->sqlFromWhere as $table => $from) {
-            $queries[] = $this->getSelect($table) . " " . $from . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count;
+            $queries[] = $this->getSelect($table) . " " . $from;
         }
 
         /** @noinspection SqlResolve TODO idk if I should resolve the table schematics */
-        return "SELECT * FROM (" . join(" UNION ALL ", $queries) . ") AS t ORDER BY t.time " . $this->sqlOrder . " LIMIT " . $this->count;
+        //return "SELECT * FROM ((" . join(") UNION ALL (", $queries) . ")) AS t ORDER BY t.time " . $this->sqlOrder . " LIMIT " . $this->count;
+
+        $ret = "";
+        foreach($queries as $key => $val) {
+            if($key) $ret .= " UNION ALL ";
+            $ret .= "SELECT * FROM (" . $val . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count . ") AS t".$key;
+        }
+
+        return $ret;
     }
 
-    public function preparedCount() {
+    public function preparedStatementCount() {
         $this->populate();
 
         if (sizeof($this->sqlFromWhere) == 0)
@@ -131,7 +133,7 @@ class StatementPreparer {
         return "SELECT * FROM (" . join(" UNION ALL ", $queries) . ")";
     }
 
-    public function preparedPlaceholders() {
+    public function preparedParams() {
         $this->populate();
         return $this->sqlPlaceholders;
     }
@@ -140,20 +142,30 @@ class StatementPreparer {
      * @param string $key
      * @return string the appropriate SELECT
      */
-    private function getSelect($key) {
+    private function getSelect($key, $a = 0) {
         switch ($key) {
             case self::BLOCK:
-                return self::SELECT_BLOCK;
+                $material = $a & self::A_BLOCK_MATERIAL;
+                $entity = $a & self::A_KILL;
+                return "SELECT c.rowid, 'block' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, "
+                    . (
+                        $material && $entity
+                            ? "IFNULL(mm.material, em.entity)"
+                            : $material ? "mm.material" : "em.entity"
+                    )
+                    . " AS `target`, "
+                    . ($material ? "IFNULL(dm.data, c.data)" : "c.data")
+                    . " AS `data`, NULL as `amount`, c.rolled_back";
             case self::CONTAINER:
-                return self::SELECT_CONTAINER;
+                return "SELECT c.rowid, 'container' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, mm.material AS `target`, c.data, c.amount, c.rolled_back";
             case self::CHAT:
-                return self::SELECT_CHAT;
+                return "SELECT c.rowid, 'chat' AS `table`, c.time, u.user, u.uuid, NULL as `action`, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.message AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
             case self::COMMAND:
-                return self::SELECT_COMMAND;
+                return "SELECT c.rowid, 'command' AS `table`, c.time, c.user, u.uuid, NULL as `action`, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.message AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
             case self::SESSION:
-                return self::SELECT_SESSION;
+                return "SELECT c.rowid, 'session' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, NULL AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
             case self::USERNAME:
-                return self::SELECT_USERNAME;
+                return "SELECT c.rowid, 'username' AS `table`, c.time, u.user, c.uuid, NULL as `action`, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.user AS target, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
             default:
                 return null;
         }
@@ -182,7 +194,7 @@ class StatementPreparer {
             $sql = "FROM `" . $this->prefix . "block` AS c"
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
 
-            if ($this->a & (self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_CLICK)) {
+            if ($this->a & (self::A_BLOCK_MATERIAL)) {
                 $sql .= " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
                 $wheres[] = self::W_MATERIAL;
             }
@@ -266,7 +278,7 @@ class StatementPreparer {
             $wheres = [self::W_TIME, self::W_USER];
             /** @var string $sql */
             $sql = "FROM `".$this->prefix . "username_log` AS c"
-                . " LEFT JOIN `co2_user` AS u ON c.uuid = u.uuid";
+                . " LEFT JOIN `".$this->prefix . "user` AS u ON c.uuid = u.uuid";
 
             // TODO: Keyword
 
