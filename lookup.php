@@ -4,11 +4,13 @@
  * @author Simon Chuu
  */
 
-require_once 'res/php/LookupHandler.php';
+require_once 'res/php/StatementPreparer.php';
 
-// TODO: Parse query
-$query = new LookupHandler($_REQUEST);
-$act = $_REQUEST["a"];
+$statement = new StatementPreparer("co2_", $_REQUEST);
+
+var_dump($statement->preparedData());
+var_dump($statement->preparedPlaceholders());
+
 
 
 // TODO: Get information based on query

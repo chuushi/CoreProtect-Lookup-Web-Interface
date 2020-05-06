@@ -14,8 +14,9 @@ class StatementPreparer {
     const A_SESSION       = 0x0100;
     const A_USERNAME      = 0x0200;
 
-    const A_BLOCK_TABLE = self::A_BLOCK_MINE + self::A_BLOCK_PLACE + self::A_CLICK + self::A_KILL;
-    const A_CONTAINER_TABLE = self::A_CONTAINER_IN + self::A_CONTAINER_OUT;
+    const A_BLOCK_TABLE = self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_CLICK | self::A_KILL;
+    const A_CONTAINER_TABLE = self::A_CONTAINER_IN | self::A_CONTAINER_OUT;
+    const A_LOOKUP_TABLE = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_CHAT | self::A_COMMAND | self::A_SESSION | self::A_USERNAME;
 
     const A_EX_USER       = 0x0400;
     const A_EX_BLOCK      = 0x0800;
@@ -88,26 +89,33 @@ class StatementPreparer {
         return $ifunset;
     }
 
-    public function prepareData() {
+    public function preparedData() {
         $this->populate();
 
+        if (sizeof($this->sqlFromWhere) == 0)
+            return "";
+
         if (sizeof($this->sqlFromWhere) == 1) {
-            $k = array_key_first($this->sqlFromWhere);
-            return $this->getSelect($k) . $this->sqlFromWhere[$k] . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count;
+            $v = reset($this->sqlFromWhere);
+            $k = key($this->sqlFromWhere);
+            return $this->getSelect($k) . " " . $v . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count;
         }
 
         $queries = [];
 
         foreach ($this->sqlFromWhere as $table => $from) {
-            $queries[] = $this->getSelect($table) . $from . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count;
+            $queries[] = $this->getSelect($table) . " " . $from . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count;
         }
 
         /** @noinspection SqlResolve TODO idk if I should resolve the table schematics */
-        return "SELECT * FROM (" . join(" UNION ALL ", $queries) . ") ORDER BY c.time " . $this->sqlOrder . " LIMIT " . $this->count;
+        return "SELECT * FROM (" . join(" UNION ALL ", $queries) . ") AS t ORDER BY t.time " . $this->sqlOrder . " LIMIT " . $this->count;
     }
 
-    public function prepareCount() {
+    public function preparedCount() {
         $this->populate();
+
+        if (sizeof($this->sqlFromWhere) == 0)
+            return "";
 
         if (sizeof($this->sqlFromWhere) == 1) {
             $k = array_key_first($this->sqlFromWhere);
@@ -123,6 +131,11 @@ class StatementPreparer {
         return "SELECT * FROM (" . join(" UNION ALL ", $queries) . ")";
     }
 
+    public function preparedPlaceholders() {
+        $this->populate();
+        return $this->sqlPlaceholders;
+    }
+
     /**
      * @param string $key
      * @return string the appropriate SELECT
@@ -136,7 +149,7 @@ class StatementPreparer {
             case self::CHAT:
                 return self::SELECT_CHAT;
             case self::COMMAND:
-                return self::COMMAND;
+                return self::SELECT_COMMAND;
             case self::SESSION:
                 return self::SELECT_SESSION;
             case self::USERNAME:
@@ -153,36 +166,65 @@ class StatementPreparer {
         if (isset($this->sqlFromWhere))
             return;
 
-        $this->parseWheres();
         $this->sqlFromWhere = [];
+
+        if ($this->a & self::A_LOOKUP_TABLE == 0) {
+            $this->sqlPlaceholders = [];
+            return;
+        }
+
+        $this->parseWheres();
 
         if ($this->a & self::A_BLOCK_TABLE) {
             /** @var string[] $wheres */
             $wheres = [self::W_TIME, self::W_USER, self::W_WORLD, self::W_COL_XYZ, self::W_COL_ROLLED_BACK];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "block` AS c"
-                . "LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
 
             if ($this->a & (self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_CLICK)) {
-                $sql .= "LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
                 $wheres[] = self::W_MATERIAL;
             }
             if ($this->a & self::A_KILL) {
-                $sql .= "LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type = em.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type = em.rowid";
                 $wheres[] = self::W_ENTITY;
             }
 
-            $this->sqlFromWhere[self::BLOCK] = $sql . $this->generateWhere($wheres);
+            // If action=0, 1, 2, and 3 are not on at the same time
+            $a = null;
+            if (($this->a & self::A_BLOCK_TABLE) != self::A_BLOCK_TABLE) {
+                $aList = [];
+                if ($this->a & self::A_BLOCK_MINE)
+                    $aList[] = "0";
+                if ($this->a & self::A_BLOCK_PLACE)
+                    $aList[] = "1";
+                if ($this->a & self::A_CLICK)
+                    $aList[] = "2";
+                if ($this->a & self::A_KILL)
+                    $aList[] = "3";
+                $a = "c.action IN (" . join(",", $aList) . ")";
+            }
+
+            $this->sqlFromWhere[self::BLOCK] = $sql . $this->generateWhere($wheres, $a);
         }
         if ($this->a & self::A_CONTAINER_TABLE) {
             /** @var string[] $wheres */
             $wheres = [self::W_TIME, self::W_USER, self::W_WORLD, self::W_COL_XYZ, self::W_COL_ROLLED_BACK, self::W_MATERIAL];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix."container` AS c"
-                . "LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid"
-                . "LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix."blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid"
+                . " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix."blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
 
-            $this->sqlFromWhere[self::CONTAINER] = $sql . $this->generateWhere($wheres);
+            $a = null;
+            if (($this->a & self::A_CONTAINER_TABLE) != self::A_CONTAINER_TABLE) {
+                if ($this->a & self::A_CONTAINER_OUT)
+                    $a = "c.action=0";
+                if ($this->a & self::A_CONTAINER_IN)
+                    $a = "c.action=1";
+            }
+
+            $this->sqlFromWhere[self::CONTAINER] = $sql . $this->generateWhere($wheres, $a);
         }
 
         if ($this->a & self::A_CHAT) {
@@ -190,7 +232,9 @@ class StatementPreparer {
             $wheres = [self::W_TIME, self::W_USER];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "chat` AS c"
-                . "LEFT JOIN `" . $this->prefix."user` AS u ON c.user = u.rowid";
+                . " LEFT JOIN `" . $this->prefix."user` AS u ON c.user = u.rowid";
+
+            // TODO: Keyword
 
             $this->sqlFromWhere[self::CHAT] = $sql . $this->generateWhere($wheres);
         }
@@ -200,7 +244,9 @@ class StatementPreparer {
             $wheres = [self::W_TIME, self::W_USER];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix."command` AS c"
-                . "LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid";
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid";
+
+            // TODO: Keyword
 
             $this->sqlFromWhere[self::COMMAND] = $sql . $this->generateWhere($wheres);
         }
@@ -210,7 +256,7 @@ class StatementPreparer {
             $wheres = [self::W_TIME, self::W_USER, self::W_WORLD, self::W_COL_XYZ];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "session` AS c"
-                . "LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
 
             $this->sqlFromWhere[self::SESSION] = $sql . $this->generateWhere($wheres);
         }
@@ -220,7 +266,9 @@ class StatementPreparer {
             $wheres = [self::W_TIME, self::W_USER];
             /** @var string $sql */
             $sql = "FROM `".$this->prefix . "username_log` AS c"
-                . "LEFT JOIN `co2_user` AS u ON c.uuid = u.uuid";
+                . " LEFT JOIN `co2_user` AS u ON c.uuid = u.uuid";
+
+            // TODO: Keyword
 
             $this->sqlFromWhere[self::USERNAME] = $sql . $this->generateWhere($wheres);
         }
@@ -228,13 +276,13 @@ class StatementPreparer {
 
     /**
      * @param string[] $columns
-     * @param string[] $additional Additional
+     * @param string $additional Additional
      * @return string pre-spaced at the beginning
      */
     private function generateWhere($columns, $additional = null) {
-        $wheres = $additional == null ? [] : $additional;
+        $wheres = $additional == null ? [] : [$additional];
         foreach ($columns as $col) {
-            if ($this->sqlWhereParts[$col]) {
+            if (isset($this->sqlWhereParts[$col])) {
                 $wheres[] = $this->sqlWhereParts[$col];
             }
         }
@@ -248,13 +296,13 @@ class StatementPreparer {
         $this->sqlPlaceholders = [];
 
         if ($this->b != null)
-            self::whereAbsoluteString(self::W_MATERIAL, $this->a & self::A_EX_BLOCK, "blk");
+            self::whereAbsoluteString(self::W_MATERIAL, $this->b, $this->a & self::A_EX_BLOCK, "blk");
         if ($this->e != null)
-            self::whereAbsoluteString(self::W_ENTITY, $this->a & self::A_EX_ENTITY, "ety");
+            self::whereAbsoluteString(self::W_ENTITY, $this->e, $this->a & self::A_EX_ENTITY, "ety");
         if ($this->u != null)
-            self::whereAbsoluteString(self::W_USER, $this->a & self::A_EX_USER, "usr", self::W_USER_UUID);
+            self::whereAbsoluteString(self::W_USER, $this->u, $this->a & self::A_EX_USER, "usr", self::W_USER_UUID);
         if ($this->w != null)
-            self::whereAbsoluteString(self::W_WORLD, false, "wld");
+            self::whereAbsoluteString(self::W_WORLD, $this->w, false, "wld");
         if ($this->t != null) {
             if ($this->a & self::A_REV_TIME) {
                 $this->sqlWhereParts[self::W_TIME] = self::W_TIME . ">= :time";
@@ -282,13 +330,16 @@ class StatementPreparer {
         }
     }
 
-    private function whereAbsoluteString($column, $exFlag, $prefix, $uuidColumn = null) {
+    private function whereAbsoluteString($column, $query, $exFlag, $prefix, $uuidColumn = null) {
         $parts = [];
-        if ($exFlag)
+        if ($exFlag) {
             $d = "<>";
-        else
+            $g = " AND ";
+        } else {
             $d = "=";
-        foreach (str_getcsv($this->b) as $k => $val) {
+            $g = " OR ";
+        }
+        foreach (str_getcsv($query) as $k => $val) {
             if ($uuidColumn && strlen($val) == 36) {
                 $parts[] = $uuidColumn . $d . " :$prefix$k";
                 $this->sqlPlaceholders[":$prefix$k"] = $val;
@@ -300,6 +351,6 @@ class StatementPreparer {
         if (sizeof($parts) == 1)
             $this->sqlWhereParts[$column] = $parts[0];
         else
-            $this->sqlWhereParts[$column] = "(" . join(" OR ", $parts) . ")";
+            $this->sqlWhereParts[$column] = "(" . join($g, $parts) . ")";
     }
 }
