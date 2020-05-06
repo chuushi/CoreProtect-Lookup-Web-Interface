@@ -4,7 +4,7 @@
  * @author Simon Chuu
  */
 
-require_once 'res/php/StatementPreparer.php';
+require_once 'res/php/StatementPreparer.class.php';
 
 $statement = new StatementPreparer("co2_", $_REQUEST);
 
