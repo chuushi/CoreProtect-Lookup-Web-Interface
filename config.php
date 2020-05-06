@@ -1,65 +1,80 @@
-<?php return array (
-// This is where the default configuration will go.  All comments will be
-//   discarded upon configuration of the tool from the web UI.
-// The lock on an account must be set to false before you can use it.
-// It is recommended to change the 'password' before you set the lock to
-//   false.
-// If you have alternate login system, then you may use that.
+<?php return [
+/*
+ * NOTICE: Configuration file will be overwritten if you save any
+ * configuration changes from the web dashboard.  Web configuration is
+ * accessible through administrator account only via local or HTTPS
+ * connection.
+ */
 
-// Permission levels:
-// 0: full control
-// 1: Lookup + Cache clearing
-// 2: Just lookup
+########################
+# Account Configuration
+# Administrator account can manage configuration from the web.
+# Username: administrator
+# set password to enable access.
+'administrator' => '',
 
-  'login' =>
-  array(
-    'required' => true, // True to require login, false for optional.
-    'baseperm' => 2,    // If login not required, base permission to use.
-    'duration' => 21,   // "Remember me" duration in days
-  ),
-  'user' => 
-  array (
-    # Optional: Change and set-up the admin user.
-    'admin' =>
-    array (
-      # 1. Set the password.
-      'pass' => 'password',
-      # 2. Set this to false to allow account access from the web.
-      'lock' => true,
-      'perm' => 0, // 0 means full permission!
-    ),
-    # Optional: Configure other users here.  Create as many users as you want.
-    'purgableuser' => 
-    array (
-      'pass' => 'examplepass',
-      'lock' => true,
-      'perm' => 1, // 1 is lookup tool access plus cache purging access.
-    ),
-    'user' => 
-    array (
-      'pass' => 'examplepass',
-      'lock' => true,
-      'perm' => 2, // 2 is just lookup tool access.
-    ),
-  ),
-  # Optional: Configure navigation items here.
-  'navbar' => 
-  array (
+# User account to access lookup.
+# Username: user
+# set password to require log in to use the lookup.
+'user' => '',
+
+
+#########################
+# Database configuration
+#   type        = 'mysql' or 'sqlite' all lowercase
+#   path        = SQLite path to CoreProtect's database.db
+#   host        = MySQL database host[:port]
+#   database    = MySQL database name
+#   username    = MySQL username
+#   password    = MySQL password
+#   flags       = MySQL flags to put at the end of connection URI
+#                 (don't change if you don't need to)
+#   prefix      = CoreProtect prefix
+'database' => [
+    'type'      => 'mysql',
+    'path'      => 'path/to/database.db',
+    'host'      => 'localhost',
+    'database'  => 'minecraft',
+    'username'  => 'username',
+    'password'  => 'password',
+    'flags'     => '',
+    'prefix'    => 'co_',
+],
+
+########################
+# Website Configuration
+
+# Form Configuration
+#   limit           = default lookup query limit
+#   moreLimit       = default "load more" query limit
+#   max             = maximum limit for single query
+#   pageInterval    = how many entries to divide the pagination by
+#   timeDivider     = how many entries the table displays before the interval shows up
+#   locale          = Date locale (website locale coming soon?)
+#   dateFormat      = Date format (see https://momentjs.com/docs/#/parsing/string-format/)
+#   timeFormat      = Time format (see ^)
+'form' => [
+    'limit'         => 30,
+    'moreLimit'     => 10,
+    'max'           => 300,
+    'pageInterval'  => 25,
+    'timeDivider'   => 300,
+    'locale'        => 'en-US',
+    'dateFormat'    => 'll',
+    'timeFormat'    => 'LTS',
+],
+
+# Navigation Bar Customization
+#   add more pairs below to add more options to the navbar.
+'navbar' => [
     'Home' => '/',
-    'BanManager' => '../banmanager/',
-    'Dynmap' => 'http://127.0.0.1:8123/',
-  ),
-  # Optional: configure rest of the files.
-  'flag' => 
-  array (
-    'bukkitToMc'   => true, // Translate Bukkit block/item names to MC name
-  ),
-  'form' =>
-  array (
-    'limit' => 30,
-    'loadMoreLimit' => 10,
-  ),
-  'copyright' => 'SimonOrJ, 2015-%year%',
+    #'BanManager' => '/banmanager/',
+    #'Dynmap' => 'http://127.0.0.1:8123/',
+],
+# Copyright message
+'copyright' => 'SimonOrJ, 2015-%year%',
+
+  # Optional: Configure navigation items here.
   // For additional form configuration, visit the `config.json` file.
   //  form:
   //    dateFormat:     Date format to use based on Moment.js.
@@ -68,4 +83,4 @@
   //    timeDividor:    Time difference between two results in seconds before
   //                      a time separator comes in.
   //    pageInterval:   Interval before a page separator is made at the bottom.
-);?>
+];
