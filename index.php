@@ -12,7 +12,7 @@ $config = require "config.php";
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CoreProtect Lookup Web Interface</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
 <!--    <link rel="stylesheet" href="res/css/main.css">-->
 <!--    <link rel="stylesheet" href="res/css/jquery-autocomplete.css">-->
   </head>
@@ -183,8 +183,7 @@ $config = require "config.php";
               <div class="input-group-prepend">
                 <label for="lookup-time" class="input-group-text">Date/Time</label>
               </div>
-              <!-- TODO: Javascript flop to type="number" -->
-              <input type="datetime-local" class="form-control" id="lookup-time" placeholder="0000-00-00T00:00:00">
+              <input type="text" class="form-control datetimepicker-input" id="lookup-time" placeholder="0000-00-00T00:00:00" data-target="#lookup-time" data-toggle="datetimepicker">
             </div>
             <div class="col-md-6 col-12 form-group input-group">
               <div class="input-group-prepend">
@@ -280,14 +279,18 @@ $config = require "config.php";
 <!--    document.getElementById("lSubmit").disabled = true;-->
 <!--    document.getElementById("mSubmit").disabled = true;-->
 <!--    </script>-->
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">// JQuery</script>-->
 <!--    <script src="res/js/buttons.js"></script>-->
 <!--    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js">// Dropdown</script>-->
 <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js">// Bootstrap dependency</script>-->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js">// datetime-picker dependency</script>-->
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">// Datetime Picker</script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script>
+        $(function () {
+            $('#lookup-time').datetimepicker();
+        });
+    </script>
 <!--    <script src="res/js/lookup.js"></script>-->
   </body>
 </html>
