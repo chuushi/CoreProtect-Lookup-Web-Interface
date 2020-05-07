@@ -21,6 +21,9 @@
 
 #########################
 # Database configuration
+# If you have multiple databases, configure each database source here by
+# copying 'server' array right under and renaming 'server' to a different
+# server name.
 #   type        = 'mysql' or 'sqlite' all lowercase
 #   path        = SQLite path to CoreProtect's database.db
 #   host        = MySQL database host[:port]
@@ -31,14 +34,16 @@
 #                 (don't change if you don't need to)
 #   prefix      = CoreProtect prefix
 'database' => [
-    'type'      => 'mysql',
-    'path'      => 'path/to/database.db',
-    'host'      => 'localhost',
-    'database'  => 'minecraft',
-    'username'  => 'username',
-    'password'  => 'password',
-    'flags'     => '',
-    'prefix'    => 'co_',
+    'server' => [
+        'type'      => 'mysql',
+        'path'      => 'path/to/database.db',
+        'host'      => 'localhost',
+        'database'  => 'minecraft',
+        'username'  => 'username',
+        'password'  => 'password',
+        'flags'     => '',
+        'prefix'    => 'co_',
+    ],
 ],
 
 ########################
