@@ -61,40 +61,60 @@ $config = require "config.php";
             </select>
           </div>
 
-          <div class="form-group input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Actions</span>
+          <div class="row">
+            <div class="col-auto form-group">
+              <div class="input-group-append btn-group btn-group-toggle" data-toggle="buttons">
+                <label for="form-a-block-add" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-block-add"> +Block
+                </label>
+                <label for="form-a-block-sub" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-block-sub"> -Block
+                </label>
+                <label for="form-a-container-add" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-container-add"> +Container
+                </label>
+                <label for="form-a-container-sub" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-container-sub"> -Container
+                </label>
+                <label for="form-a-kill" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-kill"> Kill
+                </label>
+              </div>
             </div>
-            <div class="input-group-append btn-group btn-group-toggle" data-toggle="buttons">
-              <label for="form-a-block-add" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-block-add"> +Block
-              </label>
-              <label for="form-a-block-sub" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-block-sub"> -Block
-              </label>
-              <label for="form-a-container-add" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-container-add"> +Container
-              </label>
-              <label for="form-a-container-sub" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-container-sub"> -Container
-              </label>
-              <label for="form-a-chat" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-chat"> Chat
-              </label>
-              <label for="form-a-command" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-command"> Command
-              </label>
-              <label for="form-a-kill" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-kill"> Kill
-              </label>
-              <label for="form-a-session" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-session"> Session
-              </label>
-              <label for="form-a-username" class="btn btn-outline-secondary">
-                <input type="checkbox" id="form-a-username"> Username
-              </label>
+            <div class="col-auto form-group">
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-outline-success">
+                  <input type="radio" name="options" id="option1" autocomplete="off"> Yes
+                </label>
+                <label class="btn btn-dark active">
+                  <input type="radio" name="options" id="option2" autocomplete="off" checked> Rollback
+                </label>
+                <label class="btn btn-outline-secondary">
+                  <input type="radio" name="options" id="option3" autocomplete="off"> No
+                </label>
+              </div>
+            </div>
+            <div class="col-auto form-group">
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label for="form-a-click" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-click"> Click
+                </label>
+                <label for="form-a-chat" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-chat"> Chat
+                </label>
+                <label for="form-a-command" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-command"> Command
+                </label>
+                <label for="form-a-session" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-session"> Session
+                </label>
+                <label for="form-a-username" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="form-a-username"> Username
+                </label>
+              </div>
             </div>
           </div>
+
 
           <div class="row">
             <div class="col-md-6 col-12 form-group input-group">
@@ -121,7 +141,7 @@ $config = require "config.php";
             </div>
             <input type="text" class="form-control" id="lookup-user" placeholder="Users, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="form-user-exclude" class="btn btn-outline-secondary">
+              <label for="form-user-exclude" class="btn btn-outline-dark">
                 <input type="checkbox" id="form-user-exclude"> Exclude
               </label>
             </div>
@@ -133,7 +153,7 @@ $config = require "config.php";
             </div>
             <input type="text" class="form-control" id="lookup-material" placeholder="Blocks or items, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="form-material-exclude" class="btn btn-outline-secondary">
+              <label for="form-material-exclude" class="btn btn-outline-dark">
                 <input type="checkbox" id="form-material-exclude"> Exclude
               </label>
             </div>
@@ -145,7 +165,7 @@ $config = require "config.php";
             </div>
             <input type="text" class="form-control" id="lookup-entity" placeholder="Entities, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="form-entity-exclude" class="btn btn-outline-secondary">
+              <label for="form-entity-exclude" class="btn btn-outline-dark">
                 <input type="checkbox" id="form-entity-exclude"> Exclude
               </label>
             </div>
