@@ -22,9 +22,10 @@ class StatementPreparer {
     const A_EX_USER       = 0x0400;
     const A_EX_BLOCK      = 0x0800;
     const A_EX_ENTITY     = 0x1000;
-    const A_ROLLBACK_YES  = 0x2000;
-    const A_ROLLBACK_NO   = 0x4000;
-    const A_REV_TIME      = 0x8000;
+    const A_EX_WORLD      = 0x2000;
+    const A_ROLLBACK_YES  = 0x4000;
+    const A_ROLLBACK_NO   = 0x8000;
+    const A_REV_TIME      = 0x10000;
 
     const BLOCK = "block";
     const CONTAINER = "container";
@@ -49,20 +50,21 @@ class StatementPreparer {
      * Input integers
      * @var integer
      */
-    private $a, $t, $x, $y, $z, $x2, $y2, $z2, $count;
+    private $a, $t, $x, $y, $z, $x2, $y2, $z2, $count, $offset;
     /**
      * Input strings
      * @var string
      */
-    private $prefix, $u, $b, $e, $w;
+    private $prefix, $u, $b, $e, $w, $keyword;
 
     /** @var string[] */
     private $sqlFromWhere, $sqlWhereParts, $sqlPlaceholders;
     private $sqlOrder;
 
-    public function __construct($prefix, $req) {
+    public function __construct($prefix, $req, $count, $moreCount) {
         $this->prefix = $prefix;
-        $this->count  = self::nonnull($req['count'], 25);
+        $this->offset = self::nonnull($req['offset']); // TODO: Implement offset, make count a parameter
+        $this->count  = self::nonnull($req['count'], $this->offset == null ? $count : $moreCount);
         $this->a  = self::nonnull($req['a']);
         $this->b  = self::nonnull($req['b']);
         $this->e  = self::nonnull($req['e']);
@@ -75,10 +77,11 @@ class StatementPreparer {
         $this->y2 = self::nonnull($req['y2']);
         $this->z  = self::nonnull($req['z']);
         $this->z2 = self::nonnull($req['z2']);
+        $this->keyword = self::nonnull($req['keyword']);
     }
 
     private function nonnull(& $in, $ifunset = null) {
-        if (isset($in))
+        if (isset($in) && $in !== "")
             return $in;
         return $ifunset;
     }
@@ -101,8 +104,6 @@ class StatementPreparer {
             $queries[] = $this->getSelect($table) . " " . $from;
         }
 
-        /** @noinspection SqlResolve TODO idk if I should resolve the table schematics */
-        //return "SELECT * FROM ((" . join(") UNION ALL (", $queries) . ")) AS t ORDER BY t.time " . $this->sqlOrder . " LIMIT " . $this->count;
 
         $ret = "";
         foreach($queries as $key => $val) {
@@ -110,7 +111,7 @@ class StatementPreparer {
             $ret .= "SELECT * FROM (" . $val . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count . ") AS t".$key;
         }
 
-        return $ret;
+        return $ret . " ORDER BY time " . $this->sqlOrder . " LIMIT " . $this->count;
     }
 
     public function preparedStatementCount() {
@@ -142,16 +143,16 @@ class StatementPreparer {
      * @param string $key
      * @return string the appropriate SELECT
      */
-    private function getSelect($key, $a = 0) {
+    private function getSelect($key) {
         switch ($key) {
             case self::BLOCK:
-                $material = $a & self::A_BLOCK_MATERIAL;
-                $entity = $a & self::A_KILL;
+                $material = $this->a & self::A_BLOCK_MATERIAL;
+                $entity = $this->a & self::A_KILL;
                 return "SELECT c.rowid, 'block' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, "
                     . (
                         $material && $entity
                             ? "IFNULL(mm.material, em.entity)"
-                            : $material ? "mm.material" : "em.entity"
+                            : $material ? "mm.material" : "em.entity" // TODO investigate why material returns em.entity
                     )
                     . " AS `target`, "
                     . ($material ? "IFNULL(dm.data, c.data)" : "c.data")
@@ -314,7 +315,7 @@ class StatementPreparer {
         if ($this->u != null)
             self::whereAbsoluteString(self::W_USER, $this->u, $this->a & self::A_EX_USER, "usr", self::W_USER_UUID);
         if ($this->w != null)
-            self::whereAbsoluteString(self::W_WORLD, $this->w, false, "wld");
+            self::whereAbsoluteString(self::W_WORLD, $this->w, $this->a & self::A_EX_WORLD, "wld");
         if ($this->t != null) {
             if ($this->a & self::A_REV_TIME) {
                 $this->sqlWhereParts[self::W_TIME] = self::W_TIME . ">= :time";
@@ -340,6 +341,8 @@ class StatementPreparer {
             $this->sqlWhereParts[self::W_COL_ROLLED_BACK] = self::WHERE_ROLLED_BACK;
             $this->sqlPlaceholders[":rlbk"] = $this->a & self::A_ROLLBACK_YES ? 1 : 0;
         }
+
+        // TODO: Keyword
     }
 
     private function whereAbsoluteString($column, $query, $exFlag, $prefix, $uuidColumn = null) {

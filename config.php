@@ -19,8 +19,8 @@
 'user' => '',
 
 
-#########################
-# Database configuration
+#################$$$$$$$########
+# Database/Server configuration
 # If you have multiple databases, configure each database source here by
 # copying 'server' array right under and renaming 'server' to a different
 # server name.
@@ -33,16 +33,19 @@
 #   flags       = MySQL flags to put at the end of connection URI
 #                 (don't change if you don't need to)
 #   prefix      = CoreProtect prefix
+#   mapLink     = Link to view on the map. (Dynmap, Overviewer, etc.)
+#                 %world% for world; %x% %y% %z% for xyz coordinates
 'database' => [
     'server' => [
         'type'      => 'mysql',
         'path'      => 'path/to/database.db',
-        'host'      => 'localhost',
+        'host'      => 'localhost:3306',
         'database'  => 'minecraft',
         'username'  => 'username',
         'password'  => 'password',
         'flags'     => '',
         'prefix'    => 'co_',
+        'mapLink'   => 'https://localhost:8123/?worldname=%world%&mapname=surface&zoom=3&x=%x%&y=%y%&z=%z%'
     ],
 ],
 
@@ -59,8 +62,8 @@
 #   dateFormat      = Date format (see https://momentjs.com/docs/#/parsing/string-format/)
 #   timeFormat      = Time format (see ^)
 'form' => [
-    'limit'         => 30,
-    'moreLimit'     => 10,
+    'count'         => 30,
+    'moreCount'     => 10,
     'max'           => 300,
     'pageInterval'  => 25,
     'timeDivider'   => 300,
