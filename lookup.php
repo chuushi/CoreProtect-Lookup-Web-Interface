@@ -6,24 +6,28 @@
 
 require_once 'res/php/StatementPreparer.class.php';
 require_once 'res/php/PDOWrapper.Class.php';
+$config = require_once 'config.php';
 
 $return = [["time" => microtime(true)]];
 
 register_shutdown_function(function () {
-    global $return;
+    global $return, $request;
 
     // Set type to application/json
     header('Content-type:application/json;charset=utf-8');
 
     if(!isset($return[0]["status"]))
         $return[0]["status"] = -1;
+    $return[0]["request"] = $request;
     $return[0]["duration"] = microtime(true) - $return[0]["time"];
     echo json_encode($return);
 });
 
+// Get the input parameters
+$request = $_REQUEST;
 
 // TODO: get prefix from config
-$prep = new StatementPreparer("co_", $_REQUEST);
+$prep = new StatementPreparer("co_", $request, $config['form']['count'], $config['form']['moreCount']);
 
 // TODO: get database info from config
 $wrapper = new PDOWrapper(["type" => "sqlite", "path" => "./database.db"]);

@@ -11,6 +11,7 @@ $config = require "config.php";
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CoreProtect Lookup Web Interface</title>
+<!--    <link rel="stylesheet" href="res/css/bootstrap/darkly.min.css">-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
 <!--    <link rel="stylesheet" href="res/css/main.css">-->
@@ -48,68 +49,68 @@ $config = require "config.php";
       </div>
 -->
       <!-- Lookup Form -->
-      <div id="lookup-form" class="card">
+      <div class="card">
         <div class="card-header">Make a query</div>
-        <form class="card-body">
+        <form id="lookup-form" class="card-body">
 
           <div class="form-group input-group">
             <div class="input-group-prepend">
               <label for="lookup-database" class="input-group-text">Server</label>
             </div>
-            <select class="custom-select" id="lookup-database">
-              <option value="1" selected><?php echo "Server" // TODO ?></option>
+            <select class="custom-select" id="lookup-database" name="server">
+              <option value="Server" selected><?php echo "Server" // TODO ?></option>
             </select>
           </div>
 
           <div class="row">
             <div class="col-auto form-group">
               <div class="input-group-append btn-group btn-group-toggle" data-toggle="buttons">
-                <label for="form-a-block-add" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-block-add"> +Block
+                <label for="lookup-a-block-add" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-block-add"> +Block
                 </label>
-                <label for="form-a-block-sub" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-block-sub"> -Block
+                <label for="lookup-a-block-sub" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-block-sub"> -Block
                 </label>
-                <label for="form-a-container-add" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-container-add"> +Container
+                <label for="lookup-a-container-add" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-container-add"> +Container
                 </label>
-                <label for="form-a-container-sub" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-container-sub"> -Container
+                <label for="lookup-a-container-sub" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-container-sub"> -Container
                 </label>
-                <label for="form-a-kill" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-kill"> Kill
-                </label>
-              </div>
-            </div>
-            <div class="col-auto form-group">
-              <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-outline-success">
-                  <input type="radio" name="options" id="option1" autocomplete="off"> Yes
-                </label>
-                <label class="btn btn-dark active">
-                  <input type="radio" name="options" id="option2" autocomplete="off" checked> Rollback
-                </label>
-                <label class="btn btn-outline-secondary">
-                  <input type="radio" name="options" id="option3" autocomplete="off"> No
+                <label for="lookup-a-kill" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-kill"> Kill
                 </label>
               </div>
             </div>
             <div class="col-auto form-group">
               <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label for="form-a-click" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-click"> Click
+                <label class="btn btn-outline-success" for="lookup-rollback-yes">
+                  <input type="radio" id="lookup-rollback-yes"> Yes
                 </label>
-                <label for="form-a-chat" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-chat"> Chat
+                <label class="btn btn-dark active" for="lookup-rollback-null">
+                  <input type="radio" id="lookup-rollback-null" checked> Rollback
                 </label>
-                <label for="form-a-command" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-command"> Command
+                <label class="btn btn-outline-secondary" for="lookup-rollback-no">
+                  <input type="radio" id="lookup-rollback-no"> No
                 </label>
-                <label for="form-a-session" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-session"> Session
+              </div>
+            </div>
+            <div class="col-auto form-group">
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label for="lookup-a-click" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-click"> Click
                 </label>
-                <label for="form-a-username" class="btn btn-outline-secondary">
-                  <input type="checkbox" id="form-a-username"> Username
+                <label for="lookup-a-chat" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-chat"> Chat
+                </label>
+                <label for="lookup-a-command" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-command"> Command
+                </label>
+                <label for="lookup-a-session" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-session"> Session
+                </label>
+                <label for="lookup-a-username" class="btn btn-outline-secondary">
+                  <input type="checkbox" id="lookup-a-username"> Username
                 </label>
               </div>
             </div>
@@ -121,17 +122,29 @@ $config = require "config.php";
               <div class="input-group-prepend">
                 <label for="lookup-coords-x" class="input-group-text">Corner 1</label>
               </div>
-              <input type="number" class="form-control" id="lookup-coords-x" placeholder="x">
-              <input type="number" class="form-control" id="lookup-coords-y" placeholder="y">
-              <input type="number" class="form-control" id="lookup-coords-z" placeholder="z">
+              <input type="number" class="form-control" id="lookup-coords-x" name="x" placeholder="x">
+              <input type="number" class="form-control" id="lookup-coords-y" name="y" placeholder="y">
+              <input type="number" class="form-control" id="lookup-coords-z" name="z" placeholder="z">
             </div>
             <div class="col-md-6 col-12 form-group input-group">
               <div class="input-group-prepend">
                 <label for="lookup-coords2-x" class="input-group-text">Corner 2</label>
               </div>
-              <input type="number" class="form-control" id="lookup-coords2-x" placeholder="x">
-              <input type="number" class="form-control" id="lookup-coords2-y" placeholder="y">
-              <input type="number" class="form-control" id="lookup-coords2-z" placeholder="z">
+              <input type="number" class="form-control" id="lookup-coords2-x" name="x2" placeholder="x">
+              <input type="number" class="form-control" id="lookup-coords2-y" name="y2" placeholder="y">
+              <input type="number" class="form-control" id="lookup-coords2-z" name="z2" placeholder="z">
+            </div>
+          </div>
+
+          <div class="form-group input-group">
+            <div class="input-group-prepend">
+              <label for="lookup-world" class="input-group-text">Worlds</label>
+            </div>
+            <input type="text" class="form-control" id="lookup-world" name="w" placeholder="Worlds, comma separated">
+            <div class="input-group-append btn-group-toggle" data-toggle="buttons">
+              <label for="lookup-world-exclude" class="btn btn-outline-dark">
+                <input type="checkbox" id="lookup-world-exclude"> Exclude
+              </label>
             </div>
           </div>
 
@@ -139,10 +152,10 @@ $config = require "config.php";
             <div class="input-group-prepend">
               <label for="lookup-user" class="input-group-text">Users</label>
             </div>
-            <input type="text" class="form-control" id="lookup-user" placeholder="Users, comma separated">
+            <input type="text" class="form-control" id="lookup-user" name="u" placeholder="Users, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="form-user-exclude" class="btn btn-outline-dark">
-                <input type="checkbox" id="form-user-exclude"> Exclude
+              <label for="lookup-user-exclude" class="btn btn-outline-dark">
+                <input type="checkbox" id="lookup-user-exclude"> Exclude
               </label>
             </div>
           </div>
@@ -151,10 +164,10 @@ $config = require "config.php";
             <div class="input-group-prepend">
               <label for="lookup-material" class="input-group-text">Materials</label>
             </div>
-            <input type="text" class="form-control" id="lookup-material" placeholder="Blocks or items, comma separated">
+            <input type="text" class="form-control" id="lookup-material" name="b" placeholder="Blocks or items, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="form-material-exclude" class="btn btn-outline-dark">
-                <input type="checkbox" id="form-material-exclude"> Exclude
+              <label for="lookup-material-exclude" class="btn btn-outline-dark">
+                <input type="checkbox" id="lookup-material-exclude"> Exclude
               </label>
             </div>
           </div>
@@ -163,10 +176,10 @@ $config = require "config.php";
             <div class="input-group-prepend">
               <label for="lookup-entity" class="input-group-text">Entities</label>
             </div>
-            <input type="text" class="form-control" id="lookup-entity" placeholder="Entities, comma separated">
+            <input type="text" class="form-control" id="lookup-entity" name="e" placeholder="Entities, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="form-entity-exclude" class="btn btn-outline-dark">
-                <input type="checkbox" id="form-entity-exclude"> Exclude
+              <label for="lookup-entity-exclude" class="btn btn-outline-dark">
+                <input type="checkbox" id="lookup-entity-exclude"> Exclude
               </label>
             </div>
           </div>
@@ -175,7 +188,7 @@ $config = require "config.php";
             <div class="input-group-prepend">
               <label for="lookup-keyword" class="input-group-text">Keyword</label>
             </div>
-            <input type="text" class="form-control" id="lookup-keyword" placeholder="Keywords (roughly implemented)">
+            <input type="text" class="form-control" id="lookup-keyword" name="keyword" placeholder="Keywords (roughly implemented)">
           </div>
 
           <div class="row">
@@ -184,12 +197,17 @@ $config = require "config.php";
                 <label for="lookup-time" class="input-group-text">Date/Time</label>
               </div>
               <input type="text" class="form-control datetimepicker-input" id="lookup-time" placeholder="0000-00-00T00:00:00" data-target="#lookup-time" data-toggle="datetimepicker">
+              <div class="input-group-append btn-group-toggle" data-toggle="buttons">
+                <label for="lookup-time-rev" class="btn btn-outline-dark">
+                  <input type="checkbox" id="lookup-time-rev"> Reverse
+                </label>
+              </div>
             </div>
             <div class="col-md-6 col-12 form-group input-group">
               <div class="input-group-prepend">
                 <label for="lookup-limit" class="input-group-text">Limit</label>
               </div>
-              <input type="number" class="form-control" id="lookup-limit" min="1" max="<?php echo $config['form']['max'];?>" placeholder="<?php echo $config['form']['limit'];?>">
+              <input type="number" class="form-control" id="lookup-limit" name="count" min="1" max="<?php echo $config['form']['max'];?>" placeholder="<?php echo $config['form']['count'];?>">
             </div>
           </div>
 
@@ -226,16 +244,14 @@ $config = require "config.php";
     <div class="container">
 
       <!-- Load More form -->
-      <div id="lookup-form" class="card">
+      <div id="more-form" class="card">
         <form class="card-body">
-          <input id="more-offset" type="hidden" value="0">
-
           <div class="row">
             <div class="col-md-6 col-12 form-group input-group">
               <div class="input-group-prepend">
                 <label for="more-limit" class="input-group-text">Load next</label>
               </div>
-              <input type="number" class="form-control" id="more-limit" min="1" max="<?php echo $config['form']['max'];?>" placeholder="<?php echo $config['form']['moreLimit'];?>">
+              <input type="number" class="form-control" id="more-limit" name="count" min="1" max="<?php echo $config['form']['max'];?>" placeholder="<?php echo $config['form']['moreCount'];?>">
             </div>
           </div>
 
@@ -282,15 +298,10 @@ $config = require "config.php";
 <!--    <script src="res/js/buttons.js"></script>-->
 <!--    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js">// Dropdown</script>-->
 <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js">// Bootstrap dependency</script>-->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script>
-        $(function () {
-            $('#lookup-time').datetimepicker();
-        });
-    </script>
-<!--    <script src="res/js/lookup.js"></script>-->
+    <script src="res/js/lookup.js"></script>
   </body>
 </html>
