@@ -152,7 +152,7 @@ class StatementPreparer {
                     . (
                         $material && $entity
                             ? "IFNULL(mm.material, em.entity)"
-                            : $material ? "mm.material" : "em.entity" // TODO investigate why material returns em.entity
+                            : ($material ? "mm.material" : "em.entity") // TODO: User killed searches
                     )
                     . " AS `target`, "
                     . ($material ? "IFNULL(dm.data, c.data)" : "c.data")

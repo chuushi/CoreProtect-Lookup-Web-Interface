@@ -54,7 +54,27 @@ if (!$lookup) {
 
 if ($lookup->execute($prep->preparedParams())) {
     $return[0]["status"] = 0;
-    $return[1] = $lookup->fetchAll(PDO::FETCH_ASSOC);
+    $return[1] = [];
+    while($r = $lookup->fetch(PDO::FETCH_ASSOC)) {
+        // Treat numbers as integers
+        $r["rowid"] = intval($r["rowid"]);
+        $r["time"] = intval($r["time"]);
+        if ($r["action"] !== null) {
+            $r["action"] = intval($r["action"]);
+        }
+        if ($r["world"] !== null) {
+            $r["x"] = intval($r["x"]);
+            $r["y"] = intval($r["y"]);
+            $r["z"] = intval($r["z"]);
+        }
+        if ($r["amount"] !== null) {
+            $r["amount"] = intval($r["amount"]);
+        }
+        if ($r["rolled_back"] !== null) {
+            $r["rolled_back"] = intval($r["rolled_back"]);
+        }
+        $return[1][] = $r;
+    }
 } else {
     $return[0]["status"] = 2;
     $return[0]["code"] = $lookup->errorInfo()[0];

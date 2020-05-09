@@ -152,6 +152,8 @@ function serializeLookup() {
             currentLookup[form[i].name] = form[i].value;
     }
 
+    delete(form.rollback);
+
     // currentLookup.t = $lookup.time.val(); // TODO time calculation
 }
 
@@ -202,7 +204,7 @@ function populateTable(data, append) {
 
     if (data[0].status !== 0) {
         // TODO show error
-        $tableBody.append('<tr><th></th><td colspan="6">Error</td></tr>'); // TODO: icon
+        $tableBody.append('<tr><th></th><td colspan="5">Error</td></tr>'); // TODO: icon
         return;
     }
 
@@ -210,7 +212,7 @@ function populateTable(data, append) {
 
     if (rows.length === 0) { // TODO: in php file, send an empty array on no length.
         // TODO if descending order, leave it open. otherwise,
-        $tableBody.append('<tr><th></th><td colspan="6">No more results</td></tr>'); // TODO: icon
+        $tableBody.append('<tr><th></th><td colspan="5">No more results</td></tr>'); // TODO: icon
         return;
     }
 
@@ -224,46 +226,52 @@ function populateTable(data, append) {
 }
 
 function populateRow(row) {
-    let stuff;
+    let time = moment.unix(row.time).format("LTS");
+    let user = row.uuid == null ? row.user : row.user + " " + row.uuid;
 
-    let testrow = {
-        "rowid":"36782",
-        "table":"block",
-        "time":"1560540351",
-        "user":"SimonOrJ",
-        "uuid":"39d83509-f85f-492a-ba8d-f54ad74c2682",
-        "action":"1",
-        "world":"world",
-        "x":"187",
-        "y":"65",
-        "z":"-198",
-        "target":"minecraft:bell",
-        "data":"0",
-        "amount":null,
-        "rolled_back":"0"
-    };
-
-    stuff = `<td>${row.time}</td><td>${row.user}</td><td>${row.action}</td><td>${
-        row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z
-    }</td><td>${row.target}</td><td>${row.rolled_back}</td>`;
+    let stuff = `<td>${time}</td><td>${user}</td>`;
 
     switch (row.table) {
-        case "click":
         case "session":
-            // Not rollbackable
         case "container":
         case "block":
-        case "kill":
-            // coordinates
+            console.log(row.table);
+            let action, target, data;
+            let coords = `<td>${row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z}</td>`;
+            let rollback = row.rolled_back ? " X" : "";
+            let amount = row.amount !== null ? " " + row.amount : "";
+
+            if (row.table === "block" || row.table === "container") {
+                switch (row.action) {
+                    case 0:
+                        action = `<td>-${row.table + rollback}</td>`;
+                        break;
+                    case 1:
+                        action = `<td>+${row.table + rollback}</td>`;
+                        break;
+                    case 2:
+                        action = `<td>click</td>`;
+                        break;
+                    case 3:
+                        action = `<td>kill</td>`;
+                }
+            } else {
+                action = `<td>${row.table + amount}</td>`;
+            }
+
+            data = row.data !== null && row.data !== "0" ? "[" + row.data + "]" : "";
+
+            target = `<td>${row.table === "session" ? "" : row.target + data}</td>`;
+            stuff += action + coords + target;
             break;
         case "chat":
         case "command":
-        case "username_log":
-            // Message/UUID
+        case "username":
+            stuff += `<td>${row.table}</td><td colspan="2">${row.target}</td>`;
             break;
     }
 
-    return `<tr><th>${currentCount}</th>${stuff}</tr>`;
+    return `<tr><th>${currentCount + ' ' + row.rowid}</th>${stuff}</tr>`;
 }
 
 const csv = {

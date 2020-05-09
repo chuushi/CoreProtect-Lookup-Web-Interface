@@ -85,13 +85,13 @@ $config = require "config.php";
             <div class="col-auto form-group">
               <div class="btn-group btn-group-toggle" data-toggle="buttons">
                 <label class="btn btn-outline-success" for="lookup-rollback-yes">
-                  <input type="radio" id="lookup-rollback-yes"> Yes
+                  <input type="radio" id="lookup-rollback-yes" name="rollback"> Yes
                 </label>
                 <label class="btn btn-dark active" for="lookup-rollback-null">
-                  <input type="radio" id="lookup-rollback-null" checked> Rollback
+                  <input type="radio" id="lookup-rollback-null" name="rollback" checked> Rollback
                 </label>
                 <label class="btn btn-outline-secondary" for="lookup-rollback-no">
-                  <input type="radio" id="lookup-rollback-no"> No
+                  <input type="radio" id="lookup-rollback-no" name="rollback"> No
                 </label>
               </div>
             </div>
@@ -227,7 +227,6 @@ $config = require "config.php";
             <th>Action</th>
             <th>Coordinates/World</th>
             <th>Entity/Block/Item[Data] (Amount)</th>
-            <th>Rollback</th>
           </tr>
         </thead>
         <tbody id="output-body">
