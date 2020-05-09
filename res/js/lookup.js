@@ -62,16 +62,17 @@ const $lookup = {
     entityEx: $("#lookup-entity-exclude"),
     timeRev: $("#lookup-time-rev"),
     limit: $("#lookup-limit"),
-    submit: $("#lookup-submit")
+    submit: $("#lookup-submit"),
+    alert: $("#lookup-alert")
 };
 
 const $more = {
     form: $("#more-form"),
     limit: $("#more-limit"),
-    submit: $("#more-submit")
+    submit: $("#more-submit"),
+    alert: $("#more-alert")
 };
 
-const $table = $("#output-table");
 const $tableBody = $("#output-body");
 const $queryTime = $("#output-time");
 const $pages = $("#row-pages");
@@ -91,21 +92,21 @@ function submit(ev, more) {
     ev.preventDefault();
     if (ajaxWaiting) {
         // TODO message
-        console.log("Waiting on ajaxWaiting to flip");
+        addAlert("Please wait for the previous lookup to complete.", more, "info");
         return;
     }
 
     if (more) serializeMore();
     else serializeLookup();
-    console.log(currentLookup);
 
     if (currentLookup == null) {
         // TODO "An action is required"
-        console.log("An action is required");
+        if (more)
+            addAlert("A lookup is required.", true, "info");
+        else
+            addAlert("An action is required.", false, "info");
         return;
     }
-
-    console.log(currentLookup);
 
     $.ajax("lookup.php", {
         method: "POST",
@@ -176,7 +177,6 @@ function beforeSend(xhr, settings) {
 function complete(xhr, status) {
     ajaxWaiting = false;
     $lookup.submit.prop("disabled", false);
-    $more.submit.prop("disabled", false);
 }
 
 function lookupSuccess(data, status, xhr) {
@@ -186,6 +186,9 @@ function lookupSuccess(data, status, xhr) {
 
 function lookupError(xhr, status, thrown) {
     // TODO Show error
+    console.log(xhr, status, thrown);
+    console.log(xhr.status);
+    xhrError(xhr, status, thrown, false);
 }
 
 function moreSuccess(data, status, xhr) {
@@ -195,41 +198,78 @@ function moreSuccess(data, status, xhr) {
 
 function moreError(xhr, status, thrown) {
     // TODO Show error
+    xhrError(xhr, status, thrown, true);
 }
 
-function populateTable(data, append) {
+function xhrError(xhr, status, thrown, more) {
+    let text;
+    if (status === "parsererror") {
+        text = thrown + " (Possible webserver PHP misconfiguration)";
+    } else if (thrown) {
+        text = thrown;
+    } else if (xhr.status === 0) {
+        text = "Timed out (Check your internet connection)";
+    } else {
+        text = xhr.status + "";
+    }
+    addAlert(`${text}`, more, "danger");
+}
+
+function populateTable(data, more) {
     let html = [];
 
     $queryTime.text("Request generated in "+Math.round(data[0].duration*1000)+"ms");
 
     if (data[0].status !== 0) {
+        let st = data[0];
+        let text;
+        if (st.status === 1) {
+            text = `${st.code}: ${st.reason}`
+        } else if (st.status === 2) {
+            text = `${st.code} (${st.driverCode}): ${st.reason}`
+        } else {
+            text = "Unknown error occured."
+        }
         // TODO show error
-        $tableBody.append('<tr><th></th><td colspan="5">Error</td></tr>'); // TODO: icon
+        addAlert(text, more, "danger");
         return;
     }
 
     const rows = data[1];
 
-    if (rows.length === 0) { // TODO: in php file, send an empty array on no length.
+    if (rows.length === 0) {
         // TODO if descending order, leave it open. otherwise,
-        $tableBody.append('<tr><th></th><td colspan="5">No more results</td></tr>'); // TODO: icon
+        if (more)
+            $tableBody.append('<tr><th></th><td colspan="5">No more results</td></tr>'); // TODO: icon
+        else
+            addAlert("That lookup returned no results.", more, "info");
         return;
     }
 
-    if (!append)
+    if (!more)
         $tableBody.empty();
 
     for (let i = 0; i < rows.length; i++) {
         currentCount++;
         $tableBody.append(populateRow(rows[i]));
     }
+
+    // Allow submitting more lookups
+    $more.submit.prop("disabled", false);
+}
+
+function addAlert(text, more, level) {
+    if (!level)
+        level = "warning";
+    let $alert = more ? $more.alert : $lookup.alert;
+    $alert.append(`<div class="alert alert-${level} alert-dismissible" role="alert">${text}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>`);
 }
 
 function populateRow(row) {
-    let time = moment.unix(row.time).format("LTS");
+    let date = moment.unix(row.time).format("ll LTS");
     let user = row.uuid == null ? row.user : row.user + " " + row.uuid;
 
-    let stuff = `<td>${time}</td><td>${user}</td>`;
+    let stuff = `<td>${date}</td><td>${user}</td>`;
 
     switch (row.table) {
         case "session":

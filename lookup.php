@@ -11,14 +11,13 @@ $config = require_once 'config.php';
 $return = [["time" => microtime(true)]];
 
 register_shutdown_function(function () {
-    global $return, $request;
+    global $return;
 
     // Set type to application/json
     header('Content-type:application/json;charset=utf-8');
 
     if(!isset($return[0]["status"]))
         $return[0]["status"] = -1;
-    $return[0]["request"] = $request;
     $return[0]["duration"] = microtime(true) - $return[0]["time"];
     echo json_encode($return);
 });
@@ -41,8 +40,6 @@ if (!$pdo) {
 }
 
 $lookup = $pdo->prepare($prep->preparedStatementData());
-$return[0]["sql"] = $prep->preparedStatementData();
-$return[0]["params"] = $prep->preparedParams();
 
 if (!$lookup) {
     $return[0]["status"] = 2;

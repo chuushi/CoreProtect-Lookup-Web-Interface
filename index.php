@@ -214,6 +214,8 @@ $config = require "config.php";
           <input class="btn btn-primary btn-block" type="submit" id="lookup-submit" value="Make a Lookup">
         </form>
       </div>
+      <div id="lookup-alert">
+      </div>
     </div>
 
     <!-- Output table -->
@@ -240,7 +242,6 @@ $config = require "config.php";
     </div>
 
     <div class="container">
-
       <!-- Load More form -->
       <div id="more-form" class="card">
         <form class="card-body">
@@ -253,10 +254,11 @@ $config = require "config.php";
             </div>
           </div>
 
-          <input class="btn btn-primary btn-block" type="submit" id="more-submit" value="Load more">
+          <input class="btn btn-primary btn-block" type="submit" id="more-submit" value="Load more" disabled>
         </form>
       </div>
-
+      <div id="more-alert">
+      </div>
 
       <p>If you encounter any issues, please open an issue on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.</p>
     </div>
