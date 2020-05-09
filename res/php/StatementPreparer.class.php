@@ -151,11 +151,15 @@ class StatementPreparer {
                 return "SELECT c.rowid, 'block' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, "
                     . (
                         $material && $entity
-                            ? "IFNULL(mm.material, em.entity)"
-                            : ($material ? "mm.material" : "em.entity") // TODO: User killed searches
+                            ? "IFNULL(mm.material, IFNULL(em.entity, um.user))"
+                            : ($material ? "mm.material" : "IFNULL(em.entity, um.user)")
                     )
                     . " AS `target`, "
-                    . ($material ? "IFNULL(dm.data, c.data)" : "c.data")
+                    . (
+                        $material && $entity
+                            ? "IFNULL(dm.data, IFNULL(um.uuid, c.data))"
+                            : ($material ? "IFNULL(dm.data, c.data)" : "IFNULL(um.uuid, c.data)")
+                    )
                     . " AS `data`, NULL as `amount`, c.rolled_back";
             case self::CONTAINER:
                 return "SELECT c.rowid, 'container' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, mm.material AS `target`, c.data, c.amount, c.rolled_back";
@@ -203,7 +207,8 @@ class StatementPreparer {
                 $wheres[] = self::W_MATERIAL;
             }
             if ($this->a & self::A_KILL) {
-                $sql .= " LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type = em.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type<>0 AND c.type = em.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "user` AS um ON c.action=3 AND c.type=0 AND c.data = um.rowid";
                 $wheres[] = self::W_ENTITY;
             }
 
