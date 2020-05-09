@@ -71,9 +71,9 @@ const $more = {
     submit: $("#more-submit")
 };
 
-const $table = $("#mainTable");
-const $output = $("#outputTable");
-const $queryTime = $("#queryTime");
+const $table = $("#output-table");
+const $tableBody = $("#output-body");
+const $queryTime = $("#output-time");
 const $pages = $("#row-pages");
 
 let config = {form: {count: 30, moreCount: 10}}; // TODO
@@ -91,19 +91,25 @@ function submit(ev, more) {
     ev.preventDefault();
     if (ajaxWaiting) {
         // TODO message
-        return;
-    }
-    const input = more ? serializeMore() : serializeLookup();
-    if (input == null) {
-        // TODO "An action is required"
+        console.log("Waiting on ajaxWaiting to flip");
         return;
     }
 
-    console.log(input);
+    if (more) serializeMore();
+    else serializeLookup();
+    console.log(currentLookup);
+
+    if (currentLookup == null) {
+        // TODO "An action is required"
+        console.log("An action is required");
+        return;
+    }
+
+    console.log(currentLookup);
 
     $.ajax("lookup.php", {
         method: "POST",
-        data: input,
+        data: currentLookup,
         dataType: "json",
         beforeSend: beforeSend,
         success: more ? moreSuccess : lookupSuccess,
@@ -135,10 +141,10 @@ function serializeLookup() {
     if ($lookup.timeRev.prop("checked")) a |= A_REV_TIME;
 
     if ((a & A_LOOKUP_TABLE) === 0)
-        return null;
+        return;
 
-    let currentLookup = {};
-    currentLookup.a = a;
+    currentCount = 0;
+    currentLookup = {a: a};
 
     let form = $lookup.form.serializeArray();
     for (let i = 0; i < form.length; i++) {
@@ -147,22 +153,16 @@ function serializeLookup() {
     }
 
     // currentLookup.t = $lookup.time.val(); // TODO time calculation
-
-    return currentLookup;
 }
 
 function serializeMore() {
     if (currentLookup === null)
-        return null;
+        return;
 
     let count = Number.parseInt($more.limit.val());
     currentLookup.offset = currentCount;
     if (isNaN(count)) delete (currentLookup.count);
     else currentLookup.count = count;
-
-    currentCount += count ? count : config.form.moreCount;
-
-    return currentLookup;
 }
 
 function beforeSend(xhr, settings) {
@@ -196,7 +196,74 @@ function moreError(xhr, status, thrown) {
 }
 
 function populateTable(data, append) {
+    let html = [];
+
     $queryTime.text("Request generated in "+Math.round(data[0].duration*1000)+"ms");
+
+    if (data[0].status !== 0) {
+        // TODO show error
+        $tableBody.append('<tr><th></th><td colspan="6">Error</td></tr>'); // TODO: icon
+        return;
+    }
+
+    const rows = data[1];
+
+    if (rows.length === 0) { // TODO: in php file, send an empty array on no length.
+        // TODO if descending order, leave it open. otherwise,
+        $tableBody.append('<tr><th></th><td colspan="6">No more results</td></tr>'); // TODO: icon
+        return;
+    }
+
+    if (!append)
+        $tableBody.empty();
+
+    for (let i = 0; i < rows.length; i++) {
+        currentCount++;
+        $tableBody.append(populateRow(rows[i]));
+    }
+}
+
+function populateRow(row) {
+    let stuff;
+
+    let testrow = {
+        "rowid":"36782",
+        "table":"block",
+        "time":"1560540351",
+        "user":"SimonOrJ",
+        "uuid":"39d83509-f85f-492a-ba8d-f54ad74c2682",
+        "action":"1",
+        "world":"world",
+        "x":"187",
+        "y":"65",
+        "z":"-198",
+        "target":"minecraft:bell",
+        "data":"0",
+        "amount":null,
+        "rolled_back":"0"
+    };
+
+    stuff = `<td>${row.time}</td><td>${row.user}</td><td>${row.action}</td><td>${
+        row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z
+    }</td><td>${row.target}</td><td>${row.rolled_back}</td>`;
+
+    switch (row.table) {
+        case "click":
+        case "session":
+            // Not rollbackable
+        case "container":
+        case "block":
+        case "kill":
+            // coordinates
+            break;
+        case "chat":
+        case "command":
+        case "username_log":
+            // Message/UUID
+            break;
+    }
+
+    return `<tr><th>${currentCount}</th>${stuff}</tr>`;
 }
 
 const csv = {

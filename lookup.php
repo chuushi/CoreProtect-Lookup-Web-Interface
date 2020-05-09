@@ -42,6 +42,7 @@ if (!$pdo) {
 
 $lookup = $pdo->prepare($prep->preparedStatementData());
 $return[0]["sql"] = $prep->preparedStatementData();
+$return[0]["params"] = $prep->preparedParams();
 
 if (!$lookup) {
     $return[0]["status"] = 2;
@@ -53,10 +54,7 @@ if (!$lookup) {
 
 if ($lookup->execute($prep->preparedParams())) {
     $return[0]["status"] = 0;
-    // Code Sanitizer
-    while($r = $lookup->fetch(PDO::FETCH_ASSOC)) {
-        $return[1][] = $r;
-    }
+    $return[1] = $lookup->fetchAll(PDO::FETCH_ASSOC);
 } else {
     $return[0]["status"] = 2;
     $return[0]["code"] = $lookup->errorInfo()[0];

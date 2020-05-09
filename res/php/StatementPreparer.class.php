@@ -63,7 +63,7 @@ class StatementPreparer {
 
     public function __construct($prefix, $req, $count, $moreCount) {
         $this->prefix = $prefix;
-        $this->offset = self::nonnull($req['offset']); // TODO: Implement offset, make count a parameter
+        $this->offset = self::nonnull($req['offset'], 0);
         $this->count  = self::nonnull($req['count'], $this->offset == null ? $count : $moreCount);
         $this->a  = self::nonnull($req['a']);
         $this->b  = self::nonnull($req['b']);
@@ -95,7 +95,7 @@ class StatementPreparer {
         if (sizeof($this->sqlFromWhere) == 1) {
             $v = reset($this->sqlFromWhere);
             $k = key($this->sqlFromWhere);
-            return $this->getSelect($k) . " " . $v . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count;
+            return $this->getSelect($k) . " " . $v . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT :offset, :count";
         }
 
         $queries = [];
@@ -108,10 +108,10 @@ class StatementPreparer {
         $ret = "";
         foreach($queries as $key => $val) {
             if($key) $ret .= " UNION ALL ";
-            $ret .= "SELECT * FROM (" . $val . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT " . $this->count . ") AS t".$key;
+            $ret .= "SELECT * FROM (" . $val . " ORDER BY c.rowid " . $this->sqlOrder . " LIMIT :osct) AS t".$key;
         }
 
-        return $ret . " ORDER BY time " . $this->sqlOrder . " LIMIT " . $this->count;
+        return $ret . " ORDER BY time " . $this->sqlOrder . " LIMIT :offset, :count";
     }
 
     public function preparedStatementCount() {
@@ -187,6 +187,9 @@ class StatementPreparer {
         }
 
         $this->parseWheres();
+        $this->sqlPlaceholders[":count"] = $this->count;
+        $this->sqlPlaceholders[":offset"] = $this->offset;
+
 
         if ($this->a & self::A_BLOCK_TABLE) {
             /** @var string[] $wheres */
@@ -285,6 +288,8 @@ class StatementPreparer {
 
             $this->sqlFromWhere[self::USERNAME] = $sql . $this->generateWhere($wheres);
         }
+        if (count($this->sqlFromWhere) !== 1)
+            $this->sqlPlaceholders[":osct"] = $this->offset + $this->count;
     }
 
     /**

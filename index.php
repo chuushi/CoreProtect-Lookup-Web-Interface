@@ -218,7 +218,7 @@ $config = require "config.php";
 
     <!-- Output table -->
     <div class="container-fluid">
-      <table id="mainTable" class="table table-sm table-striped">
+      <table id="output-table" class="table table-sm table-striped">
         <thead class="thead-inverse">
           <tr id="row-0">
             <th>#</th>
@@ -226,18 +226,17 @@ $config = require "config.php";
             <th>User</th>
             <th>Action</th>
             <th>Coordinates/World</th>
-            <th>Entity/Block/Item[Data]</th>
-            <th>Amount</th>
+            <th>Entity/Block/Item[Data] (Amount)</th>
             <th>Rollback</th>
           </tr>
         </thead>
-        <tbody id="outputTable">
+        <tbody id="output-body">
           <tr>
             <th scope="row">-</th>
             <td colspan="7">Please submit a lookup.</td>
           </tr>
         </tbody>
-        <caption id="queryTime"></caption>
+        <caption id="output-time"></caption>
       </table>
     </div>
 
