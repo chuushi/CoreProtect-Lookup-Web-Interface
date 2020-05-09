@@ -5,20 +5,20 @@
  */
 $config = require "config.php";
 ?><!DOCTYPE html>
-<html>
+<html lang="en-US">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CoreProtect Lookup Web Interface</title>
-<!--    <link rel="stylesheet" href="res/css/bootstrap/darkly.min.css">-->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="res/css/bootstrap/slate.min.css">
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
-<!--    <link rel="stylesheet" href="res/css/main.css">-->
+    <link rel="stylesheet" href="res/css/lookup.css">
 <!--    <link rel="stylesheet" href="res/css/jquery-autocomplete.css">-->
   </head>
   <body data-spy="scroll" data-target="#row-pages">
-    <nav id="top" class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <nav id="top" class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
       <div class="container">
         <a class="navbar-brand" href="./">CoreProtect Lookup Web Interface</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,51 +65,51 @@ $config = require "config.php";
           <div class="row">
             <div class="col-auto form-group">
               <div class="input-group-append btn-group btn-group-toggle" data-toggle="buttons">
-                <label for="lookup-a-block-add" class="btn btn-outline-secondary">
+                <label for="lookup-a-block-add" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-block-add"> +Block
                 </label>
-                <label for="lookup-a-block-sub" class="btn btn-outline-secondary">
+                <label for="lookup-a-block-sub" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-block-sub"> -Block
                 </label>
-                <label for="lookup-a-container-add" class="btn btn-outline-secondary">
+                <label for="lookup-a-container-add" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-container-add"> +Container
                 </label>
-                <label for="lookup-a-container-sub" class="btn btn-outline-secondary">
+                <label for="lookup-a-container-sub" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-container-sub"> -Container
                 </label>
-                <label for="lookup-a-kill" class="btn btn-outline-secondary">
+                <label for="lookup-a-kill" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-kill"> Kill
                 </label>
               </div>
             </div>
             <div class="col-auto form-group">
               <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-outline-success" for="lookup-rollback-yes">
+                <label for="lookup-rollback-yes" class="action-btns btn btn-success">
                   <input type="radio" id="lookup-rollback-yes" name="rollback"> Yes
                 </label>
-                <label class="btn btn-dark active" for="lookup-rollback-null">
+                <label for="lookup-rollback-null" class="action-btns btn btn-outline-secondary active">
                   <input type="radio" id="lookup-rollback-null" name="rollback" checked> Rollback
                 </label>
-                <label class="btn btn-outline-secondary" for="lookup-rollback-no">
+                <label for="lookup-rollback-no" class="action-btns btn btn-secondary">
                   <input type="radio" id="lookup-rollback-no" name="rollback"> No
                 </label>
               </div>
             </div>
             <div class="col-auto form-group">
               <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label for="lookup-a-click" class="btn btn-outline-secondary">
+                <label for="lookup-a-click" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-click"> Click
                 </label>
-                <label for="lookup-a-chat" class="btn btn-outline-secondary">
+                <label for="lookup-a-chat" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-chat"> Chat
                 </label>
-                <label for="lookup-a-command" class="btn btn-outline-secondary">
+                <label for="lookup-a-command" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-command"> Command
                 </label>
-                <label for="lookup-a-session" class="btn btn-outline-secondary">
+                <label for="lookup-a-session" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-session"> Session
                 </label>
-                <label for="lookup-a-username" class="btn btn-outline-secondary">
+                <label for="lookup-a-username" class="action-btns btn btn-secondary">
                   <input type="checkbox" id="lookup-a-username"> Username
                 </label>
               </div>
@@ -142,7 +142,7 @@ $config = require "config.php";
             </div>
             <input type="text" class="form-control" id="lookup-world" name="w" placeholder="Worlds, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="lookup-world-exclude" class="btn btn-outline-dark">
+              <label for="lookup-world-exclude" class="btn btn-outline-secondary">
                 <input type="checkbox" id="lookup-world-exclude"> Exclude
               </label>
             </div>
@@ -154,7 +154,7 @@ $config = require "config.php";
             </div>
             <input type="text" class="form-control" id="lookup-user" name="u" placeholder="Users, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="lookup-user-exclude" class="btn btn-outline-dark">
+              <label for="lookup-user-exclude" class="btn btn-outline-secondary">
                 <input type="checkbox" id="lookup-user-exclude"> Exclude
               </label>
             </div>
@@ -166,7 +166,7 @@ $config = require "config.php";
             </div>
             <input type="text" class="form-control" id="lookup-material" name="b" placeholder="Blocks or items, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="lookup-material-exclude" class="btn btn-outline-dark">
+              <label for="lookup-material-exclude" class="btn btn-outline-secondary">
                 <input type="checkbox" id="lookup-material-exclude"> Exclude
               </label>
             </div>
@@ -178,7 +178,7 @@ $config = require "config.php";
             </div>
             <input type="text" class="form-control" id="lookup-entity" name="e" placeholder="Entities, comma separated">
             <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-              <label for="lookup-entity-exclude" class="btn btn-outline-dark">
+              <label for="lookup-entity-exclude" class="btn btn-outline-secondary">
                 <input type="checkbox" id="lookup-entity-exclude"> Exclude
               </label>
             </div>
@@ -198,7 +198,7 @@ $config = require "config.php";
               </div>
               <input type="text" class="form-control datetimepicker-input" id="lookup-time" placeholder="0000-00-00T00:00:00" data-target="#lookup-time" data-toggle="datetimepicker">
               <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-                <label for="lookup-time-rev" class="btn btn-outline-dark">
+                <label for="lookup-time-rev" class="btn btn-dark">
                   <input type="checkbox" id="lookup-time-rev"> Reverse
                 </label>
               </div>
@@ -211,7 +211,7 @@ $config = require "config.php";
             </div>
           </div>
 
-          <input class="btn btn-secondary" type="submit" id="lookup-submit" value="Make a Lookup">
+          <input class="btn btn-primary btn-block" type="submit" id="lookup-submit" value="Make a Lookup">
         </form>
       </div>
     </div>
@@ -253,7 +253,7 @@ $config = require "config.php";
             </div>
           </div>
 
-          <input class="btn btn-secondary" type="submit" id="more-submit" value="Load more">
+          <input class="btn btn-primary btn-block" type="submit" id="more-submit" value="Load more">
         </form>
       </div>
 

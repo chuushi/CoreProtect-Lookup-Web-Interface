@@ -1,0 +1,39 @@
+
+.form-control[type=text], .form-control[type=number], .custom-select {
+  background-color: var(--dark);
+  color: var(--light);
+}
+
+.form-control[type=text]:focus, .form-control[type=number]:focus {
+  background-color: #000;
+  color: var(--white);
+}
+
+.input-group-text {
+  background-color: var(--gray-dark);
+  color: var(--light);
+}
+
+.form-control, .input-group-text, .custom-select {
+  border-color: rgba(0, 0, 0, 0.6);
+}
+
+.input-group-text, .form-control, .btn, .custom-select {
+  padding: .375rem .75rem;
+}
+
+.form-control, .custom-select {
+  height: calc(1.5em + .75rem + 2px);
+}
+
+/* Hide number arrows Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide number arrows Chrome, Safari, Edge, Opera */
+input[type=number] {
+  -moz-appearance: textfield;
+}
