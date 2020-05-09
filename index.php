@@ -198,7 +198,7 @@ $config = require "config.php";
               </div>
               <input type="text" class="form-control datetimepicker-input" id="lookup-time" placeholder="0000-00-00T00:00:00" data-target="#lookup-time" data-toggle="datetimepicker">
               <div class="input-group-append btn-group-toggle" data-toggle="buttons">
-                <label for="lookup-time-rev" class="btn btn-dark">
+                <label for="lookup-time-rev" class="btn btn-outline-secondary">
                   <input type="checkbox" id="lookup-time-rev"> Reverse
                 </label>
               </div>

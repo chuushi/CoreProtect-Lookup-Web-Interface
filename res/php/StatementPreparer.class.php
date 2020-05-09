@@ -47,6 +47,8 @@ class StatementPreparer {
     const W_TIME = "c.time";
     const W_USER = "u.user";
     const W_USER_UUID = "u.uuid";
+    const W_USER_ENTITY = "um.user";
+    const W_USER_ENTITY_UUID = "um.uuid";
     const W_WORLD = "w.world";
 
     const W_COL_XYZ = "xyz";
@@ -312,11 +314,26 @@ class StatementPreparer {
      */
     private function generateWhere($columns, $additional = null) {
         $wheres = $additional == null ? [] : [$additional];
+        $me = 0;
         foreach ($columns as $col) {
             if (isset($this->sqlWhereParts[$col])) {
-                $wheres[] = $this->sqlWhereParts[$col];
+                if ($col == self::W_MATERIAL)
+                    $me |= 0b01;
+                elseif ($col == self::W_ENTITY)
+                    $me |= 0b10;
+                else
+                    $wheres[] = $this->sqlWhereParts[$col];
             }
         }
+
+        if ($me == 0b11) {
+            $wheres[] = "(" . $this->sqlWhereParts[self::W_MATERIAL] . " OR " . $this->sqlWhereParts[self::W_ENTITY] . ")";
+        } elseif ($me & 0b01) {
+            $wheres[] = $this->sqlWhereParts[self::W_MATERIAL];
+        } elseif ($me & 0b10) {
+            $wheres[] = $this->sqlWhereParts[self::W_ENTITY];
+        }
+
         if (sizeof($wheres) == 0)
             return "";
         return " WHERE " . join(" AND ", $wheres);
@@ -333,7 +350,7 @@ class StatementPreparer {
         if ($this->a & self::A_WHERE_COORDS && $this->w != null)
             self::whereAbsoluteString(self::W_WORLD, $this->w, $this->a & self::A_EX_WORLD, "wld");
         if ($this->u != null)
-            self::whereAbsoluteString(self::W_USER, $this->u, $this->a & self::A_EX_USER, "usr", self::W_USER_UUID);
+            self::whereAbsoluteString(self::W_USER, $this->u, $this->a & self::A_EX_USER, "usr");
         if ($this->t != null) {
             if ($this->a & self::A_REV_TIME) {
                 $this->sqlWhereParts[self::W_TIME] = self::W_TIME . ">= :time";
@@ -363,7 +380,7 @@ class StatementPreparer {
         // TODO: Keyword
     }
 
-    private function whereAbsoluteString($column, $query, $exFlag, $prefix, $uuidColumn = null) {
+    private function whereAbsoluteString($column, $query, $exFlag, $prefix) {
         $parts = [];
         if ($exFlag) {
             $d = "<>";
@@ -372,12 +389,25 @@ class StatementPreparer {
             $d = "=";
             $g = " OR ";
         }
-        foreach (str_getcsv($query) as $k => $val) {
-            if ($uuidColumn && strlen($val) == 36) {
-                $parts[] = $uuidColumn . $d . " :$prefix$k";
+
+        if ($column == self::W_USER) {
+            $type = 1;
+        } elseif ($column == self::W_ENTITY) {
+            $type = 2;
+        } else {
+            $type = 0;
+        }
+
+        foreach (str_getcsv($query) as $k => $uncleanVal) {
+            $val = trim($uncleanVal);
+            if ($type && strlen($val) == 36) {
+                $parts[] = ($type === 1 ? self::W_USER_UUID : self::W_USER_ENTITY_UUID) . $d . " :$prefix$k";
+
                 $this->sqlPlaceholders[":$prefix$k"] = $val;
             } else {
                 $parts[] = $column . $d . " :$prefix$k";
+                if ($type === 2) $parts[] = (self::W_USER_ENTITY) . $d . " :$prefix$k";
+
                 $this->sqlPlaceholders[":$prefix$k"] = $val;
             }
         }
