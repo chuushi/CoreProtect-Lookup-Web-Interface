@@ -15,8 +15,16 @@ class StatementPreparer {
     const A_USERNAME      = 0x0200;
 
     const A_BLOCK_MATERIAL = self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_CLICK;
+    const A_BLOCK_ENTITY = self::A_KILL;
     const A_BLOCK_TABLE = self::A_BLOCK_MATERIAL | self::A_KILL;
     const A_CONTAINER_TABLE = self::A_CONTAINER_IN | self::A_CONTAINER_OUT;
+
+    const A_WHERE_MATERIAL = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_SESSION;
+    const A_WHERE_ENTITY = self::A_BLOCK_ENTITY;
+    const A_WHERE_COORDS = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_SESSION;
+    const A_WHERE_ROLLBACK = self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_KILL | self::A_CONTAINER_TABLE;
+    const A_WHERE_KEYWORD = self::A_CHAT | self::A_COMMAND | self::A_USERNAME;
+
     const A_LOOKUP_TABLE = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_CHAT | self::A_COMMAND | self::A_SESSION | self::A_USERNAME;
 
     const A_EX_USER       = 0x0400;
@@ -147,7 +155,7 @@ class StatementPreparer {
         switch ($key) {
             case self::BLOCK:
                 $material = $this->a & self::A_BLOCK_MATERIAL;
-                $entity = $this->a & self::A_KILL;
+                $entity = $this->a & self::A_BLOCK_ENTITY;
                 return "SELECT c.rowid, 'block' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, "
                     . (
                         $material && $entity
@@ -318,14 +326,14 @@ class StatementPreparer {
         $this->sqlWhereParts = [];
         $this->sqlPlaceholders = [];
 
-        if ($this->b != null)
+        if ($this->a & self::A_WHERE_MATERIAL && $this->b != null)
             self::whereAbsoluteString(self::W_MATERIAL, $this->b, $this->a & self::A_EX_BLOCK, "blk");
-        if ($this->e != null)
+        if ($this->a & self::A_WHERE_ENTITY && $this->e != null)
             self::whereAbsoluteString(self::W_ENTITY, $this->e, $this->a & self::A_EX_ENTITY, "ety");
+        if ($this->a & self::A_WHERE_COORDS && $this->w != null)
+            self::whereAbsoluteString(self::W_WORLD, $this->w, $this->a & self::A_EX_WORLD, "wld");
         if ($this->u != null)
             self::whereAbsoluteString(self::W_USER, $this->u, $this->a & self::A_EX_USER, "usr", self::W_USER_UUID);
-        if ($this->w != null)
-            self::whereAbsoluteString(self::W_WORLD, $this->w, $this->a & self::A_EX_WORLD, "wld");
         if ($this->t != null) {
             if ($this->a & self::A_REV_TIME) {
                 $this->sqlWhereParts[self::W_TIME] = self::W_TIME . ">= :time";
@@ -338,7 +346,7 @@ class StatementPreparer {
         } else {
             $this->sqlOrder = "DESC";
         }
-        if ($this->x != null && $this->y != null && $this->z != null && $this->x2 != null && $this->y2 != null && $this->z2 != null) {
+        if ($this->a & self::A_WHERE_COORDS && $this->x != null && $this->y != null && $this->z != null && $this->x2 != null && $this->y2 != null && $this->z2 != null) {
             $this->sqlWhereParts[self::W_COL_XYZ] = self::WHERE_XYZ;
             $this->sqlPlaceholders[":xyz1"] = $this->x;
             $this->sqlPlaceholders[":xyz2"] = $this->x2;
@@ -347,7 +355,7 @@ class StatementPreparer {
             $this->sqlPlaceholders[":xyz5"] = $this->z;
             $this->sqlPlaceholders[":xyz6"] = $this->z2;
         }
-        if ($this->a & (self::A_ROLLBACK_YES | self::A_ROLLBACK_NO)) {
+        if ($this->a & self::A_WHERE_ROLLBACK && $this->a & (self::A_ROLLBACK_YES | self::A_ROLLBACK_NO)) {
             $this->sqlWhereParts[self::W_COL_ROLLED_BACK] = self::WHERE_ROLLED_BACK;
             $this->sqlPlaceholders[":rlbk"] = $this->a & self::A_ROLLBACK_YES ? 1 : 0;
         }
