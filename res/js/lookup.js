@@ -78,7 +78,9 @@ const $queryTime = $("#output-time");
 const $pages = $("#row-pages");
 
 let config = {form: {count: 30, moreCount: 10}}; // TODO
-let currentLookup = null, currentCount = 0, ajaxWaiting = false;
+let currentLookup = null;
+let currentCount = 0;
+let ajaxWaiting = false;
 
 $lookup.form.submit(function (ev) {
     submit(ev, false);
@@ -168,30 +170,28 @@ function serializeMore() {
     else currentLookup.count = count;
 }
 
-function beforeSend(xhr, settings) {
+function beforeSend() {
     ajaxWaiting = true;
     $lookup.submit.prop("disabled", true);
     $more.submit.prop("disabled", true);
 }
 
-function complete(xhr, status) {
+function complete() {
     ajaxWaiting = false;
     $lookup.submit.prop("disabled", false);
 }
 
-function lookupSuccess(data, status, xhr) {
+function lookupSuccess(data) {
     // TODO Populate table
     populateTable(data, false);
 }
 
 function lookupError(xhr, status, thrown) {
     // TODO Show error
-    console.log(xhr, status, thrown);
-    console.log(xhr.status);
     xhrError(xhr, status, thrown, false);
 }
 
-function moreSuccess(data, status, xhr) {
+function moreSuccess(data) {
     // TODO Expand table
     populateTable(data, true);
 }
@@ -212,7 +212,7 @@ function xhrError(xhr, status, thrown, more) {
     } else {
         text = xhr.status + "";
     }
-    addAlert(`${text}`, more, "danger");
+    addAlert(text, more, "danger");
 }
 
 function populateTable(data, more) {
@@ -246,8 +246,9 @@ function populateTable(data, more) {
         return;
     }
 
-    if (!more)
+    if (!more) {
         $tableBody.empty();
+    }
 
     for (let i = 0; i < rows.length; i++) {
         currentCount++;
@@ -267,52 +268,124 @@ function addAlert(text, more, level) {
 
 function populateRow(row) {
     let date = moment.unix(row.time).format("ll LTS");
-    let user = row.uuid == null ? row.user : row.user + " " + row.uuid;
+    let user = row.user;
 
-    let stuff = `<td>${date}</td><td>${user}</td>`;
+    let userAttr = {type: "user", user: row.user};
+    if (row.uuid) userAttr.uuid = row.uuid;
+    let stuff = `<td class="dropdown">${
+        addDropButton(date, {type: "date", time: row.time})
+    }</td><td class="dropdown">${
+        addDropButton(user, userAttr)
+    }</td>`;
 
     switch (row.table) {
         case "session":
         case "container":
         case "block":
-            console.log(row.table);
-            let action, target, data;
-            let coords = `<td>${row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z}</td>`;
-            let rollback = row.rolled_back ? " X" : "";
-            let amount = row.amount !== null ? " " + row.amount : "";
+            let actionInner, badgeStyle, dataType;
+            let rollback = row.rolled_back ? '</span> <span class="badge badge-light">Rolled Back' : "";
+            let amount = row.amount !== null ? `</span> <span class="badge badge-secondary">${row.amount}` : "";
 
-            if (row.table === "block" || row.table === "container") {
-                switch (row.action) {
-                    case 0:
-                        action = `<td>-${row.table + rollback}</td>`;
-                        break;
-                    case 1:
-                        action = `<td>+${row.table + rollback}</td>`;
-                        break;
-                    case 2:
-                        action = `<td>click</td>`;
-                        break;
-                    case 3:
-                        action = `<td>kill</td>`;
-                }
-            } else {
-                action = `<td>${row.table + amount}</td>`;
+            switch (row.action) {
+                case 0:
+                    actionInner = `-${row.table + amount + rollback}`;
+                    badgeStyle = "danger";
+                    dataType = "material";
+                    break;
+                case 1:
+                    actionInner = `+${row.table + amount + rollback}`;
+                    badgeStyle = "success";
+                    dataType = "material";
+                    break;
+                case 2:
+                    actionInner = "click";
+                    badgeStyle = "info";
+                    dataType = "material";
+                    break;
+                case 3:
+                    actionInner = "kill";
+                    badgeStyle = "warning";
+                    dataType = "entity";
+                    break;
+                default:
+                    actionInner = `${row.table + amount + rollback}`;
+                    badgeStyle = "info";
+                    dataType = row.table;
             }
 
-            data = row.data !== null && row.data !== "0" ? "[" + row.data + "]" : "";
+            let action = `<td><span class="badge badge-${badgeStyle}">${actionInner}</span></td>`;
+            let coords = `<td class="dropdown">${
+                addDropButton(row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z,
+                    {type: "coordinates", world: row.world, x: row.x, y: row.y, z: row.z})
+            }</td>`;
+            let data = row.data !== null && row.data !== "0" ? "[" + row.data + "]" : "";
+            let target = `<td class="dropdown">${
+                row.table === "session" ? "" : addDropButton(row.target + data, {type: dataType, target: row.target})
+            }</td>`;
 
-            target = `<td>${row.table === "session" ? "" : row.target + data}</td>`;
             stuff += action + coords + target;
             break;
         case "chat":
         case "command":
         case "username":
-            stuff += `<td>${row.table}</td><td colspan="2">${row.target}</td>`;
+            stuff += `<td><span class="badge badge-info">${row.table}</span></td><td colspan="2">${row.target}</td>`;
             break;
     }
 
     return `<tr><th>${currentCount + ' ' + row.rowid}</th>${stuff}</tr>`;
 }
+
+function addDropButton(innerHTML, attrMap) {
+    let ret = '<span class="output-add-dropdown dropdown-toggle" role="button" data-toggle="dropdown"';
+    for (const prop in attrMap)
+        // noinspection JSUnfilteredForInLoop
+        ret += ` data-${prop}="${attrMap[prop]}"`;
+    return ret + ">" + innerHTML + "</span>";
+}
+
+// ###################
+//  Dropdown Listener
+// ###################
+$tableBody.on("click", ".output-add-dropdown", function() {
+    //const $this = $(this);
+    const addon = document.createElement("div");
+    addon.classList.add("dropdown-menu");
+
+    switch (this.dataset.type) {
+        case "date":
+            const time = document.createElement("span");
+            time.classList.add("dropdown-item-text");
+            time.innerHTML = `Unix time: <code>${this.dataset.time}</code>`;
+            addon.append(time);
+            break;
+        case "user":
+            break;
+        case "coordinates":
+            break;
+        case "material":
+            break;
+        case "entity":
+            break;
+    }
+    const incl = document.createElement("a");
+    incl.classList.add("dropdown-item");
+    incl.innerHTML = `After this date`;
+    addon.append(incl);
+
+    const excl = document.createElement("a");
+    excl.classList.add("dropdown-item");
+    excl.innerHTML = `Before this date`;
+    addon.append(excl);
+
+    // Prevent dropdown from collapsing when clicked inside
+    $(addon).on("click", ":not(.dropdown-item)", function (e) {
+        e.stopPropagation();
+    });
+
+    this.after(addon);
+    this.classList.remove("output-add-dropdown");
+    this.classList.add("output-dropdown");
+});
 
 const csv = {
     append: function (text, value) {
@@ -325,6 +398,8 @@ const csv = {
         return array.join(", ");
     }
 };
+
+
 
 // There are no tooltips yet
 //$('[data-toggle="tooltip"]').tooltip();
