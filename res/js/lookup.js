@@ -216,8 +216,6 @@ function serializeLookup() {
         }
     }
 
-    console.log(currentLookup);
-
     // currentLookup.t = $lookup.time.val(); // TODO time calculation
 }
 
@@ -349,7 +347,7 @@ function populateRow(row) {
     const userEl = document.createElement("td");
     userEl.classList.add("dropdown");
     userEl.innerText = user + " ";
-    userEl.append(addDropButton({type: "user", uuid: row.uuid}));
+    userEl.append(addDropButton({type: "user", user: row.user, uuid: row.uuid}));
     ret.append(userEl);
 
     switch (row.table) {
@@ -399,7 +397,7 @@ function populateRow(row) {
 
             const targetEl = document.createElement("td");
 
-            let targetAttr = {type: dataType, target: row.target};
+            let targetAttr = {type: dataType, item: row.target};
             let targetInner = row.target;
             if (row.data !== null && row.data !== "0") {
                 if (dataType === "material")
@@ -521,31 +519,81 @@ $tableBody.on("click", ".output-add-dropdown", function() {
 
 function dropdownAutofill(ev) {
     ev.preventDefault();
-    console.log(this);
-    const data = this.parent.dataset;
-    const clicked = this.dataset.fillPos;
+    const data = this.parentElement.previousSibling.dataset;
+    const fillPos = this.dataset.fillPos;
+    let $elem, $toggle;
+    let item;
+
     switch (data.type) {
-        case "date":
-            break;
         case "user":
-            break;
-        case "coordinates":
+            item = data.user;
+            $elem = $lookup.user;
+            $toggle = $lookup.userEx;
             break;
         case "material":
+            item = data.item;
+            $elem = $lookup.material;
+            $toggle = $lookup.materialEx;
             break;
         case "entity":
+            item = data.item;
+            $elem = $lookup.entity;
+            $toggle = $lookup.entityEx;
             break;
+        case "date":
+            // TODO date stuff
+            item = data.time;
+            $elem = $lookup.time;
+            $toggle = $lookup.timeRev;
+            return;
+        case "coordinates":
+            // TODO coordinates
+            return;
+    }
+
+    console.log(item);
+    console.log($elem.val());
+    console.log($toggle.prop("checked"));
+
+    const exclude = fillPos === LT2;
+    const checked = $toggle.prop("checked");
+
+    if (checked === exclude)
+        $elem.val(csvSetAdd($elem.val(), item));
+    else {
+        const res = csvSetRemove($elem.val(), item);
+        if (res) {
+            $elem.val(res);
+        } else {
+            $toggle.prop("checked", !checked);
+            $toggle.parent().button("toggle");
+            $elem.val(item);
+        }
+    }
+
+}
+
+function csvSetAdd(text, value) {
+    return text === "" ? value : text.split(/, */).includes(value) ? text : text + ", " + value;
+}
+
+function csvSetRemove(text, value) {
+    const parts = text.split(/, */);
+    let i = parts.indexOf(value);
+    if (i === -1) {
+        return false;
+    } else {
+        parts.splice(i, 1);
+        return parts.join(", ");
     }
 }
 
-
-
-const csv = {
+const CsvUtils = {
     append: function (text, value) {
-        return $.inArray(value, text.split(/, ?/)) === -1 ? text + ", " + value : text;
+        return $.inArray(value, text.split(/, */)) === -1 ? text + ", " + value : text;
     },
     array: function (value) {
-        return value.split(/, ?/);
+        return value.split(/, */);
     },
     join: function (array) {
         return array.join(", ");
