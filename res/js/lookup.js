@@ -89,9 +89,10 @@ const CENTER = "Center";
 const RADIUS = "Radius";
 $lookup.coordsToggle.click(function () {coordsToggle()});
 
-function coordsToggle (center) {
+function coordsToggle(center) {
     const $r = $lookup.r;
-    if ($r.prop("hidden")) {
+    const isCenter = $r.prop("hidden");
+    if (center !== false && isCenter) {
         $lookup.r.prop("hidden", false);
 
         $lookup.coordsLabel.text(CENTER);
@@ -100,7 +101,7 @@ function coordsToggle (center) {
         $lookup.x2.prop("hidden", true);
         $lookup.y2.prop("hidden", true);
         $lookup.z2.prop("hidden", true);
-    } else if (!center) {
+    } else if (center !== true && !isCenter) {
         $lookup.x2.prop("hidden", false);
         $lookup.y2.prop("hidden", false);
         $lookup.z2.prop("hidden", false);
@@ -547,7 +548,7 @@ function dropdownAutofill(ev) {
             $toggle = $lookup.timeRev;
             return;
         case "coordinates":
-            // TODO coordinates
+            dropdownCoordsAutofill(data, fillPos);
             return;
     }
 
@@ -570,15 +571,34 @@ function dropdownAutofill(ev) {
             $elem.val(item);
         }
     }
+}
 
+function dropdownCoordsAutofill(data, fillPos) {
+    if (fillPos === LT2) {
+        coordsToggle(false);
+        $lookup.x2.val(data.x);
+        $lookup.y2.val(data.y);
+        $lookup.z2.val(data.z);
+    } else {
+        $lookup.x1.val(data.x);
+        $lookup.y1.val(data.y);
+        $lookup.z1.val(data.z);
+
+        if (fillPos === LT3)
+            coordsToggle(true);
+    }
+
+    $lookup.world.val(data.world);
+    $lookup.worldEx.prop("checked", false);
+    $lookup.worldEx.parent().button("toggle", false);
 }
 
 function csvSetAdd(text, value) {
-    return text === "" ? value : text.split(/, */).includes(value) ? text : text + ", " + value;
+    return text === "" ? value : text.split(/ *, */).includes(value) ? text : text + ", " + value;
 }
 
 function csvSetRemove(text, value) {
-    const parts = text.split(/, */);
+    const parts = text.split(/ *, */);
     let i = parts.indexOf(value);
     if (i === -1) {
         return false;
