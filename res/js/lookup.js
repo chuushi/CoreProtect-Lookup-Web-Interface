@@ -115,6 +115,30 @@ function coordsToggle(center) {
 }
 
 
+// ##################
+//  Date/Time parser
+// ##################
+// All times are baed on UNIX timestamp (seconds since)
+const timeFormat = "ll LTS";
+
+function unixToString(unix) {
+    return moment.unix(unix).format(timeFormat);
+}
+
+function setLookupTime(unix, reverse) {
+    $lookup.time.val(unixToString(unix));
+    const checked = $lookup.timeRev.prop("checked");
+    if (typeof reverse === "boolean" && reverse !== checked) {
+        $lookup.timeRev.prop("checked", reverse);
+        $lookup.timeRev.parent().button("toggle", reverse);
+    }
+}
+
+function getLookupTime() {
+    return moment($lookup.time.val(), timeFormat).unix();
+}
+
+
 // ####################
 //  Lookup form parser
 // ####################
@@ -215,6 +239,11 @@ function serializeLookup() {
             currentLookup.y2 = y + r;
             currentLookup.z2 = z + r;
         }
+    }
+
+    const time = $lookup.time.val();
+    if (time !== "") {
+        currentLookup.t = getLookupTime();
     }
 
     // currentLookup.t = $lookup.time.val(); // TODO time calculation
@@ -327,9 +356,6 @@ function addAlert(text, more, level) {
 }
 
 function populateRow(row) {
-    let date = moment.unix(row.time).format("ll LTS");
-    let user = row.user;
-
     let userAttr = {type: "user", user: row.user};
     if (row.uuid) userAttr.uuid = row.uuid;
     const ret = document.createElement("tr");
@@ -341,13 +367,13 @@ function populateRow(row) {
 
     const dateEl = document.createElement("td");
     dateEl.classList.add("dropdown");
-    dateEl.innerText = date + " ";
+    dateEl.innerText = unixToString(row.time) + " ";
     dateEl.append(addDropButton({type: "date", time: row.time}));
     ret.append(dateEl);
 
     const userEl = document.createElement("td");
     userEl.classList.add("dropdown");
-    userEl.innerText = user + " ";
+    userEl.innerText = row.user + " ";
     userEl.append(addDropButton({type: "user", user: row.user, uuid: row.uuid}));
     ret.append(userEl);
 
@@ -542,10 +568,7 @@ function dropdownAutofill(ev) {
             $toggle = $lookup.entityEx;
             break;
         case "date":
-            // TODO date stuff
-            item = data.time;
-            $elem = $lookup.time;
-            $toggle = $lookup.timeRev;
+            setLookupTime(data.time, fillPos === LT2);
             return;
         case "coordinates":
             dropdownCoordsAutofill(data, fillPos);
