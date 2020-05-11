@@ -145,7 +145,19 @@ function getLookupTime() {
 }
 
 $lookup.time.datetimepicker({
-    format: timeFormat
+    format: timeFormat,
+    // https://stackoverflow.com/questions/47618134/bootstrap-datetimepicker-for-bootstrap-4
+    icons: {
+        time: 'fa fa-clock-o',
+        date: 'fa fa-calendar',
+        up: 'fa fa-chevron-up',
+        down: 'fa fa-chevron-down',
+        previous: 'fa fa-chevron-left',
+        next: 'fa fa-chevron-right',
+        today: 'fa fa-check',
+        clear: 'fa fa-trash',
+        close: 'fa fa-times'
+    }
 });
 
 // ####################
@@ -340,8 +352,6 @@ function populateTable(data, more) {
             addAlert("That lookup returned no results.", more, "info");
         return;
     }
-
-    console.log(currentLookup);
 
     if (!more) {
         $tableBody.empty();
