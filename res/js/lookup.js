@@ -144,6 +144,9 @@ function getLookupTime() {
     return moment($lookup.time.val(), timeFormat).unix();
 }
 
+$lookup.time.datetimepicker({
+    format: timeFormat
+});
 
 // ####################
 //  Lookup form parser
@@ -277,22 +280,19 @@ function complete() {
 }
 
 function lookupSuccess(data) {
-    // TODO Populate table
     populateTable(data, false);
 }
 
 function lookupError(xhr, status, thrown) {
-    // TODO Show error
+
     xhrError(xhr, status, thrown, false);
 }
 
 function moreSuccess(data) {
-    // TODO Expand table
     populateTable(data, true);
 }
 
 function moreError(xhr, status, thrown) {
-    // TODO Show error
     xhrError(xhr, status, thrown, true);
 }
 
@@ -341,8 +341,12 @@ function populateTable(data, more) {
         return;
     }
 
+    console.log(currentLookup);
+
     if (!more) {
         $tableBody.empty();
+        if (!currentLookup.t)
+            currentLookup.t = data[1][0].time;
     }
 
     for (let i = 0; i < rows.length; i++) {
