@@ -84,7 +84,7 @@ $config = require "config.php";
             </div>
             <div class="col-auto form-group">
               <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label for="lookup-rollback-yes" class="action-btns btn btn-success">
+                <label for="lookup-rollback-yes" class="action-btns btn btn-secondary">
                   <input type="radio" id="lookup-rollback-yes" name="rollback"> Yes
                 </label>
                 <label for="lookup-rollback-null" class="action-btns btn btn-outline-secondary active">
@@ -120,7 +120,7 @@ $config = require "config.php";
           <div class="row">
             <div class="col-md-6 col-12 form-group input-group">
               <div class="input-group-prepend">
-                <label for="lookup-coords-x" class="input-group-text">Corner 1</label>
+                <label for="lookup-coords-x" class="input-group-text" id="lookup-coords-label">Corner 1</label>
               </div>
               <input type="number" class="form-control" id="lookup-coords-x" name="x" placeholder="x">
               <input type="number" class="form-control" id="lookup-coords-y" name="y" placeholder="y">
@@ -128,8 +128,11 @@ $config = require "config.php";
             </div>
             <div class="col-md-6 col-12 form-group input-group">
               <div class="input-group-prepend">
-                <label for="lookup-coords2-x" class="input-group-text">Corner 2</label>
+                <button type="button" class="btn btn-dark" id="lookup-coords-toggle">
+                  Corner 2
+                </button>
               </div>
+              <input type="number" class="form-control rounded-right" id="lookup-coords-radius" placeholder="radius" hidden>
               <input type="number" class="form-control" id="lookup-coords2-x" name="x2" placeholder="x">
               <input type="number" class="form-control" id="lookup-coords2-y" name="y2" placeholder="y">
               <input type="number" class="form-control" id="lookup-coords2-z" name="z2" placeholder="z">
@@ -219,7 +222,7 @@ $config = require "config.php";
     </div>
 
     <!-- Output table -->
-    <div class="container-fluid">
+    <div class="container-fluid table-responsive">
       <table id="output-table" class="table table-sm table-striped">
         <thead class="thead-inverse">
           <tr id="row-0">

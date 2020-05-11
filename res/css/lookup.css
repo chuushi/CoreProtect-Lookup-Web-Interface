@@ -1,4 +1,4 @@
-
+/* Form styling */
 .form-control[type=text], .form-control[type=number], .custom-select {
   background-color: var(--dark);
   color: var(--light);
@@ -24,6 +24,14 @@
 
 .form-control, .custom-select {
   height: calc(1.5em + .75rem + 2px);
+}
+
+/* Result table button styling */
+.btn-inline {
+  font-size: 75%;
+  padding: .25em .4em;
+  line-height: 1;
+  vertical-align: baseline;
 }
 
 /* Hide number arrows Chrome, Safari, Edge, Opera */

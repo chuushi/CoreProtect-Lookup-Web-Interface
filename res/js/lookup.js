@@ -50,6 +50,9 @@ const $lookup = {
     x2: $("#lookup-coords2-x"),
     y2: $("#lookup-coords2-y"),
     z2: $("#lookup-coords2-z"),
+    r: $("#lookup-coords-radius"),
+    coordsLabel: $("#lookup-coords-label"),
+    coordsToggle: $("#lookup-coords-toggle"),
     world: $("#lookup-world"),
     user: $("#lookup-user"),
     material: $("#lookup-material"),
@@ -77,7 +80,43 @@ const $tableBody = $("#output-body");
 const $queryTime = $("#output-time");
 const $pages = $("#row-pages");
 
-let config = {form: {count: 30, moreCount: 10}}; // TODO
+
+// ##########################
+//  Corner and Radius Toggle
+// ##########################
+const CORNER = "Corner";
+const CENTER = "Center";
+const RADIUS = "Radius";
+$lookup.coordsToggle.click(function () {coordsToggle()});
+
+function coordsToggle (center) {
+    const $r = $lookup.r;
+    if ($r.prop("hidden")) {
+        $lookup.r.prop("hidden", false);
+
+        $lookup.coordsLabel.text(CENTER);
+        $lookup.coordsToggle.text(RADIUS);
+
+        $lookup.x2.prop("hidden", true);
+        $lookup.y2.prop("hidden", true);
+        $lookup.z2.prop("hidden", true);
+    } else if (!center) {
+        $lookup.x2.prop("hidden", false);
+        $lookup.y2.prop("hidden", false);
+        $lookup.z2.prop("hidden", false);
+
+        $lookup.coordsLabel.text(CORNER + ' ' + 1);
+        $lookup.coordsToggle.text(CORNER + ' ' + 2);
+
+        $lookup.r.prop("hidden", true);
+        $lookup.r.val("");
+    }
+}
+
+
+// ####################
+//  Lookup form parser
+// ####################
 let currentLookup = null;
 let currentCount = 0;
 let ajaxWaiting = false;
@@ -156,6 +195,28 @@ function serializeLookup() {
     }
 
     delete(form.rollback);
+
+    const rs = $lookup.r.val();
+    if (rs !== "") {
+        const xs = $lookup.x1.val();
+        const ys = $lookup.y1.val();
+        const zs = $lookup.z1.val();
+
+        if (xs !== "" && ys !== "" && zs !== "") {
+            const r = parseInt(rs);
+            const x = parseInt(xs);
+            const y = parseInt(ys);
+            const z = parseInt(zs);
+            currentLookup.x = x - r;
+            currentLookup.y = y - r;
+            currentLookup.z = z - r;
+            currentLookup.x2 = x + r;
+            currentLookup.y2 = y + r;
+            currentLookup.z2 = z + r;
+        }
+    }
+
+    console.log(currentLookup);
 
     // currentLookup.t = $lookup.time.val(); // TODO time calculation
 }
@@ -272,11 +333,24 @@ function populateRow(row) {
 
     let userAttr = {type: "user", user: row.user};
     if (row.uuid) userAttr.uuid = row.uuid;
-    let stuff = `<td class="dropdown">${
-        addDropButton(date, {type: "date", time: row.time})
-    }</td><td class="dropdown">${
-        addDropButton(user, userAttr)
-    }</td>`;
+    const ret = document.createElement("tr");
+
+    const rowEl = document.createElement("th");
+    rowEl.title = "Row ID: " + row.rowid;
+    rowEl.innerText = currentCount;
+    ret.append(rowEl);
+
+    const dateEl = document.createElement("td");
+    dateEl.classList.add("dropdown");
+    dateEl.innerText = date + " ";
+    dateEl.append(addDropButton({type: "date", time: row.time}));
+    ret.append(dateEl);
+
+    const userEl = document.createElement("td");
+    userEl.classList.add("dropdown");
+    userEl.innerText = user + " ";
+    userEl.append(addDropButton({type: "user", uuid: row.uuid}));
+    ret.append(userEl);
 
     switch (row.table) {
         case "session":
@@ -313,50 +387,145 @@ function populateRow(row) {
                     dataType = row.table;
             }
 
-            let action = `<td><span class="badge badge-${badgeStyle}">${actionInner}</span></td>`;
-            let coords = `<td class="dropdown">${
-                addDropButton(row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z,
-                    {type: "coordinates", world: row.world, x: row.x, y: row.y, z: row.z})
-            }</td>`;
-            let data = row.data !== null && row.data !== "0" ? "[" + row.data + "]" : "";
-            let target = `<td class="dropdown">${
-                row.table === "session" ? "" : addDropButton(row.target + data, {type: dataType, target: row.target})
-            }</td>`;
+            const actionEl = document.createElement("td");
+            actionEl.innerHTML = `<span class="badge badge-${badgeStyle}">${actionInner}</span>`;
+            ret.append(actionEl);
 
-            stuff += action + coords + target;
+            const coordsEl = document.createElement("td");
+            coordsEl.classList.add("dropdown");
+            coordsEl.innerText = row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z + ' ';
+            coordsEl.append(addDropButton({type: "coordinates", world: row.world, x: row.x, y: row.y, z: row.z}));
+            ret.append(coordsEl);
+
+            const targetEl = document.createElement("td");
+
+            let targetAttr = {type: dataType, target: row.target};
+            let targetInner = row.target;
+            if (row.data !== null && row.data !== "0") {
+                if (dataType === "material")
+                    targetInner += "[" + row.data + "]";
+                else
+                    targetAttr.data = row.data;
+            }
+
+            targetEl.innerText = targetInner + " ";
+            if (row.table !== "session") {
+                targetEl.classList.add("dropdown");
+                targetEl.append(addDropButton(targetAttr));
+            }
+            ret.append(targetEl);
+
             break;
         case "chat":
         case "command":
         case "username":
-            stuff += `<td><span class="badge badge-info">${row.table}</span></td><td colspan="2">${row.target}</td>`;
+            const action2El = document.createElement("td");
+            action2El.innerHTML = `<span class="badge badge-info">${row.table}</span></td>`;
+            ret.append(action2El);
+            const target2El = document.createElement("td");
+            target2El.rowSpan = 2;
+            target2El.innerHTML = row.target;
+            ret.append(target2El);
             break;
     }
 
-    return `<tr><th>${currentCount + ' ' + row.rowid}</th>${stuff}</tr>`;
+    return ret;
 }
 
-function addDropButton(innerHTML, attrMap) {
-    let ret = '<span class="output-add-dropdown dropdown-toggle" role="button" data-toggle="dropdown"';
+function addDropButton(attrMap) {
+    const ret = document.createElement("button");
+    ret.classList.add("btn", "btn-secondary", "btn-inline", "output-add-dropdown", "dropdown-toggle", "dropdown-toggle-split");
+    ret.role = "button";
     for (const prop in attrMap)
         // noinspection JSUnfilteredForInLoop
-        ret += ` data-${prop}="${attrMap[prop]}"`;
-    return ret + ">" + innerHTML + "</span>";
+        ret.dataset[prop] = attrMap[prop];
+    ret.dataset.toggle = "dropdown";
+    return ret;
 }
 
 // ###################
 //  Dropdown Listener
 // ###################
+const LT1 = "lt1";
+const LT2 = "lt2";
+const LT3 = "lt3";
+
 $tableBody.on("click", ".output-add-dropdown", function() {
-    //const $this = $(this);
     const addon = document.createElement("div");
     addon.classList.add("dropdown-menu");
+    const lt1 = document.createElement("a");
+    const lt2 = document.createElement("a");
+    lt1.classList.add("dropdown-item");
+    lt2.classList.add("dropdown-item");
+    lt1.dataset.fillPos = LT1;
+    lt2.dataset.fillPos = LT2;
+    lt1.href = lt2.href = "#";
 
     switch (this.dataset.type) {
         case "date":
             const time = document.createElement("span");
             time.classList.add("dropdown-item-text");
             time.innerHTML = `Unix time: <code>${this.dataset.time}</code>`;
+            lt1.innerHTML = "Before";
+            lt2.innerHTML = "After";
             addon.append(time);
+            break;
+        case "user":
+            const uuid = document.createElement("span");
+            uuid.classList.add("dropdown-item-text");
+            uuid.innerHTML = `UUID: <code>${this.dataset.uuid}</code>`;
+            lt1.innerHTML = "Include";
+            lt2.innerHTML = "Exclude";
+            addon.append(uuid);
+            break;
+        case "coordinates":
+            const cntr = document.createElement("a");
+            cntr.classList.add("dropdown-item");
+            cntr.dataset.lookupTarget = LT3;
+            cntr.href = "#";
+            cntr.innerHTML = "Center";
+            lt1.innerHTML = "Corner 1";
+            lt2.innerHTML = "Corner 2";
+            addon.append(cntr);
+            break;
+        case "material":
+            lt1.innerHTML = "Include";
+            lt2.innerHTML = "Exclude";
+            break;
+        case "entity":
+            const enid = document.createElement("span");
+            if (this.dataset.data) {
+                enid.innerHTML = (this.dataset.data.length === 36 ? "UUID" : "Entity row ID") + `: <code>${this.dataset.data}</code>`;
+                enid.classList.add("dropdown-item-text");
+                addon.append(enid);
+            }
+            lt1.innerHTML = "Include";
+            lt2.innerHTML = "Exclude";
+            break;
+    }
+    addon.append(lt1);
+    addon.append(lt2);
+
+    // Prevent dropdown from collapsing when clicked inside
+    $(addon).on("click", ":not(.dropdown-item)", function (e) {
+        e.stopPropagation();
+    });
+
+    // Prevent dropdown from collapsing when clicked inside
+    $(addon).on("click", ".dropdown-item", dropdownAutofill);
+
+    this.after(addon);
+    this.classList.remove("output-add-dropdown");
+    this.classList.add("output-dropdown");
+});
+
+function dropdownAutofill(ev) {
+    ev.preventDefault();
+    console.log(this);
+    const data = this.parent.dataset;
+    const clicked = this.dataset.fillPos;
+    switch (data.type) {
+        case "date":
             break;
         case "user":
             break;
@@ -367,25 +536,9 @@ $tableBody.on("click", ".output-add-dropdown", function() {
         case "entity":
             break;
     }
-    const incl = document.createElement("a");
-    incl.classList.add("dropdown-item");
-    incl.innerHTML = `After this date`;
-    addon.append(incl);
+}
 
-    const excl = document.createElement("a");
-    excl.classList.add("dropdown-item");
-    excl.innerHTML = `Before this date`;
-    addon.append(excl);
 
-    // Prevent dropdown from collapsing when clicked inside
-    $(addon).on("click", ":not(.dropdown-item)", function (e) {
-        e.stopPropagation();
-    });
-
-    this.after(addon);
-    this.classList.remove("output-add-dropdown");
-    this.classList.add("output-dropdown");
-});
 
 const csv = {
     append: function (text, value) {
