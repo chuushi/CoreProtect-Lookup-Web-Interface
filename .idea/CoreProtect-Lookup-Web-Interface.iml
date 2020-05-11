@@ -8,5 +8,6 @@
     <orderEntry type="library" name="moment" level="application" />
     <orderEntry type="library" name="tempusdominus-bootstrap-4" level="application" />
     <orderEntry type="library" name="jquery-3.5.1" level="application" />
+    <orderEntry type="library" name="popper" level="application" />
   </component>
 </module>

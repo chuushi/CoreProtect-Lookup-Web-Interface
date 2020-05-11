@@ -101,7 +101,13 @@ function coordsToggle(center) {
         $lookup.x2.prop("hidden", true);
         $lookup.y2.prop("hidden", true);
         $lookup.z2.prop("hidden", true);
+        $lookup.x2.prop("disabled", true);
+        $lookup.y2.prop("disabled", true);
+        $lookup.z2.prop("disabled", true);
     } else if (center !== true && !isCenter) {
+        $lookup.x2.prop("disabled", false);
+        $lookup.y2.prop("disabled", false);
+        $lookup.z2.prop("disabled", false);
         $lookup.x2.prop("hidden", false);
         $lookup.y2.prop("hidden", false);
         $lookup.z2.prop("hidden", false);
@@ -506,7 +512,7 @@ $tableBody.on("click", ".output-add-dropdown", function() {
         case "coordinates":
             const cntr = document.createElement("a");
             cntr.classList.add("dropdown-item");
-            cntr.dataset.lookupTarget = LT3;
+            cntr.dataset.fillPos = LT3;
             cntr.href = "#";
             cntr.innerHTML = "Center";
             lt1.innerHTML = "Corner 1";
@@ -597,6 +603,7 @@ function dropdownAutofill(ev) {
 }
 
 function dropdownCoordsAutofill(data, fillPos) {
+    console.log(fillPos);
     if (fillPos === LT2) {
         coordsToggle(false);
         $lookup.x2.val(data.x);
@@ -607,8 +614,11 @@ function dropdownCoordsAutofill(data, fillPos) {
         $lookup.y1.val(data.y);
         $lookup.z1.val(data.z);
 
-        if (fillPos === LT3)
+        if (fillPos === LT1) {
+            coordsToggle(false);
+        } else {
             coordsToggle(true);
+        }
     }
 
     $lookup.world.val(data.world);
