@@ -83,28 +83,34 @@ class StatementPreparer {
     private $sqlFromWhere, $sqlWhereParts, $sqlPlaceholders;
     private $sqlOrder;
 
-    public function __construct($prefix, $req, $count, $moreCount) {
+    public function __construct($prefix, & $req, $count, $moreCount) {
         $this->prefix = $prefix;
-        $this->offset = self::nonnull($req['offset'], 0);
-        $this->count  = self::nonnull($req['count'], $this->offset == null ? $count : $moreCount);
+        $this->offset = self::nonnullInt($req['offset'], 0);
+        $this->count  = self::nonnullInt($req['count'], $this->offset == null ? $count : $moreCount);
         $this->a  = self::nonnull($req['a']);
         $this->b  = self::nonnull($req['b']);
         $this->e  = self::nonnull($req['e']);
-        $this->t  = self::nonnull($req['t']);
+        $this->t  = self::nonnullInt($req['t']);
         $this->u  = self::nonnull($req['u']);
         $this->w  = self::nonnull($req['w']);
-        $this->x  = self::nonnull($req['x']);
-        $this->x2 = self::nonnull($req['x2']);
-        $this->y  = self::nonnull($req['y']);
-        $this->y2 = self::nonnull($req['y2']);
-        $this->z  = self::nonnull($req['z']);
-        $this->z2 = self::nonnull($req['z2']);
+        $this->x  = self::nonnullInt($req['x']);
+        $this->x2 = self::nonnullInt($req['x2']);
+        $this->y  = self::nonnullInt($req['y']);
+        $this->y2 = self::nonnullInt($req['y2']);
+        $this->z  = self::nonnullInt($req['z']);
+        $this->z2 = self::nonnullInt($req['z2']);
         $this->keyword = self::nonnull($req['keyword']);
     }
 
-    private function nonnull(& $in, $ifunset = null) {
+    private function nonnull(& $in) {
         if (isset($in) && $in !== "")
             return $in;
+        return null;
+    }
+
+    private function nonnullInt(& $in, $ifunset = null) {
+        if (isset($in) && $in !== "")
+            return intval($in);
         return $ifunset;
     }
 
