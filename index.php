@@ -209,7 +209,7 @@ $config = require "config.php";
               <div class="input-group-prepend">
                 <label for="lookup-time" class="input-group-text">Date/Time</label>
               </div>
-              <input type="text" class="form-control datetimepicker-input" id="lookup-time" placeholder="0000-00-00T00:00:00" data-target="#lookup-time" data-toggle="datetimepicker">
+              <input type="text" class="form-control datetimepicker-input" id="lookup-time" placeholder="now" data-target="#lookup-time" data-toggle="datetimepicker">
               <div class="input-group-append btn-group-toggle" data-toggle="buttons">
                 <label for="lookup-time-rev" class="btn btn-outline-secondary">
                   <input type="checkbox" id="lookup-time-rev"> Reverse
@@ -288,7 +288,7 @@ $config = require "config.php";
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.25.3/moment.min.js" integrity="sha256-C66CaAImteEKZPYvgng9j10J/45e9sAuZyfPYCwp4gE=" crossorigin="anonymous"></script>
     <script src="res/js/bootstrap-datetimepicker.min.js"></script> <!-- https://github.com/technovistalimited/bootstrap4-datetimepicker -->
     <script src="res/js/lookup.js"></script>
   </body>

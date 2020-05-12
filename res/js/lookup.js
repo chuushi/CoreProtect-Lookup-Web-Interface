@@ -83,8 +83,8 @@ const $pages = $("#row-pages");
 
 // Configuration constants
 const dateTimeFormat = config.dateTimeFormat;
-const locale = config.locale;
 
+moment.defaultFormat = dateTimeFormat;
 $lookup.time.datetimepicker({
     format: dateTimeFormat,
     // https://stackoverflow.com/questions/47618134/bootstrap-datetimepicker-for-bootstrap-4

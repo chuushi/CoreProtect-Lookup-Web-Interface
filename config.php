@@ -67,7 +67,6 @@
     'max'           => 300,
     'pageInterval'  => 25,
     'timeDivider'   => 300,
-    'locale'        => 'ko-KR',
     'dateTimeFormat'=> 'll LTS'
 ],
 
