@@ -3,6 +3,10 @@ noinclude/
 database.db
 notes.txt
 
+# Ignore configuration files (potential password leaks)
+config.php
+
+
 # Created by https://www.gitignore.io/api/phpstorm
 # Edit at https://www.gitignore.io/?templates=phpstorm
 

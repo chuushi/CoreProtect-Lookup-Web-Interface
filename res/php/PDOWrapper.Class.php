@@ -48,8 +48,8 @@ class PDOWrapper {
                     . ";dbname="
                     . $this->dbinfo["database"]
                     . $this->dbinfo["flags"],
-                    $this->dbinfo["user"],
-                    $this->dbinfo["pass"],
+                    $this->dbinfo["username"],
+                    $this->dbinfo["password"],
                     [PDO::ATTR_PERSISTENT => true]
                 )
                 : new PDO("sqlite:"

@@ -38,8 +38,8 @@
 #                 %world% for world; %x% %y% %z% for xyz coordinates
 'database' => [
     'server' => [
-        'type'      => 'sqlite', // TODO 'mysql',
-        'path'      => 'database.db', // TODO 'path/to/database.db',
+        'type'      => 'mysql',
+        'path'      => 'path/to/database.db',
         'host'      => 'localhost:3306',
         'database'  => 'minecraft',
         'username'  => 'username',
