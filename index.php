@@ -328,7 +328,8 @@ $session = new Session($config);
     <script>
       // noinspection JSAnnotator
       const config = <?php echo json_encode($config['form']) ?>;
-      let loginRequired = <?php echo $session->hasLookupAccess() ?>;
+      // noinspection JSAnnotator
+      const loginRequired = <?php echo $session->hasLookupAccess() ? 'false' : 'true' ?>;
       let loginUsername = <?php
               $name = $session->getUsername();
               echo $name === null ? "null" : "'$name'";
