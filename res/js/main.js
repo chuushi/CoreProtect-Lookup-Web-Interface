@@ -553,7 +553,7 @@ function populateRow(row) {
                     dataType = "material";
                     break;
                 case 3:
-                    actionInner = "kill";
+                    actionInner = "kill" + rollback;
                     badgeStyle = "warning";
                     dataType = "entity";
                     break;
