@@ -30,7 +30,7 @@ v0.9.2 - August 17, 2016
   - Restyle `README.md` and this file to fit in 80-character width consoles and
     for better bullet points.
 - Technical:
-  - Merged `form-handler.js` and `out-table.js` into `lookup.js`.
+  - Merged `form-handler.js` and `out-table.js` into `main.js`.
 
 
 v0.9.1 - August 17, 2016

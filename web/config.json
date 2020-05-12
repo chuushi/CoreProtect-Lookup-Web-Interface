@@ -1,9 +1,0 @@
-{
-    "form": {
-        "locale": "en-US",
-        "dateFormat": "ll",
-        "timeFormat": "LTS",
-        "timeDividor": 300,
-        "pageInterval": 25
-    }
-}

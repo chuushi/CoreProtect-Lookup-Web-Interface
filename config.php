@@ -1,22 +1,23 @@
 <?php return [
-/*
- * NOTICE: Configuration file will be overwritten if you save any
- * configuration changes from the web dashboard.  Web configuration is
- * accessible through administrator account only via local or HTTPS
- * connection.
+/**
+ * Configuration File
+ *
+ * CoreProtect Lookup Web Interface config
+ * @since 1.0.0
  */
 
 ########################
 # Account Configuration
+# There's only two access accounts: administrator and user.
+# The array is as follows: [ username, password ]
+
 # Administrator account can manage configuration from the web.
-# Username: administrator
 # set password to enable access.
-'administrator' => '',
+'administrator' => ['administrator', ''],
 
 # User account to access lookup.
-# Username: user
 # set password to require log in to use the lookup.
-'user' => '',
+'user' => ['user', ''],
 
 
 ################################
@@ -37,8 +38,8 @@
 #                 %world% for world; %x% %y% %z% for xyz coordinates
 'database' => [
     'server' => [
-        'type'      => 'mysql',
-        'path'      => 'path/to/database.db',
+        'type'      => 'sqlite', // TODO 'mysql',
+        'path'      => 'database.db', // TODO 'path/to/database.db',
         'host'      => 'localhost:3306',
         'database'  => 'minecraft',
         'username'  => 'username',
@@ -59,15 +60,15 @@
 #   pageInterval    = how many entries to divide the pagination by
 #   timeDivider     = how many entries the table displays before the interval shows up
 #   locale          = Date locale (website locale coming soon?)
-#   dateFormat      = Date format (see https://momentjs.com/docs/#/parsing/string-format/)
-#   timeFormat      = Time format (see ^)
+#   dateTimeFormat  = Date format (see https://momentjs.com/docs/#/parsing/string-format/)
+#                     (try 'YYYY.MM.DD hh:mm:ss a')
 'form' => [
     'count'         => 30,
     'moreCount'     => 10,
     'max'           => 300,
     'pageInterval'  => 25,
     'timeDivider'   => 300,
-    'dateTimeFormat'=> 'll LTS'
+    'dateTimeFormat'=> 'LL LTS'
 ],
 
 # Webpage name and style configuration

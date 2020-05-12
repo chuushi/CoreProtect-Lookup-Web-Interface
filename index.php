@@ -1,7 +1,13 @@
 <?php
 /**
- * index.php file
- * by Simon Chuu
+ * Index Page
+ *
+ * CoreProtect Lookup Web Interface
+ * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
+ * @since 1.0.0
  */
 $config = require "config.php";
 ?><!DOCTYPE html>
@@ -25,7 +31,7 @@ $config = require "config.php";
       ?>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="res/css/bootstrap-datetimepicker.min.css"> <!-- https://github.com/technovistalimited/bootstrap4-datetimepicker -->
-    <link rel="stylesheet" href="res/css/lookup.css">
+    <link rel="stylesheet" href="res/css/main.css">
 <!--    <link rel="stylesheet" href="res/css/jquery-autocomplete.css">-->
   </head>
   <body data-spy="scroll" data-target="#row-pages">
@@ -290,6 +296,6 @@ $config = require "config.php";
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.25.3/moment.min.js" integrity="sha256-C66CaAImteEKZPYvgng9j10J/45e9sAuZyfPYCwp4gE=" crossorigin="anonymous"></script>
     <script src="res/js/bootstrap-datetimepicker.min.js"></script> <!-- https://github.com/technovistalimited/bootstrap4-datetimepicker -->
-    <script src="res/js/lookup.js"></script>
+    <script src="res/js/main.js"></script>
   </body>
 </html>

@@ -1,7 +1,15 @@
 <?php
 /**
- * Lookup PHP application
+ * Lookup Page
+ *
+ * Returns as a JSON file
+ *
+ * CoreProtect Lookup Web Interface
  * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
+ * @since 1.0.0
  */
 
 require_once 'res/php/StatementPreparer.class.php';
@@ -94,4 +102,3 @@ if ($lookup->execute($prep->preparedParams())) {
     $return[0]["reason"] = $lookup->errorInfo()[2];
     exit();
 }
-

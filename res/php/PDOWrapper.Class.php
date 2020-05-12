@@ -1,11 +1,12 @@
 <?php
-// CoLWI v0.9.3
-// pdoWrapper PHP Function
-// Copyright (c) 2015-2016 SimonOrJ
-
-// pdoWrapper (array database)
-//   returns PDO on success or PDOException on failure.
-
+/**
+ * CoreProtect Lookup Web Interface
+ * PDOWrapper class
+ * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT
+ * @since 1.0.0
+ */
 class PDOWrapper {
     /** @var array */
     private $error, $dbinfo;

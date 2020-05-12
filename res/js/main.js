@@ -1,8 +1,15 @@
+/**
+ * Main JavaScript
+ *
+ * CoreProtect Lookup Web Interface
+ * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
+ * @since 1.0.0
+ */
 (function () {
 "use strict";
-/*
- * Main script
- */
 
 // action constants
 const A_BLOCK_MINE    = 0x0001;
@@ -674,8 +681,4 @@ const CsvUtils = {
     }
 };
 
-
-
-// There are no tooltips yet
-//$('[data-toggle="tooltip"]').tooltip();
 }());

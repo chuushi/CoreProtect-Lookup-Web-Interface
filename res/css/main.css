@@ -1,3 +1,13 @@
+/**
+ * Main CSS
+ *
+ * CoreProtect Lookup Web Interface
+ * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
+ * @since 1.0.0
+ */
 /* Form styling */
 .input-group-text, .form-control, .btn, .custom-select {
   padding: .375rem .75rem;
