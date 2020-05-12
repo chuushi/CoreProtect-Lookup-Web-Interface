@@ -307,7 +307,6 @@ $more.form.submit(function (ev) {
 function submit(ev, more) {
     ev.preventDefault();
     if (ajaxWaiting) {
-        // TODO message
         addAlert("Please wait for the previous lookup to complete.", more, "info");
         return;
     }
@@ -316,7 +315,6 @@ function submit(ev, more) {
     else serializeLookup();
 
     if (currentLookup == null) {
-        // TODO "An action is required"
         if (more)
             addAlert("A lookup is required.", true, "info");
         else
@@ -395,8 +393,6 @@ function serializeLookup() {
     if (time !== "") {
         currentLookup.t = getLookupTime();
     }
-
-    // currentLookup.t = $lookup.time.val(); // TODO time calculation
 }
 
 function serializeMore() {

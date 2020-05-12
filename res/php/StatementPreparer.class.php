@@ -283,8 +283,6 @@ class StatementPreparer {
             $sql = "FROM `" . $this->prefix . "chat` AS c"
                 . " LEFT JOIN `" . $this->prefix."user` AS u ON c.user = u.rowid";
 
-            // TODO: Keyword
-
             $this->sqlFromWhere[self::CHAT] = $sql . $this->generateWhere($wheres);
         }
 

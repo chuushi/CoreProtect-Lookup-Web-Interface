@@ -68,10 +68,7 @@ if (!isset($server)) {
     exit();
 }
 
-// TODO: get prefix from config
 $prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount']);
-
-// TODO: get database info from config
 $wrapper = new PDOWrapper($server);
 $pdo = $wrapper->initPDO();
 

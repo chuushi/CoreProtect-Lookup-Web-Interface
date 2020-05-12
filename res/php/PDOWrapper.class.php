@@ -60,6 +60,8 @@ class PDOWrapper {
                 : new PDO("sqlite:"
                     .$this->dbinfo["path"]
                 );
+            // Prevent numbers from being quoted (breaks on MySQL)
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
             return $pdo;
         } catch(PDOException $ex) {
             $this->error = [$ex->getCode(), $ex->getMessage()];
