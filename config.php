@@ -19,7 +19,7 @@
 'user' => '',
 
 
-#################$$$$$$$########
+################################
 # Database/Server configuration
 # If you have multiple databases, configure each database source here by
 # copying 'server' array right under and renaming 'server' to a different
@@ -67,28 +67,32 @@
     'max'           => 300,
     'pageInterval'  => 25,
     'timeDivider'   => 300,
-    'locale'        => 'en-US',
-    'dateFormat'    => 'll',
-    'timeFormat'    => 'LTS',
+    'locale'        => 'ko-KR',
+    'dateTimeFormat'=> 'll LTS'
+],
+
+# Webpage name and style configuration
+#   bootstrap = Link to a bootstrap swatch, local or from CDN.
+#               If from a CDN, using the HTML <link> with
+#               'integrity' and 'crossorigin' is recommended!
+#               (you can get link to theme from:)
+#               https://www.bootstrapcdn.com/bootswatch/
+#   darkInput = if the bootstrap theme is a dark theme
+#               (Affects the color of input fields)
+#   name      = Page name
+#   href      = link where the page name leads to
+'page' => [
+    'bootstrap' => '<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" rel="stylesheet" integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">',
+    'darkInput' => true,
+    'name'      => 'CoreProtect Lookup Web Interface',
+    'href'      => '/'
 ],
 
 # Navigation Bar Customization
-#   add more pairs below to add more options to the navbar.
+#   add more pairs below to add more links to the navbar.
 'navbar' => [
-    'Home' => '/',
+    'Home' => 'index.php',
     #'BanManager' => '/banmanager/',
     #'Dynmap' => 'http://127.0.0.1:8123/',
-],
-# Copyright message
-'copyright' => 'SimonOrJ, 2015-%year%',
-
-  # Optional: Configure navigation items here.
-  // For additional form configuration, visit the `config.json` file.
-  //  form:
-  //    dateFormat:     Date format to use based on Moment.js.
-  //    timeFormat:     Time format to use based on Moment.js.
-  //                      Link:  http://momentjs.com/docs/#/displaying/format/
-  //    timeDividor:    Time difference between two results in seconds before
-  //                      a time separator comes in.
-  //    pageInterval:   Interval before a page separator is made at the bottom.
+]
 ];

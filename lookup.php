@@ -22,14 +22,27 @@ register_shutdown_function(function () {
     echo json_encode($return);
 });
 
-// Get the input parameters
-$request = $_REQUEST;
+$serverName = $_REQUEST['server'];
+if ($serverName == null) {
+    $return[0]["status"] = 1;
+    $return[0]["code"] = "Request Error";
+    $return[0]["reason"] = "No server specified";
+    exit();
+}
+
+$server = $config['database'][$serverName];
+if (!isset($server)) {
+    $return[0]["status"] = 1;
+    $return[0]["code"] = "Configuration Error";
+    $return[0]["reason"] = "The specified server '$serverName' is not configured.";
+    exit();
+}
 
 // TODO: get prefix from config
-$prep = new StatementPreparer("co_", $request, $config['form']['count'], $config['form']['moreCount']);
+$prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount']);
 
 // TODO: get database info from config
-$wrapper = new PDOWrapper(["type" => "sqlite", "path" => "./database.db"]);
+$wrapper = new PDOWrapper($server);
 $pdo = $wrapper->initPDO();
 
 if (!$pdo) {
@@ -51,6 +64,8 @@ if (!$lookup) {
 
 if ($lookup->execute($prep->preparedParams())) {
     $return[0]["status"] = 0;
+    if (!isset($_REQUEST['offset']) && $server['mapLink']) $return[0]["mapHref"] = $server['mapLink'];
+
     $return[1] = [];
     while($r = $lookup->fetch(PDO::FETCH_ASSOC)) {
         // Treat numbers as integers

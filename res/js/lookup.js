@@ -1,8 +1,9 @@
 (function () {
 "use strict";
 /*
- * Lookup class
+ * Main script
  */
+
 // action constants
 const A_BLOCK_MINE    = 0x0001;
 const A_BLOCK_PLACE   = 0x0002;
@@ -80,6 +81,26 @@ const $tableBody = $("#output-body");
 const $queryTime = $("#output-time");
 const $pages = $("#row-pages");
 
+// Configuration constants
+const dateTimeFormat = config.dateTimeFormat;
+const locale = config.locale;
+
+$lookup.time.datetimepicker({
+    format: dateTimeFormat,
+    // https://stackoverflow.com/questions/47618134/bootstrap-datetimepicker-for-bootstrap-4
+    icons: {
+        time: 'fa fa-clock-o',
+        date: 'fa fa-calendar',
+        up: 'fa fa-chevron-up',
+        down: 'fa fa-chevron-down',
+        previous: 'fa fa-chevron-left',
+        next: 'fa fa-chevron-right',
+        today: 'fa fa-check',
+        clear: 'fa fa-trash',
+        close: 'fa fa-times'
+    }
+});
+
 
 // ##########################
 //  Corner and Radius Toggle
@@ -125,10 +146,8 @@ function coordsToggle(center) {
 //  Date/Time parser
 // ##################
 // All times are baed on UNIX timestamp (seconds since)
-const timeFormat = "ll LTS";
-
 function unixToString(unix) {
-    return moment.unix(unix).format(timeFormat);
+    return moment.unix(unix).format(dateTimeFormat);
 }
 
 function setLookupTime(unix, reverse) {
@@ -141,24 +160,9 @@ function setLookupTime(unix, reverse) {
 }
 
 function getLookupTime() {
-    return moment($lookup.time.val(), timeFormat).unix();
+    return moment($lookup.time.val(), dateTimeFormat).unix();
 }
 
-$lookup.time.datetimepicker({
-    format: timeFormat,
-    // https://stackoverflow.com/questions/47618134/bootstrap-datetimepicker-for-bootstrap-4
-    icons: {
-        time: 'fa fa-clock-o',
-        date: 'fa fa-calendar',
-        up: 'fa fa-chevron-up',
-        down: 'fa fa-chevron-down',
-        previous: 'fa fa-chevron-left',
-        next: 'fa fa-chevron-right',
-        today: 'fa fa-check',
-        clear: 'fa fa-trash',
-        close: 'fa fa-times'
-    }
-});
 
 // ####################
 //  Lookup form parser

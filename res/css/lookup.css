@@ -1,23 +1,4 @@
 /* Form styling */
-.form-control[type=text], .form-control[type=number], .custom-select {
-  background-color: var(--dark);
-  color: var(--light);
-}
-
-.form-control[type=text]:focus, .form-control[type=number]:focus {
-  background-color: #000;
-  color: var(--white);
-}
-
-.input-group-text {
-  background-color: var(--gray-dark);
-  color: var(--light);
-}
-
-.form-control, .input-group-text, .custom-select {
-  border-color: rgba(0, 0, 0, 0.6);
-}
-
 .input-group-text, .form-control, .btn, .custom-select {
   padding: .375rem .75rem;
 }

@@ -1,15 +1,6 @@
 # For my test server
-web/test.php
-aspnet_client/
+noinclude/
 database.db
-
-# Prevent data leaks
-web/config.php
-web/config.json
-web/cache/*
-web/server/*
-
-# private notes
 notes.txt
 
 # Created by https://www.gitignore.io/api/phpstorm

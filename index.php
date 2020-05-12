@@ -10,9 +10,20 @@ $config = require "config.php";
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>CoreProtect Lookup Web Interface</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" rel="stylesheet" integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <title><?php echo $config['page']['name'] ?></title>
+      <?php
+      $theme = $config['page']['bootstrap'];
+      $dark = $config['page']['darkInput'];
+      if (!$theme)
+          echo '<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" rel="stylesheet" integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">';
+      elseif (strpos($theme, "<link ") === 0)
+          echo $theme;
+      else
+          echo "<link rel=\"stylesheet\" href=\"$theme\">";
+      if (!isset($dark) || $dark !== false)
+          echo '<link rel="stylesheet" href="res/css/bootstrap-dark-input.css">';
+      ?>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="res/css/bootstrap-datetimepicker.min.css"> <!-- https://github.com/technovistalimited/bootstrap4-datetimepicker -->
     <link rel="stylesheet" href="res/css/lookup.css">
 <!--    <link rel="stylesheet" href="res/css/jquery-autocomplete.css">-->
@@ -20,7 +31,7 @@ $config = require "config.php";
   <body data-spy="scroll" data-target="#row-pages">
     <nav id="top" class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
       <div class="container">
-        <a class="navbar-brand" href="./">CoreProtect Lookup Web Interface</a>
+        <a class="navbar-brand" href="<?php echo $config['page']['href'] ?>"><?php echo $config['page']['name'] ?></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -53,7 +64,11 @@ $config = require "config.php";
               <label for="lookup-database" class="input-group-text">Server</label>
             </div>
             <select class="custom-select" id="lookup-database" name="server">
-              <option value="Server" selected><?php echo "Server" // TODO ?></option>
+                <?php
+                foreach (array_keys($config['database']) as $key) {
+                    echo "<option value=\"$key\">$key</option>";
+                }
+                ?>
             </select>
           </div>
 
@@ -123,7 +138,7 @@ $config = require "config.php";
             </div>
             <div class="col-md-6 col-12 form-group input-group">
               <div class="input-group-prepend">
-                <button type="button" class="btn btn-dark" id="lookup-coords-toggle">
+                <button type="button" class="btn btn-secondary" id="lookup-coords-toggle">
                   Corner 2
                 </button>
               </div>
@@ -205,7 +220,7 @@ $config = require "config.php";
               <div class="input-group-prepend">
                 <label for="lookup-limit" class="input-group-text">Limit</label>
               </div>
-              <input type="number" class="form-control" id="lookup-limit" name="count" min="1" max="<?php echo $config['form']['max'];?>" placeholder="<?php echo $config['form']['count'];?>">
+              <input type="number" class="form-control" id="lookup-limit" name="count" min="1" max="<?php echo $config['form']['max'] ?>" placeholder="<?php echo $config['form']['count'] ?>">
             </div>
           </div>
 
@@ -248,7 +263,7 @@ $config = require "config.php";
               <div class="input-group-prepend">
                 <label for="more-limit" class="input-group-text">Load next</label>
               </div>
-              <input type="number" class="form-control" id="more-limit" name="count" min="1" max="<?php echo $config['form']['max'];?>" placeholder="<?php echo $config['form']['moreCount'];?>">
+              <input type="number" class="form-control" id="more-limit" name="count" min="1" max="<?php echo $config['form']['max'] ?>" placeholder="<?php echo $config['form']['moreCount'] ?>">
             </div>
           </div>
 
@@ -263,39 +278,13 @@ $config = require "config.php";
 
     <!-- Copyright Message -->
     <div class="container-fluid">
-      <p>&copy; <?php echo str_replace("%year%", date("Y"),$config["copyright"]);?>. <span class="">CoreProtect LWI v0.9.3-beta &ndash; Created by <a href="http://simonorj.com/">Simon Chuu</a>.</span></p>
+      <p>&copy; <?php echo str_replace("%year%", date("Y"),$config["copyright"]) ?>. <span class="">CoreProtect LWI v0.9.3-beta &ndash; Created by <a href="http://simonorj.com/">Simon Chuu</a>.</span></p>
     </div>
 
-    <!-- All the scripting needs -->
-    <?php
-    // Unset sensetitive information before sending it to the JS.
-    unset($config['login']);
-    unset($config['user']);
-    ?>
-<!--    <script>-->
-<!--    // Quick Styling for JS-enabled browser-->
-<!--    -->
-<!--    // Corner/Radius Reset-->
-<!--    document.getElementById("lCorner1").innerHTML = "Center";-->
-<!--    document.getElementById("lCorner2").innerHTML = "Radius";-->
-<!--    document.getElementById("lC2").className = "";-->
-<!--    a = document.getElementsByClassName("lRadiusHide");-->
-<!--    for (var i = 0; i < a.length; i++) a[i].style.display = "none";-->
-<!--    document.getElementById("lCX2").setAttribute("placeholder","Radius");-->
-<!--    -->
-<!--    // Add data-toggle attribute to checkboxes (and radio buttons) with dtButtons php-->
-<!--    a = document.getElementsByClassName("dtButtons");-->
-<!--    for (var i = 0; i < a.length; i++) a[i].setAttribute("data-toggle","buttons");-->
-<!--    document.getElementById("lT").setAttribute("placeholder","")-->
-<!--    document.getElementById("lT").setAttribute("type","text");-->
-<!--    document.getElementById("lT").removeAttribute("name");-->
-<!--    -->
-<!--    document.getElementById("lSubmit").disabled = true;-->
-<!--    document.getElementById("mSubmit").disabled = true;-->
-<!--    </script>-->
-<!--    <script src="res/js/buttons.js"></script>-->
-<!--    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js">// Dropdown</script>-->
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.1.1/js/tether.min.js">// Bootstrap dependency</script>-->
+    <script>
+      // noinspection JSAnnotator
+      const config = <?php echo json_encode($config['form']) ?>;
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
