@@ -337,7 +337,6 @@ function populateTable(data, more) {
         } else {
             text = "Unknown error occured."
         }
-        // TODO show error
         addAlert(text, more, "danger");
         return;
     }
@@ -345,11 +344,16 @@ function populateTable(data, more) {
     const rows = data[1];
 
     if (rows.length === 0) {
-        // TODO if descending order, leave it open. otherwise,
-        if (more)
-            $tableBody.append('<tr><th></th><td colspan="5">No more results</td></tr>'); // TODO: icon
-        else
+        if (more) {
+            if ((currentLookup.a & A_REV_TIME ) === 0)
+                $tableBody.append('<tr><th><i class="fa fa-minus"></i></th><td colspan="5">No more results</td></tr>');
+            else {
+                addAlert("No more results. (If on the live server, wait for more results)", more, "info");
+                $more.submit.prop("disabled", false);
+            }
+        } else {
             addAlert("That lookup returned no results.", more, "info");
+        }
         return;
     }
 

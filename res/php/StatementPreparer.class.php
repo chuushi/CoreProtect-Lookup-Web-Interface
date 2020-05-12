@@ -361,8 +361,9 @@ class StatementPreparer {
             }
             $this->sqlPlaceholders[":time"] = $this->t;
         } else {
-            $this->sqlOrder = "DESC";
+            $this->sqlOrder = $this->a & self::A_REV_TIME ? "ASC" : "DESC";
         }
+
         if ($this->a & self::A_WHERE_COORDS && $this->x != null && $this->y != null && $this->z != null && $this->x2 != null && $this->y2 != null && $this->z2 != null) {
             $this->sqlWhereParts[self::W_COL_XYZ] = self::WHERE_XYZ;
             $this->sqlPlaceholders[":xyz1"] = $this->x;
