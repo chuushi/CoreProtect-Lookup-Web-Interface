@@ -1,8 +1,8 @@
 <?php
 /**
- * Lookup Page
+ * Lookup JSON
  *
- * Returns as a JSON file
+ * Returns query results as a JSON file
  *
  * CoreProtect Lookup Web Interface
  * @author Simon Chuu
@@ -13,7 +13,8 @@
  */
 
 require_once 'res/php/StatementPreparer.class.php';
-require_once 'res/php/PDOWrapper.Class.php';
+require_once 'res/php/PDOWrapper.class.php';
+require_once 'res/php/Session.class.php';
 $config = require_once 'config.php';
 
 $return = [["time" => microtime(true)]];
@@ -30,11 +31,32 @@ register_shutdown_function(function () {
     echo json_encode($return);
 });
 
+$session = new Session($config);
+
+// Allow for immediate login through request headers
+if (array_key_exists('username', $_REQUEST) && array_key_exists('password', $_REQUEST)) {
+    if (!$session->login($_REQUEST['username'], $_REQUEST['password'])) {
+        http_response_code(401);
+        $return[0]["status"] = 1;
+        $return[0]["code"] = "Access Denied";
+        $return[0]["reason"] = "The login credentials is incorrect.";
+        exit();
+    }
+}
+
+if (!$session->hasLookupAccess()) {
+    http_response_code(401);
+    $return[0]["status"] = 1;
+    $return[0]["code"] = "Access Denied";
+    $return[0]["reason"] = "You must log in first to access the data.";
+    exit();
+}
+
 $serverName = $_REQUEST['server'];
 if ($serverName == null) {
     $return[0]["status"] = 1;
     $return[0]["code"] = "Request Error";
-    $return[0]["reason"] = "No server specified";
+    $return[0]["reason"] = "No server specified.";
     exit();
 }
 

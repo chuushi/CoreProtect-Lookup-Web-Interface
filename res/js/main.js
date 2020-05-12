@@ -88,6 +88,18 @@ const $tableBody = $("#output-body");
 const $queryTime = $("#output-time");
 const $pages = $("#row-pages");
 
+const $login = {
+    name: $("#login-name"),
+    activate: $("#login-activate"),
+    modal: $("#login-modal"),
+    form: $("#login-form"),
+    username: $("#login-username"),
+    password: $("#login-password"),
+    remember: $("#login-remember"),
+    submit: $("#login-submit"),
+    alert: $("#login-alert")
+};
+
 // Configuration constants
 const dateTimeFormat = config.dateTimeFormat;
 
@@ -170,6 +182,112 @@ function getLookupTime() {
     return moment($lookup.time.val(), dateTimeFormat).unix();
 }
 
+
+// ###################
+//  Login form parser
+// ###################
+$login.form.submit(function (ev) {
+    ev.preventDefault();
+
+    const credentials = {
+        username: $login.username.val(),
+        password: $login.password.val()
+    };
+
+    if ($login.remember.prop('checked'))
+        credentials.remember = true;
+
+    $.ajax("login.php", {
+        method: "POST",
+        data: credentials,
+        dataType: "json",
+        beforeSend: function () {
+            $login.submit.prop('disabled', true);
+        },
+        success: function (data) {
+            if (data.success) {
+                $login.modal.modal('hide');
+                login(data.username);
+                $login.username.val('');
+                $login.password.val('');
+            } else {
+                $login.alert.html(getAlertElement('Wrong credentials', "warning"));
+            }
+        },
+        error: function (xhr, status, thrown) {
+            let text = "";
+
+            if (thrown)
+                text = thrown;
+            else if (xhr.status === 0)
+                text = "Timed out (Check your internet connection)";
+            else
+                text = xhr.status + "";
+
+            $login.alert.html(getAlertElement(text, "danger"));
+        },
+        complete: function () {
+            $login.submit.prop('disabled', false);
+        }
+    });
+});
+
+$login.activate.click(function (ev) {
+    if (loginUsername === null)
+        return;
+
+    $.ajax("login.php", {
+        method: "POST",
+        data: {logout: true},
+        dataType: "json",
+        beforeSend: function () {
+            $login.submit.prop('disabled', true);
+        },
+        success: function (data) {
+            if (data.success) {
+                $login.alert.html(getAlertElement("Logged out successfully", "success"));
+                logout();
+            } else { // This shouldn't happen
+                $login.alert.html(getAlertElement("???", "warning"));
+            }
+        },
+        error: function (xhr, status, thrown) {
+            let text = "";
+
+            if (thrown)
+                text = thrown;
+            else if (xhr.status === 0)
+                text = "Timed out (Check your internet connection)";
+            else
+                text = xhr.status + "";
+
+            $('#login-alert').html(getAlertElement(text, "danger"));
+        },
+        complete: function () {
+            $login.submit.prop('disabled', false);
+        }
+    });
+});
+
+function login(username) {
+    if (username === null)
+        return;
+
+    loginUsername = username;
+
+    $login.name.html(`Hello, <b>${username}</b>!`);
+    $login.activate.text("Logout");
+}
+
+function logout() {
+    if (loginUsername === null)
+        return;
+
+    loginUsername = null;
+
+    $login.name.html("");
+    $login.activate.text("Login");
+}
 
 // ####################
 //  Lookup form parser
@@ -307,7 +425,6 @@ function lookupSuccess(data) {
 }
 
 function lookupError(xhr, status, thrown) {
-
     xhrError(xhr, status, thrown, false);
 }
 
@@ -324,7 +441,9 @@ function xhrError(xhr, status, thrown, more) {
     if (status === "parsererror") {
         text = thrown + " (Possible webserver PHP misconfiguration)";
     } else if (thrown) {
-        text = thrown;
+        text = xhr.status + ": " + thrown;
+        if (xhr.status === 401)
+            text += ' (You\'re not logged in. <a href="#" data-toggle="modal" data-target="#login-modal">Login</a>)';
     } else if (xhr.status === 0) {
         text = "Timed out (Check your internet connection)";
     } else {
@@ -386,8 +505,9 @@ function populateTable(data, more) {
 function addAlert(text, more, level) {
     if (!level)
         level = "warning";
-    let $alert = more ? $more.alert : $lookup.alert;
-    $alert.append(`<div class="alert alert-${level} alert-dismissible" role="alert">${text}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>`);
+    const $alert = more ? $more.alert : $lookup.alert;
+
+    $alert.append(getAlertElement(text, level));
 }
 
 function populateRow(row) {
@@ -654,6 +774,9 @@ function dropdownCoordsAutofill(data, fillPos) {
     $lookup.worldEx.parent().button("toggle", false);
 }
 
+// ###################
+//  Utility Functions
+// ###################
 function csvSetAdd(text, value) {
     return text === "" ? value : text.split(/ *, */).includes(value) ? text : text + ", " + value;
 }
@@ -669,16 +792,12 @@ function csvSetRemove(text, value) {
     }
 }
 
-const CsvUtils = {
-    append: function (text, value) {
-        return $.inArray(value, text.split(/, */)) === -1 ? text + ", " + value : text;
-    },
-    array: function (value) {
-        return value.split(/, */);
-    },
-    join: function (array) {
-        return array.join(", ");
-    }
-};
+function getAlertElement(text, level) {
+    return `<div class="alert alert-${level} alert-dismissible" role="alert">${text}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>`;
+}
 
+// Run functions
+login(loginUsername);
+if (loginRequired)
+    addAlert("You must login to make searches. <a href=\"#\" data-toggle=\"modal\" data-target=\"#login-modal\">Login</a>", false, "primary");
 }());

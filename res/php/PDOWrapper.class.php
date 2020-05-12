@@ -1,12 +1,17 @@
 <?php
 /**
- * CoreProtect Lookup Web Interface
  * PDOWrapper class
+ *
+ * Class for handling PDO connection
+ *
+ * CoreProtect Lookup Web Interface
  * @author Simon Chuu
  * @copyright 2015-2020 Simon Chuu
- * @license MIT
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
  * @since 1.0.0
  */
+
 class PDOWrapper {
     /** @var array */
     private $error, $dbinfo;

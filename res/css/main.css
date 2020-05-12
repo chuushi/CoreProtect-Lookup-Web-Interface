@@ -17,6 +17,27 @@
   height: calc(1.5em + .75rem + 2px);
 }
 
+#login-username:focus, #login-password:focus {
+  position: relative;
+  z-index: 2;
+}
+
+#login-username:invalid, #login-password:invalid {
+  box-shadow: unset;
+}
+
+#login-username {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: -1px;
+}
+
+#login-password {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-bottom: 10px;
+}
+
 /* Result table button styling */
 .btn-inline {
   font-size: 75%;

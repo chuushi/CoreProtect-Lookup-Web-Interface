@@ -8,12 +8,12 @@
  * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
  * @since 1.0.0
  */
-.form-control[type=text], .form-control[type=number], .custom-select {
+.form-control[type=text], .form-control[type=password], .form-control[type=number], .custom-select {
   background-color: var(--dark);
   color: var(--light);
 }
 
-.form-control[type=text]:focus, .form-control[type=number]:focus {
+.form-control[type=text]:focus, .form-control[type=password]:focus, .form-control[type=number]:focus {
   background-color: #000;
   color: var(--white);
 }

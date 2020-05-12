@@ -9,7 +9,12 @@
  * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
  * @since 1.0.0
  */
+
+require_once "res/php/Session.class.php";
+
 $config = require "config.php";
+$session = new Session($config);
+
 ?><!DOCTYPE html>
 <html lang="en-US">
   <head>
@@ -42,15 +47,48 @@ $config = require "config.php";
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="nav navbar-nav">
+          <ul class="navbar-nav mr-auto">
               <?php foreach($config['navbar'] as $link => $href) echo
                   '<li class="nav-item"><a class="nav-link" href="' . $href . '">' . $link . '</a></li>';
               ?>
           </ul>
+          <span class="px-0 px-lg-2" id="login-name"></span>
+          <div class="my-2 my-lg-0">
+            <button type="button" class="btn btn-secondary" id="login-activate" data-toggle="modal" data-target="#login-modal">
+              Login
+            </button>
+          </div>
         </div>
       </div>
     </nav>
 
+    <!-- Login modal -->
+    <div class="modal fade" id="login-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content" id="login-form">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Login</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <input type="text" class="form-control" id="login-username" placeholder="Username" required>
+            <input type="password" class="form-control" id="login-password" placeholder="Password" required>
+            <div class="checkbox text-center">
+              <label>
+                <input type="checkbox" id="login-remember"> Remember me
+              </label>
+            </div>
+            <div id="login-alert"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" class="btn btn-primary" value="Login" id="login-submit">
+          </div>
+        </form>
+      </div>
+    </div>
 <!--    <nav id="scroll-nav" class="navbar navbar-dark bg-inverse navbar-fixed-bottom">
       <div class="container-fluid">
         <ul id="row-pages" class="nav navbar-nav">
@@ -61,7 +99,7 @@ $config = require "config.php";
 -->
     <div class="container">
       <!-- Lookup Form -->
-      <div class="card">
+      <div class="card mb-3">
         <div class="card-header">Make a query</div>
         <form id="lookup-form" class="card-body">
 
@@ -290,6 +328,11 @@ $config = require "config.php";
     <script>
       // noinspection JSAnnotator
       const config = <?php echo json_encode($config['form']) ?>;
+      let loginRequired = <?php echo $session->hasLookupAccess() ?>;
+      let loginUsername = <?php
+              $name = $session->getUsername();
+              echo $name === null ? "null" : "'$name'";
+              ?>;
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

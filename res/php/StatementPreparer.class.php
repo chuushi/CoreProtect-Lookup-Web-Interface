@@ -1,6 +1,15 @@
 <?php
 /**
- * Class StatementPreparer
+ * StatementPreparer class
+ *
+ * Class for preparing an SQL statement with corresponding parameters
+ *
+ * CoreProtect Lookup Web Interface
+ * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
+ * @since 1.0.0
  */
 class StatementPreparer {
     const A_BLOCK_MINE    = 0x0001;

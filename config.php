@@ -12,12 +12,12 @@
 # The array is as follows: [ username, password ]
 
 # Administrator account can manage configuration from the web.
-# set password to enable access.
-'administrator' => ['administrator', ''],
+# set password to enable admin access (no special permissions at the moment).
+'administrator' => ['Administrator', ''],
 
 # User account to access lookup.
 # set password to require log in to use the lookup.
-'user' => ['user', ''],
+'user' => ['User', ''],
 
 
 ################################
