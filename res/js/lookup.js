@@ -442,23 +442,22 @@ function populateRow(row) {
 
             const coordsEl = document.createElement("td");
             coordsEl.classList.add("dropdown");
-            coordsEl.innerText = row.world + ' ' + row.x + ' ' + row.y + ' ' + row.z + ' ';
+            coordsEl.innerText = row.x + ' ' + row.y + ' ' + row.z + ' ' + row.world + ' ';
             coordsEl.append(addDropButton({type: "coordinates", world: row.world, x: row.x, y: row.y, z: row.z}));
             ret.append(coordsEl);
 
             const targetEl = document.createElement("td");
-
-            let targetAttr = {type: dataType, item: row.target};
-            let targetInner = row.target;
-            if (row.data !== null && row.data !== "0") {
-                if (dataType === "material")
-                    targetInner += "[" + row.data + "]";
-                else
-                    targetAttr.data = row.data;
-            }
-
-            targetEl.innerText = targetInner + " ";
             if (row.table !== "session") {
+                let targetAttr = {type: dataType, item: row.target};
+                let targetInner = row.target;
+                if (row.data !== null && row.data !== "0") {
+                    if (dataType === "material")
+                        targetInner += "[" + row.data + "]";
+                    else
+                        targetAttr.data = row.data;
+                }
+
+                targetEl.innerText = targetInner + " ";
                 targetEl.classList.add("dropdown");
                 targetEl.append(addDropButton(targetAttr));
             }
@@ -472,7 +471,7 @@ function populateRow(row) {
             action2El.innerHTML = `<span class="badge badge-info">${row.table}</span></td>`;
             ret.append(action2El);
             const target2El = document.createElement("td");
-            target2El.rowSpan = 2;
+            target2El.colSpan = 2;
             target2El.innerHTML = row.target;
             ret.append(target2El);
             break;
