@@ -56,6 +56,9 @@ class StatementPreparer {
     const W_COL_ROLLED_BACK = "rollback";
     const WHERE_ROLLED_BACK = "rolled_back= :rlbk";
 
+    const W_KEYWORD_MESSAGE = "c.message";
+    const W_KEYWORD_USER = "c.user";
+
     /**
      * Input integers
      * @var integer
@@ -260,7 +263,7 @@ class StatementPreparer {
 
         if ($this->a & self::A_CHAT) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER];
+            $wheres = [self::W_TIME, self::W_USER, self::W_KEYWORD_MESSAGE];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "chat` AS c"
                 . " LEFT JOIN `" . $this->prefix."user` AS u ON c.user = u.rowid";
@@ -272,7 +275,7 @@ class StatementPreparer {
 
         if ($this->a & self::A_COMMAND) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER];
+            $wheres = [self::W_TIME, self::W_USER, self::W_KEYWORD_MESSAGE];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix."command` AS c"
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid";
@@ -294,7 +297,7 @@ class StatementPreparer {
 
         if ($this->a & self::A_USERNAME) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER];
+            $wheres = [self::W_TIME, self::W_USER, self::W_KEYWORD_USER];
             /** @var string $sql */
             $sql = "FROM `".$this->prefix . "username_log` AS c"
                 . " LEFT JOIN `".$this->prefix . "user` AS u ON c.uuid = u.uuid";
@@ -378,7 +381,8 @@ class StatementPreparer {
             $this->sqlPlaceholders[":rlbk"] = $this->a & self::A_ROLLBACK_YES ? 1 : 0;
         }
 
-        // TODO: Keyword
+        if ($this->a & self::A_WHERE_KEYWORD && $this->keyword != null)
+            $this->whereKeywordSearch();
     }
 
     private function whereAbsoluteString($column, $query, $exFlag, $prefix) {
@@ -390,7 +394,6 @@ class StatementPreparer {
             $d = "=";
             $g = " OR ";
         }
-
         if ($column == self::W_USER) {
             $type = 1;
         } elseif ($column == self::W_ENTITY) {
@@ -403,7 +406,6 @@ class StatementPreparer {
             $val = trim($uncleanVal);
             if ($type && strlen($val) == 36) {
                 $parts[] = ($type === 1 ? self::W_USER_UUID : self::W_USER_ENTITY_UUID) . $d . " :$prefix$k";
-
                 $this->sqlPlaceholders[":$prefix$k"] = $val;
             } else {
                 $parts[] = $column . $d . " :$prefix$k";
@@ -412,9 +414,25 @@ class StatementPreparer {
                 $this->sqlPlaceholders[":$prefix$k"] = $val;
             }
         }
+
         if (sizeof($parts) == 1)
             $this->sqlWhereParts[$column] = $parts[0];
         else
             $this->sqlWhereParts[$column] = "(" . join($g, $parts) . ")";
+    }
+
+    private function whereKeywordSearch() {
+        $msgParts = [];
+        $usrParts = [];
+        foreach (str_getcsv($this->keyword) as $k => $uncleanVal) {
+            $val = trim($uncleanVal);
+            $msgParts[] = self::W_KEYWORD_MESSAGE . " LIKE :kwd$k";
+            $usrParts[] = self::W_KEYWORD_USER . " LIKE :kwd$k";
+            $this->sqlPlaceholders[":kwd$k"] = "%$val%";
+        }
+            $this->sqlWhereParts[self::W_KEYWORD_MESSAGE] = sizeof($msgParts) == 1
+                ? $msgParts[0] : "(" . join(" AND ", $msgParts) . ")";
+            $this->sqlWhereParts[self::W_KEYWORD_USER] = sizeof($msgParts) == 1
+                ? $usrParts[0] : "(" . join(" AND ", $usrParts) . ")";
     }
 }
