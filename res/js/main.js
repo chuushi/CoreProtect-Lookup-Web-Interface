@@ -311,15 +311,19 @@ function submit(ev, more) {
         return;
     }
 
-    if (more) serializeMore();
-    else serializeLookup();
-
-    if (currentLookup == null) {
-        if (more)
+    if (more) {
+        if (currentLookup == null) {
             addAlert("A lookup is required.", true, "info");
-        else
+            return;
+        }
+        serializeMore();
+    } else {
+        const a = serializeActions();
+        if (!a) {
             addAlert("An action is required.", false, "info");
-        return;
+            return;
+        }
+        serializeLookup(a);
     }
 
     $.ajax("lookup.php", {
@@ -333,7 +337,7 @@ function submit(ev, more) {
     });
 }
 
-function serializeLookup() {
+function serializeActions() {
     let a = 0;
 
     // Serialize Action/a variable
@@ -356,10 +360,16 @@ function serializeLookup() {
     if ($lookup.timeRev.prop("checked")) a |= A_REV_TIME;
 
     if ((a & A_LOOKUP_TABLE) === 0)
+        return 0;
+    return a;
+}
+
+function serializeLookup(actions) {
+    if (!actions)
         return;
 
     currentCount = 0;
-    currentLookup = {a: a};
+    currentLookup = {a: actions};
 
     let form = $lookup.form.serializeArray();
     for (let i = 0; i < form.length; i++) {
