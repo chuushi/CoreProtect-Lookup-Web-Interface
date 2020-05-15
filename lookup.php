@@ -96,7 +96,12 @@ if ($lookup->execute($prep->preparedParams())) {
     $return[1] = [];
     while($r = $lookup->fetch(PDO::FETCH_ASSOC)) {
         // Treat numbers as integers
-        $r["rowid"] = intval($r["rowid"]);
+        if (isset($r["rowid"])) {
+            $r["id"] = intval($r["rowid"]);
+            unset($r["rowid"]);
+        } else {
+            $r["id"] = intval($r["id"]);
+        }
         $r["time"] = intval($r["time"]);
         if ($r["action"] !== null) {
             $r["action"] = intval($r["action"]);

@@ -512,7 +512,7 @@ function populateRow(row) {
     const ret = document.createElement("tr");
 
     const rowEl = document.createElement("th");
-    rowEl.title = "Row ID: " + row.rowid;
+    rowEl.title = "Row ID: " + row.id;
     rowEl.innerText = currentCount;
     ret.append(rowEl);
 
