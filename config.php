@@ -35,7 +35,7 @@
 #                 (don't change if you don't need to)
 #   prefix      = CoreProtect prefix
 #   mapLink     = Link to view on the map. (Dynmap, Overviewer, etc.)
-#                 %world% for world; %x% %y% %z% for xyz coordinates
+#                 {world} for world; {x} {y} {z} for xyz coordinates
 'database' => [
     'server' => [
         'type'      => 'mysql',
@@ -46,7 +46,7 @@
         'password'  => 'password',
         'flags'     => '',
         'prefix'    => 'co_',
-        'mapLink'   => 'https://localhost:8123/?worldname=%world%&mapname=surface&zoom=3&x=%x%&y=%y%&z=%z%'
+        'mapLink'   => 'https://localhost:8123/?worldname={world}&mapname=surface&zoom=3&x={x}&y={y}&z={z}'
     ],
 ],
 

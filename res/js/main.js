@@ -432,6 +432,12 @@ function moreError(xhr, status, thrown) {
     xhrError(xhr, status, thrown, true);
 }
 
+
+// ####################
+//  Result Parser
+// ####################
+let mapHref;
+
 function xhrError(xhr, status, thrown, more) {
     let text;
     if (status === "parsererror") {
@@ -449,8 +455,6 @@ function xhrError(xhr, status, thrown, more) {
 }
 
 function populateTable(data, more) {
-    let html = [];
-
     $queryTime.text("Request generated in "+Math.round(data[0].duration*1000)+"ms");
 
     if (data[0].status !== 0) {
@@ -472,7 +476,7 @@ function populateTable(data, more) {
     if (rows.length === 0) {
         if (more) {
             if ((currentLookup.a & A_REV_TIME ) === 0)
-                $tableBody.append('<tr><th><i class="fa fa-minus"></i></th><td colspan="5">No more results</td></tr>');
+                $tableBody.prepend('<tr><th><i class="fa fa-minus"></i></th><td colspan="5">No more results</td></tr>');
             else {
                 addAlert("No more results. (If on the live server, wait for more results)", more, "info");
                 $more.submit.prop("disabled", false);
@@ -482,6 +486,9 @@ function populateTable(data, more) {
         }
         return;
     }
+
+    if (data[0].mapHref)
+        mapHref = data[0].mapHref;
 
     if (!more) {
         $tableBody.empty();
@@ -503,7 +510,7 @@ function addAlert(text, more, level) {
         level = "warning";
     const $alert = more ? $more.alert : $lookup.alert;
 
-    $alert.append(getAlertElement(text, level));
+    $alert.prepend(getAlertElement(text, level));
 }
 
 function populateRow(row) {
@@ -618,12 +625,21 @@ function addDropButton(attrMap) {
     return ret;
 }
 
+function makeMapHref(dataset) {
+    return mapHref
+        .replace("{world}", dataset.world)
+        .replace("{x}", dataset.x)
+        .replace("{y}", dataset.y)
+        .replace("{z}", dataset.z);
+}
+
 // ###################
 //  Dropdown Listener
 // ###################
 const LT1 = "lt1";
 const LT2 = "lt2";
 const LT3 = "lt3";
+const frameName = "co_map";
 
 $tableBody.on("click", ".output-add-dropdown", function() {
     const addon = document.createElement("div");
@@ -651,9 +667,16 @@ $tableBody.on("click", ".output-add-dropdown", function() {
             uuid.innerHTML = `UUID: <code>${this.dataset.uuid}</code>`;
             lt1.innerHTML = "Include";
             lt2.innerHTML = "Exclude";
-            addon.append(uuid);
             break;
         case "coordinates":
+            if (mapHref) {
+            const map = document.createElement("a");
+                map.classList.add("dropdown-item");
+                map.href = makeMapHref(this.dataset);
+                map.innerHTML = "Open in map";
+                map.target = frameName;
+                addon.append(map);
+            }
             const cntr = document.createElement("a");
             cntr.classList.add("dropdown-item");
             cntr.dataset.fillPos = LT3;
@@ -695,9 +718,12 @@ $tableBody.on("click", ".output-add-dropdown", function() {
 });
 
 function dropdownAutofill(ev) {
+    const fillPos = this.dataset.fillPos;
+    if (!fillPos)
+        return;
+
     ev.preventDefault();
     const data = this.parentElement.previousSibling.dataset;
-    const fillPos = this.dataset.fillPos;
     let $elem, $toggle;
     let item;
 
@@ -747,7 +773,6 @@ function dropdownAutofill(ev) {
 }
 
 function dropdownCoordsAutofill(data, fillPos) {
-    console.log(fillPos);
     if (fillPos === LT2) {
         coordsToggle(false);
         $lookup.x2.val(data.x);
