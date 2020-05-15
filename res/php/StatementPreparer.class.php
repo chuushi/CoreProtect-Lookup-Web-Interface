@@ -28,7 +28,7 @@ class StatementPreparer {
     const A_BLOCK_TABLE = self::A_BLOCK_MATERIAL | self::A_KILL;
     const A_CONTAINER_TABLE = self::A_CONTAINER_IN | self::A_CONTAINER_OUT;
 
-    const A_WHERE_MATERIAL = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_SESSION;
+    const A_WHERE_MATERIAL = self::A_BLOCK_MATERIAL | self::A_CONTAINER_TABLE | self::A_SESSION;
     const A_WHERE_ENTITY = self::A_BLOCK_ENTITY;
     const A_WHERE_COORDS = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_SESSION;
     const A_WHERE_ROLLBACK = self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_KILL | self::A_CONTAINER_TABLE;
@@ -51,14 +51,32 @@ class StatementPreparer {
     const SESSION = "session";
     const USERNAME = "username";
 
-    const W_MATERIAL = "mm.material";
-    const W_ENTITY = "em.entity";
-    const W_TIME = "c.time";
-    const W_USER = "u.user";
-    const W_USER_UUID = "u.uuid";
-    const W_USER_ENTITY = "um.user";
-    const W_USER_ENTITY_UUID = "um.uuid";
-    const W_WORLD = "w.world";
+    const FILTER_MATERIAL = 1;
+    const FILTER_ENTITY = 2;
+    const FILTER_USER = 3;
+    const FILTER_WORLD = 4;
+    const FILTER_TIME = 5;
+
+    const W_MATERIAL_ID = 'mm.id';
+    const W_ENTITY_ID = 'em.id';
+    const W_USER_ID = 'u.rowid';
+    const W_USER_ENTITY_ID = 'um.rowid';
+    const W_WORLD_ID = 'w.id';
+
+    const T_MATERIAL_ID = 'c.type';
+    const T_ENTITY_ID = 'c.type';
+    const T_USER_ID = 'c.user';
+    const T_USER_ENTITY_ID = 'c.data';
+    const T_WORLD_ID = 'c.wid';
+
+    const W_MATERIAL = "mm.material IN";
+    const W_ENTITY = "em.entity IN";
+    const W_USER = "u.user IN";
+    const W_USER_UUID = "u.uuid IN";
+    const W_USER_ENTITY = "um.user IN";
+    const W_USER_ENTITY_UUID = "um.uuid IN";
+    const W_WORLD = "w.world IN";
+    const W_TIME = 'c.time';
 
     const W_COL_XYZ = "xyz";
     const WHERE_XYZ = "x BETWEEN :xyz1 AND :xyz2 AND y BETWEEN :xyz3 AND :xyz4 AND z BETWEEN :xyz5 AND :xyz6";
@@ -198,7 +216,7 @@ class StatementPreparer {
             case self::SESSION:
                 return "SELECT c.rowid, 'session' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, NULL AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
             case self::USERNAME:
-                return "SELECT c.id AS `rowid`, 'username' AS `table`, c.time, u.user, c.uuid, NULL as `action`, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.user AS target, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
+                return "SELECT c.rowid , 'username' AS `table`, c.time, u.user, c.uuid, NULL as `action`, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.user AS target, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
             default:
                 return null;
         }
@@ -225,19 +243,19 @@ class StatementPreparer {
 
         if ($this->a & self::A_BLOCK_TABLE) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER, self::W_WORLD, self::W_COL_XYZ, self::W_COL_ROLLED_BACK];
+            $wheres = [self::FILTER_TIME, self::FILTER_USER, self::FILTER_WORLD, self::W_COL_XYZ, self::W_COL_ROLLED_BACK];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "block` AS c"
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
 
             if ($this->a & (self::A_BLOCK_MATERIAL)) {
                 $sql .= " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
-                $wheres[] = self::W_MATERIAL;
+                $wheres[] = self::FILTER_MATERIAL;
             }
             if ($this->a & self::A_KILL) {
                 $sql .= " LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type<>0 AND c.type = em.rowid";
                 $sql .= " LEFT JOIN `" . $this->prefix . "user` AS um ON c.action=3 AND c.type=0 AND c.data = um.rowid";
-                $wheres[] = self::W_ENTITY;
+                $wheres[] = self::FILTER_ENTITY;
             }
 
             // If action=0, 1, 2, and 3 are not on at the same time
@@ -259,7 +277,7 @@ class StatementPreparer {
         }
         if ($this->a & self::A_CONTAINER_TABLE) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER, self::W_WORLD, self::W_COL_XYZ, self::W_COL_ROLLED_BACK, self::W_MATERIAL];
+            $wheres = [self::FILTER_TIME, self::FILTER_USER, self::FILTER_WORLD, self::W_COL_XYZ, self::W_COL_ROLLED_BACK, self::FILTER_MATERIAL];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix."container` AS c"
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid"
@@ -278,7 +296,7 @@ class StatementPreparer {
 
         if ($this->a & self::A_CHAT) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER, self::W_KEYWORD_MESSAGE];
+            $wheres = [self::FILTER_TIME, self::FILTER_USER, self::W_KEYWORD_MESSAGE];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "chat` AS c"
                 . " LEFT JOIN `" . $this->prefix."user` AS u ON c.user = u.rowid";
@@ -288,7 +306,7 @@ class StatementPreparer {
 
         if ($this->a & self::A_COMMAND) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER, self::W_KEYWORD_MESSAGE];
+            $wheres = [self::FILTER_TIME, self::FILTER_USER, self::W_KEYWORD_MESSAGE];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix."command` AS c"
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid";
@@ -300,7 +318,7 @@ class StatementPreparer {
 
         if ($this->a & self::A_SESSION) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER, self::W_WORLD, self::W_COL_XYZ];
+            $wheres = [self::FILTER_TIME, self::FILTER_USER, self::FILTER_WORLD, self::W_COL_XYZ];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "session` AS c"
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
@@ -310,7 +328,7 @@ class StatementPreparer {
 
         if ($this->a & self::A_USERNAME) {
             /** @var string[] $wheres */
-            $wheres = [self::W_TIME, self::W_USER, self::W_KEYWORD_USER];
+            $wheres = [self::FILTER_TIME, self::FILTER_USER, self::W_KEYWORD_USER];
             /** @var string $sql */
             $sql = "FROM `".$this->prefix . "username_log` AS c"
                 . " LEFT JOIN `".$this->prefix . "user` AS u ON c.uuid = u.uuid";
@@ -333,9 +351,9 @@ class StatementPreparer {
         $me = 0;
         foreach ($columns as $col) {
             if (isset($this->sqlWhereParts[$col])) {
-                if ($col == self::W_MATERIAL)
+                if ($col == self::FILTER_MATERIAL)
                     $me |= 0b01;
-                elseif ($col == self::W_ENTITY)
+                elseif ($col == self::FILTER_ENTITY)
                     $me |= 0b10;
                 else
                     $wheres[] = $this->sqlWhereParts[$col];
@@ -343,11 +361,11 @@ class StatementPreparer {
         }
 
         if ($me == 0b11) {
-            $wheres[] = "(" . $this->sqlWhereParts[self::W_MATERIAL] . " OR " . $this->sqlWhereParts[self::W_ENTITY] . ")";
+            $wheres[] = "(" . $this->sqlWhereParts[self::FILTER_MATERIAL] . " OR " . $this->sqlWhereParts[self::FILTER_ENTITY] . ")";
         } elseif ($me & 0b01) {
-            $wheres[] = $this->sqlWhereParts[self::W_MATERIAL];
+            $wheres[] = $this->sqlWhereParts[self::FILTER_MATERIAL];
         } elseif ($me & 0b10) {
-            $wheres[] = $this->sqlWhereParts[self::W_ENTITY];
+            $wheres[] = $this->sqlWhereParts[self::FILTER_ENTITY];
         }
 
         if (sizeof($wheres) == 0)
@@ -359,20 +377,20 @@ class StatementPreparer {
         $this->sqlWhereParts = [];
         $this->sqlPlaceholders = [];
 
-        if ($this->a & self::A_WHERE_MATERIAL && $this->b != null)
-            self::whereAbsoluteString(self::W_MATERIAL, $this->b, $this->a & self::A_EX_BLOCK, "blk");
-        if ($this->a & self::A_WHERE_ENTITY && $this->e != null)
-            self::whereAbsoluteString(self::W_ENTITY, $this->e, $this->a & self::A_EX_ENTITY, "ety");
-        if ($this->a & self::A_WHERE_COORDS && $this->w != null)
-            self::whereAbsoluteString(self::W_WORLD, $this->w, $this->a & self::A_EX_WORLD, "wld");
-        if ($this->u != null)
-            self::whereAbsoluteString(self::W_USER, $this->u, $this->a & self::A_EX_USER, "usr");
-        if ($this->t != null) {
+        if (($this->a & self::A_WHERE_MATERIAL) && !empty($this->b))
+            self::whereAbsoluteString(self::FILTER_MATERIAL, $this->b, $this->a & self::A_EX_BLOCK, "blk");
+        if (($this->a & self::A_WHERE_ENTITY) && !empty($this->e))
+            self::whereAbsoluteString(self::FILTER_ENTITY, $this->e, $this->a & self::A_EX_ENTITY, "ety");
+        if (($this->a & self::A_WHERE_COORDS) && !empty($this->w))
+            self::whereAbsoluteString(self::FILTER_WORLD, $this->w, $this->a & self::A_EX_WORLD, "wld");
+        if (!empty($this->u))
+            self::whereAbsoluteString(self::FILTER_USER, $this->u, $this->a & self::A_EX_USER, "usr");
+        if ($this->t !== null) {
             if ($this->a & self::A_REV_TIME) {
-                $this->sqlWhereParts[self::W_TIME] = self::W_TIME . ">= :time";
+                $this->sqlWhereParts[self::FILTER_TIME] = self::W_TIME . ">= :time";
                 $this->sqlOrder = "ASC";
             } else {
-                $this->sqlWhereParts[self::W_TIME] = self::W_TIME . "<= :time";
+                $this->sqlWhereParts[self::FILTER_TIME] = self::W_TIME . "<= :time";
                 $this->sqlOrder = "DESC";
             }
             $this->sqlPlaceholders[":time"] = $this->t;
@@ -399,39 +417,98 @@ class StatementPreparer {
     }
 
     private function whereAbsoluteString($column, $query, $exFlag, $prefix) {
-        $parts = [];
-        if ($exFlag) {
-            $d = "<>";
-            $g = " AND ";
-        } else {
-            $d = "=";
-            $g = " OR ";
-        }
-        if ($column == self::W_USER) {
-            $type = 1;
-        } elseif ($column == self::W_ENTITY) {
-            $type = 2;
-        } else {
-            $type = 0;
-        }
+        $names = [];
+        $uuids = [];
+        $users = [];
 
-        foreach (str_getcsv($query) as $k => $uncleanVal) {
-            $val = trim($uncleanVal);
-            if ($type && strlen($val) == 36) {
-                $parts[] = ($type === 1 ? self::W_USER_UUID : self::W_USER_ENTITY_UUID) . $d . " :$prefix$k";
-                $this->sqlPlaceholders[":$prefix$k"] = $val;
-            } else {
-                $parts[] = $column . $d . " :$prefix$k";
-                if ($type === 2) $parts[] = (self::W_USER_ENTITY) . $d . " :$prefix$k";
+        if ($column === self::FILTER_ENTITY || $column === self::FILTER_USER) {
+            foreach (str_getcsv($query) as $k => $uncleanVal) {
+                $val = trim($uncleanVal);
 
-                $this->sqlPlaceholders[":$prefix$k"] = $val;
+                if (strlen($val) == 36) { // TODO: Make sure $val is an actual UUID
+                    $uuids[] = ":$prefix$k";
+                    $this->sqlPlaceholders[":$prefix$k"] = $val;
+                } else {
+                    $names[] = ":$prefix$k";
+                    if ($column === self::FILTER_ENTITY) $users[] = ":$prefix$k";
+                    $this->sqlPlaceholders[":$prefix$k"] = $val;
+                }
+            }
+        } else {
+            foreach (str_getcsv($query) as $k => $uncleanVal) {
+                $names[] = ":$prefix$k";
+                $this->sqlPlaceholders[":$prefix$k"] = trim($uncleanVal);
             }
         }
 
-        if (sizeof($parts) == 1)
-            $this->sqlWhereParts[$column] = $parts[0];
-        else
-            $this->sqlWhereParts[$column] = "(" . join($g, $parts) . ")";
+        switch ($column) {
+            case self::FILTER_MATERIAL:
+                $tableId = self::T_MATERIAL_ID;
+                $in = self::W_MATERIAL;
+                $selectId = self::W_MATERIAL_ID;
+                break;
+            case self::FILTER_ENTITY:
+                $tableId = self::T_ENTITY_ID;
+                $tableId2 = self::T_USER_ENTITY_ID;
+                $in = self::W_ENTITY;
+                $inUser = self::W_USER_ENTITY;
+                $inUuid = self::W_USER_ENTITY_UUID;
+                $selectId = self::W_ENTITY_ID;
+                $selectId2 = self::W_USER_ENTITY_ID;
+                break;
+            case self::FILTER_USER:
+                $tableId = self::T_USER_ID;
+                $in = self::W_USER;
+                $inUuid = self::W_USER_UUID;
+                $selectId = self::W_USER_ID;
+                break;
+            case self::FILTER_WORLD:
+                $tableId = self::T_WORLD_ID;
+                $in = self::W_WORLD;
+                $selectId = self::W_WORLD_ID;
+                break;
+            default:
+                return;
+        }
+
+        if (sizeof($names)) {
+            if ($column === self::FILTER_USER) {
+                // Username and UUID
+                // logic: if one is not set, the other is set.
+                if (!sizeof($uuids))
+                    $whereIn = $in . '(' . join(',', $names) . ')';
+                elseif (!sizeof($names))
+                    $whereIn = $inUuid . '(' . join(',', $uuids) . ')';
+                else
+                    $whereIn = $in . '(' . join(',', $names) . ') OR ' . $inUuid . '(' . join(',', $uuids) . ')';
+            } else {
+                $whereIn = $in . '(' . join(',', $names) . ')';
+            }
+
+            $add = $this->selectIdWhere($tableId, $selectId, $whereIn, $exFlag);
+        }
+
+        if (sizeof($users) || $column === self::FILTER_ENTITY && sizeof($uuids)) {
+            if (!sizeof($uuids))
+                $whereIn2 = $inUser . '(' . join(',', $users) . ')';
+            elseif (sizeof($users))
+                $whereIn2 = $inUuid . '(' . join(',', $uuids) . ')';
+            else
+                $whereIn2 = $inUser . '(' . join(',', $users) . ') OR ' . $inUuid . '(' . join(',', $uuids) . ')';
+
+            $add2 = $this->selectIdWhere($tableId2, $selectId2, $whereIn2, $exFlag);
+            if (isset($add))
+                $add .= ($exFlag ? ' AND ' : ' OR ') . $add2;
+            else
+                $add = $add2;
+        }
+
+        if (isset($add))
+            $this->sqlWhereParts[$column] = $add;
+    }
+
+    private function selectIdWhere($tableId, $mapId, $whereIn, $exFlag) {
+        return $tableId. ($exFlag ? ' NOT ' : ' ') . "IN (SELECT $mapId WHERE $whereIn)";
     }
 
     private function whereKeywordSearch() {
