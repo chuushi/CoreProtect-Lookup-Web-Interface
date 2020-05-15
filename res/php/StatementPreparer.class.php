@@ -404,10 +404,22 @@ class StatementPreparer {
         $this->sqlWhereParts = [];
         $this->whereParams = [];
 
-        if (($this->a & self::A_WHERE_MATERIAL) && !empty($this->b))
-            self::whereAbsoluteString(self::FILTER_MATERIAL, $this->b, $this->a & self::A_EX_BLOCK);
-        if (($this->a & self::A_WHERE_ENTITY) && !empty($this->e))
-            self::whereAbsoluteString(self::FILTER_ENTITY, $this->e, $this->a & self::A_EX_ENTITY);
+        if (($this->a & self::A_WHERE_MATERIAL)) {
+            if (empty($this->b)) {
+                $this->sqlWhereParts[self::FILTER_MATERIAL] = 'c.action<>3';
+                $this->whereParams[self::FILTER_MATERIAL] = [];
+            } else {
+                self::whereAbsoluteString(self::FILTER_MATERIAL, $this->b, $this->a & self::A_EX_BLOCK);
+            }
+        }
+        if (($this->a & self::A_WHERE_ENTITY)) {
+            if (empty($this->e)) {
+                $this->sqlWhereParts[self::FILTER_ENTITY] = 'c.action=3';
+                $this->whereParams[self::FILTER_ENTITY] = [];
+            } else {
+                self::whereAbsoluteString(self::FILTER_ENTITY, $this->e, $this->a & self::A_EX_ENTITY);
+            }
+        }
         if (($this->a & self::A_WHERE_COORDS) && !empty($this->w))
             self::whereAbsoluteString(self::FILTER_WORLD, $this->w, $this->a & self::A_EX_WORLD);
         if (!empty($this->u))
