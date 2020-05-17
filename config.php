@@ -89,7 +89,7 @@
     'darkInput' => true,
     'name'      => 'CoreProtect Lookup Web Interface',
     'href'      => '/',
-    'copyright' => 'Server'
+    'copyright' => 'Awesome Server, 2020'
 ],
 
 # Navigation Bar Customization
