@@ -19,6 +19,17 @@ $config = require_once 'config.php';
 
 $return = [["time" => microtime(true)]];
 
+/**
+ * @param PDO $pdo
+ */
+function pdoError($pdo) {
+    $return[0]["status"] = 2;
+    $return[0]["code"] = $pdo->errorInfo()[0];
+    $return[0]["driverCode"] = $pdo->errorInfo()[1];
+    $return[0]["reason"] = $pdo->errorInfo()[2];
+    exit();
+}
+
 register_shutdown_function(function () {
     global $return;
 
@@ -31,6 +42,7 @@ register_shutdown_function(function () {
     echo json_encode($return);
 });
 
+$checkInputQuery = !isset($_REQUEST['offset']);
 $session = new Session($config);
 
 // Allow for immediate login through request headers
@@ -79,17 +91,85 @@ if (!$pdo) {
     exit();
 }
 
-$lookup = $pdo->prepare($prep->preparedStatementData());
+// Check if where parameters exist
+if ($checkInputQuery) {
+    $checkStr = $prep->prepareCheck();
+    $return[0]["csql"] = $checkStr;
 
-if (!$lookup) {
-    $return[0]["status"] = 2;
-    $return[0]["code"] = $pdo->errorInfo()[0];
-    $return[0]["driverCode"] = $pdo->errorInfo()[1];
-    $return[0]["reason"] = $pdo->errorInfo()[2];
-    exit();
+    if ($checkStr !== '') {
+        $check = $pdo->prepare($checkStr);
+        if (!$check) {
+            pdoError($pdo);
+        }
+
+        $w = $prep->getW();
+        $u = $prep->getU();
+        $m = $prep->getB();
+        $e = $prep->getE();
+
+        if ($check->execute($prep->getParams())) {
+            while($r = $check->fetch(PDO::FETCH_ASSOC)) {
+                switch ($r['table']) {
+                    case 'world':
+                        $params = &$w;
+                        $isUser = false;
+                        break;
+                    case 'user':
+                        $params = &$u;
+                        $isUser = true;
+                        break;
+                    case 'material':
+                        $params = &$m;
+                        $isUser = false;
+                        break;
+                    case 'entity':
+                        $params = &$e;
+                        $isUser = false;
+                        break;
+                    default:
+                        continue;
+                }
+
+                if ($params !== null && (
+                    ($key = array_search($r['name'], $params)) !== false
+                    || $r['uuid'] !== null && ($key = array_search($r['uuid'], $params)) !== false)
+                )
+                    unset($params[$key]);
+                elseif ($isUser && $e !== null && ($key = array_search($r['name'], $e)) !== false)
+                    unset($e[$key]);
+            }
+        }
+
+        $wSize = sizeof($w) !== 0;
+        $uSize = sizeof($u) !== 0;
+        $mSize = sizeof($m) !== 0;
+        $eSize = sizeof($e) !== 0;
+
+        if ($wSize || $uSize || $mSize || $eSize) {
+            $return[0]["status"] = 1;
+            $return[0]["code"] = "Unknown text in"
+                . ($wSize ? " 'Worlds'" : '')
+                . ($uSize ? " 'Users'" : '')
+                . ($mSize ? " 'Materials'" : '')
+                . ($eSize ? " 'Entities'" : '');
+            $return[0]["reason"]
+                = ($wSize ? "Worlds: '" . join("', '", $w) . "';" : '')
+                . ($uSize ? "Users: '" . join("', '", $u) . "';" : '')
+                . ($mSize ? "Materials: '" . join("', '", $m) . "';" : '')
+                . ($eSize ? "Entities: '" . join("', '", $e) . "';" : '');
+            exit();
+        }
+    }
 }
 
-if ($lookup->execute($prep->preparedParams())) {
+// Lookup
+$lookup = $pdo->prepare($prep->prepareStatementData());
+
+if (!$lookup) {
+    pdoError($pdo);
+}
+
+if ($lookup->execute($prep->getParams())) {
     $return[0]["status"] = 0;
     if (!isset($_REQUEST['offset']) && $server['mapLink']) $return[0]["mapHref"] = $server['mapLink'];
 

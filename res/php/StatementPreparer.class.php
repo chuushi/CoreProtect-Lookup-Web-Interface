@@ -11,17 +11,18 @@
  * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
  * @since 1.0.0
  */
-class StatementPreparer {
-    const A_BLOCK_MINE    = 0x0001;
-    const A_BLOCK_PLACE   = 0x0002;
-    const A_CLICK         = 0x0004;
-    const A_KILL          = 0x0008;
+class StatementPreparer
+{
+    const A_BLOCK_MINE = 0x0001;
+    const A_BLOCK_PLACE = 0x0002;
+    const A_CLICK = 0x0004;
+    const A_KILL = 0x0008;
     const A_CONTAINER_OUT = 0x0010;
-    const A_CONTAINER_IN  = 0x0020;
-    const A_CHAT          = 0x0040;
-    const A_COMMAND       = 0x0080;
-    const A_SESSION       = 0x0100;
-    const A_USERNAME      = 0x0200;
+    const A_CONTAINER_IN = 0x0020;
+    const A_CHAT = 0x0040;
+    const A_COMMAND = 0x0080;
+    const A_SESSION = 0x0100;
+    const A_USERNAME = 0x0200;
 
     const A_BLOCK_MATERIAL = self::A_BLOCK_MINE | self::A_BLOCK_PLACE | self::A_CLICK;
     const A_BLOCK_ENTITY = self::A_KILL;
@@ -36,13 +37,13 @@ class StatementPreparer {
 
     const A_LOOKUP_TABLE = self::A_BLOCK_TABLE | self::A_CONTAINER_TABLE | self::A_CHAT | self::A_COMMAND | self::A_SESSION | self::A_USERNAME;
 
-    const A_EX_USER       = 0x0400;
-    const A_EX_BLOCK      = 0x0800;
-    const A_EX_ENTITY     = 0x1000;
-    const A_EX_WORLD      = 0x2000;
-    const A_ROLLBACK_YES  = 0x4000;
-    const A_ROLLBACK_NO   = 0x8000;
-    const A_REV_TIME      = 0x10000;
+    const A_EX_USER = 0x0400;
+    const A_EX_BLOCK = 0x0800;
+    const A_EX_ENTITY = 0x1000;
+    const A_EX_WORLD = 0x2000;
+    const A_ROLLBACK_YES = 0x4000;
+    const A_ROLLBACK_NO = 0x8000;
+    const A_REV_TIME = 0x10000;
 
     const BLOCK = 1;
     const CONTAINER = 2;
@@ -50,6 +51,10 @@ class StatementPreparer {
     const COMMAND = 4;
     const SESSION = 5;
     const USERNAME = 6;
+    const WORLD_MAP = 16;
+    const USER_MAP = 17;
+    const MATERIAL_MAP = 18;
+    const ENTITY_MAP = 19;
 
     const FILTER_LIMIT = 0;
     const FILTER_MATERIAL = 1;
@@ -99,45 +104,101 @@ class StatementPreparer {
      * Input strings
      * @var string
      */
-    private $prefix, $u, $b, $e, $w, $keyword;
+    private $prefix;
+    /**
+     * Input arrays from csv strings
+     * @var string[]
+     */
+    private $u, $b, $e, $w, $keyword;
 
     /** @var string[] */
-    private $sqlFromWhere, $sqlWhereParts, $whereParams, $fromWhereParamFilters, $sqlParams = [];
+    private $sqlFromWhere, $sqlWhereParts, $fromWhereParamFilters, $sqlParams = [];
+    /** @var string[][] */
+    private $whereParams;
     /** @var string */
     private $sqlOrder;
 
     public function __construct($prefix, & $req, $count, $moreCount) {
         $this->prefix = $prefix;
         $this->offset = self::nonnullInt($req['offset'], 0);
-        $this->count  = self::nonnullInt($req['count'], $this->offset == null ? $count : $moreCount);
-        $this->a  = self::nonnull($req['a']);
-        $this->b  = self::nonnull($req['b']);
-        $this->e  = self::nonnull($req['e']);
-        $this->t  = self::nonnullInt($req['t']);
-        $this->u  = self::nonnull($req['u']);
-        $this->w  = self::nonnull($req['w']);
-        $this->x  = self::nonnullInt($req['x']);
+        $this->count = self::nonnullInt($req['count'], $this->offset == null ? $count : $moreCount);
+        $this->a = self::nonnullInt($req['a']);
+        $this->b = self::nonnullArr($req['b']);
+        $this->e = self::nonnullArr($req['e']);
+        $this->t = self::nonnullInt($req['t']);
+        $this->u = self::nonnullArr($req['u']);
+        $this->w = self::nonnullArr($req['w']);
+        $this->x = self::nonnullInt($req['x']);
         $this->x2 = self::nonnullInt($req['x2']);
-        $this->y  = self::nonnullInt($req['y']);
+        $this->y = self::nonnullInt($req['y']);
         $this->y2 = self::nonnullInt($req['y2']);
-        $this->z  = self::nonnullInt($req['z']);
+        $this->z = self::nonnullInt($req['z']);
         $this->z2 = self::nonnullInt($req['z2']);
-        $this->keyword = self::nonnull($req['keyword']);
+        $this->keyword = self::nonnullArr($req['keyword']);
     }
 
-    private function nonnull(& $in) {
-        if (isset($in) && $in !== "")
-            return $in;
+    private function nonnullArr(& $in) {
+        if (isset($in)) {
+            $trim = trim($in);
+            if ($trim !== "")
+                return str_getcsv($trim);
+        }
         return null;
     }
 
     private function nonnullInt(& $in, $ifunset = null) {
-        if (isset($in) && $in !== "")
-            return intval($in);
+        if (isset($in)) {
+            $trim = trim($in);
+            if ($trim !== "")
+                return intval($trim);
+        }
         return $ifunset;
     }
 
-    public function preparedStatementData() {
+    public function getW() {
+        return $this->w;
+    }
+
+    public function getU() {
+        return $this->u;
+    }
+
+    public function getB() {
+        return $this->b;
+    }
+
+    public function getE() {
+        return $this->e;
+    }
+
+    public function prepareCheck() {
+        $this->populate();
+        $this->sqlParams = [];
+
+        if (sizeof($this->sqlFromWhere) == 0)
+            return "";
+
+        $rets = [];
+
+        if ($res = $this->generateCheckFromWhere(self::WORLD_MAP))
+            $rets[self::WORLD_MAP] = $res;
+        if ($res = $this->generateCheckFromWhere(self::USER_MAP))
+            $rets[self::USER_MAP] = $res;
+        if ($res = $this->generateCheckFromWhere(self::MATERIAL_MAP))
+            $rets[self::MATERIAL_MAP] = $res;
+        if ($res = $this->generateCheckFromWhere(self::ENTITY_MAP))
+            $rets[self::ENTITY_MAP] = $res;
+
+        $ret = "";
+        foreach ($rets as $key => $val) {
+            if ($ret) $ret .= " UNION ALL ";
+            $ret .= $this->getSelect($key) . $val;
+        }
+
+        return $ret;
+    }
+
+    public function prepareStatementData() {
         $this->populate();
         $this->sqlParams = [];
 
@@ -160,7 +221,7 @@ class StatementPreparer {
 
 
         $ret = "";
-        foreach($queries as $key => $val) {
+        foreach ($queries as $key => $val) {
             if ($ret) $ret .= " UNION ALL ";
             $ret .= "SELECT * FROM ($val ORDER BY c.rowid " . $this->sqlOrder . " LIMIT ?) AS t$key";
             $this->appenedSqlParams($this->fromWhereParamFilters[$key]);
@@ -171,7 +232,7 @@ class StatementPreparer {
         return $ret . " ORDER BY time " . $this->sqlOrder . " LIMIT ?, ?";
     }
 
-    public function preparedStatementCount() {
+    public function prepareStatementCount() {
         $this->populate();
 
         if (sizeof($this->sqlFromWhere) == 0)
@@ -191,7 +252,7 @@ class StatementPreparer {
         return "SELECT * FROM (" . join(" UNION ALL ", $queries) . ")";
     }
 
-    public function preparedParams() {
+    public function getParams() {
         $this->populate();
         return $this->sqlParams;
     }
@@ -216,15 +277,15 @@ class StatementPreparer {
                 $entity = $this->a & self::A_BLOCK_ENTITY;
                 return "SELECT c.rowid, 'block' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, "
                     . (
-                        $material && $entity
-                            ? "IFNULL(mm.material, IFNULL(em.entity, um.user))"
-                            : ($material ? "mm.material" : "IFNULL(em.entity, um.user)")
+                    $material && $entity
+                        ? "CASE WHEN c.type=0 THEN um.user WHEN c.action=3 THEN em.entity ELSE mm.material END"
+                        : ($material ? "mm.material" : "CASE WHEN c.type=0 THEN um.user ELSE em.entity END")
                     )
                     . " AS `target`, "
                     . (
-                        $material && $entity
-                            ? "IFNULL(dm.data, IFNULL(um.uuid, c.data))"
-                            : ($material ? "IFNULL(dm.data, c.data)" : "IFNULL(um.uuid, c.data)")
+                    $material && $entity
+                        ? "CASE WHEN c.type=0 THEN um.uuid ELSE IFNULL(dm.data, c.data) END"
+                        : ($material ? "IFNULL(dm.data, c.data)" : "CASE WHEN c.type=0 THEN um.uuid ELSE c.data END")
                     )
                     . " AS `data`, NULL as `amount`, c.rolled_back";
             case self::CONTAINER:
@@ -237,6 +298,14 @@ class StatementPreparer {
                 return "SELECT c.rowid, 'session' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, NULL AS `target`, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
             case self::USERNAME:
                 return "SELECT c.rowid , 'username' AS `table`, c.time, u.user, c.uuid, NULL as `action`, NULL as `world`, NULL as `x`, NULL as `y`, NULL as `z`, c.user AS target, NULL AS `data`, NULL AS `amount`, NULL AS `rolled_back`";
+            case self::WORLD_MAP:
+                return "SELECT 'world' AS `table`, world AS `name`, NULL AS uuid";
+            case self::USER_MAP:
+                return "SELECT 'user' AS `table`, user AS `name`, uuid";
+            case self::MATERIAL_MAP:
+                return "SELECT 'material' AS `table`, material AS `name`, NULL AS uuid";
+            case self::ENTITY_MAP:
+                return "SELECT 'entity' AS `table`, entity AS `name`, NULL AS uuid";
             default:
                 return null;
         }
@@ -270,12 +339,12 @@ class StatementPreparer {
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
 
             if ($this->a & (self::A_BLOCK_MATERIAL)) {
-                $sql .= " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type=mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data=dm.rowid";
                 $wheres[] = self::FILTER_MATERIAL;
             }
             if ($this->a & self::A_KILL) {
-                $sql .= " LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type<>0 AND c.type = em.rowid";
-                $sql .= " LEFT JOIN `" . $this->prefix . "user` AS um ON c.action=3 AND c.type=0 AND c.data = um.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type<>0 AND c.type=em.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "user` AS um ON c.action=3 AND c.type=0 AND c.data=um.rowid";
                 $wheres[] = self::FILTER_ENTITY;
             }
 
@@ -301,9 +370,9 @@ class StatementPreparer {
             /** @var string[] $wheres */
             $wheres = [self::FILTER_TIME, self::FILTER_USER, self::FILTER_WORLD, self::FILTER_COORDS, self::FILTER_ROLLBACK, self::FILTER_MATERIAL];
             /** @var string $sql */
-            $sql = "FROM `" . $this->prefix."container` AS c"
-                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid"
-                . " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type = mm.rowid LEFT JOIN `" . $this->prefix."blockdata_map` AS dm ON c.action<>3 AND c.data = dm.rowid";
+            $sql = "FROM `" . $this->prefix . "container` AS c"
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user=u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid=w.rowid"
+                . " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type=mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data=dm.rowid";
 
             $a = null;
             if (($this->a & self::A_CONTAINER_TABLE) != self::A_CONTAINER_TABLE) {
@@ -321,7 +390,7 @@ class StatementPreparer {
             $wheres = [self::FILTER_TIME, self::FILTER_USER, self::W_KEYWORD_MESSAGE];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "chat` AS c"
-                . " LEFT JOIN `" . $this->prefix."user` AS u ON c.user = u.rowid";
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user=u.rowid";
 
             $this->sqlFromWhere[self::CHAT] = $sql . $this->generateWhere(self::CHAT, $wheres);
         }
@@ -330,10 +399,8 @@ class StatementPreparer {
             /** @var string[] $wheres */
             $wheres = [self::FILTER_TIME, self::FILTER_USER, self::W_KEYWORD_MESSAGE];
             /** @var string $sql */
-            $sql = "FROM `" . $this->prefix."command` AS c"
-                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid";
-
-            // TODO: Keyword
+            $sql = "FROM `" . $this->prefix . "command` AS c"
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user=u.rowid";
 
             $this->sqlFromWhere[self::COMMAND] = $sql . $this->generateWhere(self::COMMAND, $wheres);
         }
@@ -343,7 +410,7 @@ class StatementPreparer {
             $wheres = [self::FILTER_TIME, self::FILTER_USER, self::FILTER_WORLD, self::FILTER_COORDS];
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "session` AS c"
-                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user=u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid=w.rowid";
 
             $this->sqlFromWhere[self::SESSION] = $sql . $this->generateWhere(self::SESSION, $wheres);
         }
@@ -352,8 +419,8 @@ class StatementPreparer {
             /** @var string[] $wheres */
             $wheres = [self::FILTER_TIME, self::FILTER_USER, self::W_KEYWORD_USER];
             /** @var string $sql */
-            $sql = "FROM `".$this->prefix . "username_log` AS c"
-                . " LEFT JOIN `".$this->prefix . "user` AS u ON c.uuid = u.uuid";
+            $sql = "FROM `" . $this->prefix . "username_log` AS c"
+                . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.uuid=u.uuid";
 
             $this->sqlFromWhere[self::USERNAME] = $sql . $this->generateWhere(self::USERNAME, $wheres);
         }
@@ -450,12 +517,17 @@ class StatementPreparer {
             $this->whereKeywordSearch();
     }
 
+    /**
+     * @param int $filter
+     * @param string[] $query
+     * @param boolean $exFlag
+     */
     private function whereAbsoluteString($filter, $query, $exFlag) {
         $names = [];
         $uuids = [];
 
         if ($filter === self::FILTER_ENTITY || $filter === self::FILTER_USER) {
-            foreach (str_getcsv($query) as $k => $uncleanVal) {
+            foreach ($query as $k => $uncleanVal) {
                 $val = trim($uncleanVal);
 
                 if (strlen($val) == 36) { // TODO: Make sure $val is an actual UUID
@@ -465,7 +537,7 @@ class StatementPreparer {
                 }
             }
         } else {
-            foreach (str_getcsv($query) as $k => $uncleanVal) {
+            foreach ($query as $k => $uncleanVal) {
                 $names[] = trim($uncleanVal);
             }
         }
@@ -548,8 +620,6 @@ class StatementPreparer {
         elseif ($filter === self::FILTER_MATERIAL)
             $add = "(c.action<>3 AND $add)";
 
-
-
         if (isset($add)) {
             $this->sqlWhereParts[$filter] = $add;
             $this->whereParams[$filter] = &$placeholders;
@@ -557,11 +627,13 @@ class StatementPreparer {
     }
 
     private function selectIdWhere($tableId, $mapId, $whereIn, $exFlag) {
-        return $tableId. ($exFlag ? ' NOT ' : ' ') . "IN (SELECT $mapId WHERE $whereIn)";
+        return $tableId . ($exFlag ? ' NOT ' : ' ') . "IN (SELECT $mapId WHERE $whereIn)";
     }
 
     private function qmPh(& $array) {
         $len = sizeof($array);
+        if ($len === 0)
+            return '';
         $ret = '?';
         while (--$len)
             $ret .= ',?';
@@ -572,7 +644,7 @@ class StatementPreparer {
         $placeholders = [];
         $msgParts = [];
         $usrParts = [];
-        foreach (str_getcsv($this->keyword) as $k => $uncleanVal) {
+        foreach ($this->keyword as $k => $uncleanVal) {
             $val = trim($uncleanVal);
             $msgParts[] = self::W_KEYWORD_MESSAGE . " LIKE ?";
             $usrParts[] = self::W_KEYWORD_USER . " LIKE ?";
@@ -584,5 +656,70 @@ class StatementPreparer {
             ? $usrParts[0] : "(" . join(" AND ", $usrParts) . ")";
         $this->whereParams[self::FILTER_KEYWORD_MESSAGE] = &$placeholders;
         $this->whereParams[self::FILTER_KEYWORD_USER] = &$placeholders;
+    }
+
+    private function generateCheckFromWhere($map) {
+        switch ($map) {
+            case self::WORLD_MAP:
+                if ($this->w === null)
+                    return '';
+                $table = 'world';
+                $column = 'world';
+                $list = $this->w;
+                break;
+            case self::USER_MAP:
+                if ($this->u === null && $this->e === null)
+                    return '';
+                $table = 'user';
+                $column = 'user';
+                $list = $this->u;
+                break;
+            case self::MATERIAL_MAP:
+                if ($this->b === null)
+                    return '';
+                $table = 'material_map';
+                $column = 'material';
+                $list = $this->b;
+                break;
+            case self::ENTITY_MAP:
+                if ($this->e === null)
+                    return '';
+                $table = 'entity_map';
+                $column = 'entity';
+                $list = $this->e;
+                break;
+            default:
+                return '';
+        }
+
+        if ($map === self::USER_MAP && $this->e !== null) {
+            // Search entities as well
+            if ($list === null)
+                $list = $this->e;
+            else
+                $list = array_merge($list, $this->e);
+        }
+
+        $list = array_unique($list);
+
+        if ($entity = ($map === self::ENTITY_MAP) || $map === self::USER_MAP) {
+            // filter out UUIDs
+            foreach ($list as $k => $v) {
+                $list[$k] = trim($v);
+                if (strlen($v) === 36) { // TODO: Make sure $val is an actual UUID
+                    if ($entity)
+                        $uuids[] = $v;
+                    unset($list[$k]);
+                }
+            }
+        }
+
+        if (sizeof($list) === 0 && isset($uuids) && sizeof($uuids) === 0)
+            return '';
+
+        $params = isset($uuids) ? array_merge($list, $uuids) : $list;
+
+        $this->sqlParams = array_merge($this->sqlParams, $params);
+        return ' FROM ' . $this->prefix . $table . " WHERE $column IN(" . $this->qmPh($params) . ')';
     }
 }
