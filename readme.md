@@ -1,10 +1,10 @@
-[CoreProtect Lookup Web Interface (CoLWI)](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface)
+[CoreProtect Lookup Web Interface (CoLWI)](https://github.com/chuushi/CoreProtect-Lookup-Web-Interface)
 ===============================================================================
 *A flexible lookup web interface for CoreProtect 2.*
 
 ![Imgur](https://i.imgur.com/gre6LpC.png)
 
-**Version:** [v1.0.0-pre1](//github.com/chuu_shi/CoreProtect-Lookup-Web-Interface/releases/latest)
+**Version:** [v1.0.0-pre1](https://github.com/chuushi/CoreProtect-Lookup-Web-Interface/releases/latest)
 
 This is a _feature-packed_ web application that gives you the power to look up
 anything CoreProtect is capable of logging in the most efficient way.
@@ -49,7 +49,7 @@ git clone https://github.com/chuushi/CoreProtect-Lookup-Web-Interface.git
 
 - **Option 2:** Download
     - Download the
-      [latest release `.zip` file](https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface/releases/latest).
+      [latest release `.zip` file](https://github.com/chuushi/CoreProtect-Lookup-Web-Interface/releases/latest).
     - Extract the .zip file somewhere on the web server.
 
 ## Configuration
