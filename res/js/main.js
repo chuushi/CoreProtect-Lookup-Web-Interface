@@ -488,7 +488,7 @@ function populateTable(data, more) {
             if ((currentLookup.a & A_REV_TIME ) === 0)
                 $tableBody.prepend('<tr><th><i class="fa fa-minus"></i></th><td colspan="5">No more results</td></tr>');
             else {
-                addAlert("No more results. (If on the live server, wait for more results)", more, "info");
+                addAlert("No more results. (If on a live server, wait a bit then submit for more results)", more, "info");
                 $more.submit.prop("disabled", false);
             }
         } else {
