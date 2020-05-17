@@ -1,0 +1,59 @@
+/**
+ * Main CSS
+ *
+ * CoreProtect Lookup Web Interface
+ * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
+ * @since 1.0.0
+ */
+/* Form styling */
+.input-group-text, .form-control, .btn, .custom-select {
+  padding: .375rem .75rem;
+}
+
+.form-control, .custom-select {
+  height: calc(1.5em + .75rem + 2px);
+}
+
+#login-username:focus, #login-password:focus {
+  position: relative;
+  z-index: 2;
+}
+
+#login-username:invalid, #login-password:invalid {
+  box-shadow: unset;
+}
+
+#login-username {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: -1px;
+}
+
+#login-password {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-bottom: 10px;
+}
+
+/* Result table button styling */
+.btn-inline {
+  font-size: 75%;
+  padding: .25em .4em;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+/* Hide number arrows Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide number arrows Chrome, Safari, Edge, Opera */
+input[type=number] {
+  -moz-appearance: textfield;
+}

@@ -1,0 +1,28 @@
+/**
+ * Dark Theme CSS
+ *
+ * CoreProtect Lookup Web Interface
+ * @author Simon Chuu
+ * @copyright 2015-2020 Simon Chuu
+ * @license MIT License
+ * @link https://github.com/chuushi/CoreProtect-Lookup-Web-Interface
+ * @since 1.0.0
+ */
+.form-control[type=text], .form-control[type=password], .form-control[type=number], .custom-select {
+  background-color: var(--dark);
+  color: var(--light);
+}
+
+.form-control[type=text]:focus, .form-control[type=password]:focus, .form-control[type=number]:focus {
+  background-color: #000;
+  color: var(--white);
+}
+
+.input-group-text {
+  background-color: var(--gray-dark);
+  color: var(--light);
+}
+
+.form-control, .input-group-text, .custom-select {
+  border-color: rgba(0, 0, 0, 0.6);
+}
