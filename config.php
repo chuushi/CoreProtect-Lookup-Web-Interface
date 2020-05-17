@@ -25,28 +25,31 @@
 # If you have multiple databases, configure each database source here by
 # copying 'server' array right under and renaming 'server' to a different
 # server name.
-#   type        = 'mysql' or 'sqlite' all lowercase
-#   path        = SQLite path to CoreProtect's database.db
-#   host        = MySQL database host[:port]
-#   database    = MySQL database name
-#   username    = MySQL username
-#   password    = MySQL password
-#   flags       = MySQL flags to put at the end of connection URI
-#                 (don't change if you don't need to)
-#   prefix      = CoreProtect prefix
-#   mapLink     = Link to view on the map. (Dynmap, Overviewer, etc.)
-#                 {world} for world; {x} {y} {z} for xyz coordinates
+#   type         = 'mysql' or 'sqlite' all lowercase
+#   path         = SQLite path to CoreProtect's database.db
+#   host         = MySQL database host[:port]
+#   database     = MySQL database name
+#   username     = MySQL username
+#   password     = MySQL password
+#   flags        = MySQL flags to put at the end of connection URI
+#                  (don't change if you don't need to)
+#   prefix       = CoreProtect prefix
+#   preBlockName = Whether to prepend "minecraft:" for material name if no colon (:) is present
+#                  (May need to be turned off for databases with data from MC 1.7)
+#   mapLink      = Link to view on the map. (Dynmap, Overviewer, etc.)
+#                  {world} for world; {x} {y} {z} for xyz coordinates
 'database' => [
     'server' => [
-        'type'      => 'mysql',
-        'path'      => 'path/to/database.db',
-        'host'      => 'localhost:3306',
-        'database'  => 'minecraft',
-        'username'  => 'username',
-        'password'  => 'password',
-        'flags'     => '',
-        'prefix'    => 'co_',
-        'mapLink'   => 'https://localhost:8123/?worldname={world}&mapname=surface&zoom=3&x={x}&y={y}&z={z}'
+        'type'        => 'mysql',
+        'path'        => 'path/to/database.db',
+        'host'        => 'localhost:3306',
+        'database'    => 'minecraft',
+        'username'    => 'username',
+        'password'    => 'password',
+        'flags'       => '',
+        'prefix'      => 'co_',
+        'preBlockName'=> true,
+        'mapLink'     => 'https://localhost:8123/?worldname={world}&mapname=surface&zoom=3&x={x}&y={y}&z={z}'
     ],
 ],
 

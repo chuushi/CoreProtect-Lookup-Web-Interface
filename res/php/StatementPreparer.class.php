@@ -118,7 +118,7 @@ class StatementPreparer
     /** @var string */
     private $sqlOrder;
 
-    public function __construct($prefix, & $req, $count, $moreCount) {
+    public function __construct($prefix, & $req, $count, $moreCount, $preBlockName = true) {
         $this->prefix = $prefix;
         $this->offset = self::nonnullInt($req['offset'], 0);
         $this->count = self::nonnullInt($req['count'], $this->offset == null ? $count : $moreCount);
@@ -134,14 +134,26 @@ class StatementPreparer
         $this->y2 = self::nonnullInt($req['y2']);
         $this->z = self::nonnullInt($req['z']);
         $this->z2 = self::nonnullInt($req['z2']);
-        $this->keyword = self::nonnullArr($req['keyword']);
+        $this->keyword = self::nonnullArr($req['keyword'], false);
+
+        if ($preBlockName && $this->b !== null)
+            foreach ($this->b as $k => $v)
+                if (strpos($v, ':') === false)
+                    $this->b[$k] = 'minecraft:' . $v;
+
     }
 
-    private function nonnullArr(& $in) {
+    private function nonnullArr(& $in, $trimInner = true) {
         if (isset($in)) {
             $trim = trim($in);
-            if ($trim !== "")
-                return str_getcsv($trim);
+            if ($trim !== "") {
+                $csv = str_getcsv($trim);
+                if ($trimInner) {
+                    foreach ($csv as $k => $v)
+                        $csv[$k] = trim($v);
+                }
+                return $csv;
+            }
         }
         return null;
     }
@@ -527,8 +539,7 @@ class StatementPreparer
         $uuids = [];
 
         if ($filter === self::FILTER_ENTITY || $filter === self::FILTER_USER) {
-            foreach ($query as $k => $uncleanVal) {
-                $val = trim($uncleanVal);
+            foreach ($query as $k => $val) {
 
                 if (strlen($val) == 36) { // TODO: Make sure $val is an actual UUID
                     $uuids[] = $val;
@@ -537,8 +548,8 @@ class StatementPreparer
                 }
             }
         } else {
-            foreach ($query as $k => $uncleanVal) {
-                $names[] = trim($uncleanVal);
+            foreach ($query as $k => $val) {
+                $names[] = $val;
             }
         }
 
@@ -644,8 +655,7 @@ class StatementPreparer
         $placeholders = [];
         $msgParts = [];
         $usrParts = [];
-        foreach ($this->keyword as $k => $uncleanVal) {
-            $val = trim($uncleanVal);
+        foreach ($this->keyword as $k => $val) {
             $msgParts[] = self::W_KEYWORD_MESSAGE . " LIKE ?";
             $usrParts[] = self::W_KEYWORD_USER . " LIKE ?";
             $placeholders = "%$val%";
@@ -705,7 +715,6 @@ class StatementPreparer
         if ($entity = ($map === self::ENTITY_MAP) || $map === self::USER_MAP) {
             // filter out UUIDs
             foreach ($list as $k => $v) {
-                $list[$k] = trim($v);
                 if (strlen($v) === 36) { // TODO: Make sure $val is an actual UUID
                     if ($entity)
                         $uuids[] = $v;

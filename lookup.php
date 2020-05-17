@@ -80,7 +80,7 @@ if (!isset($server)) {
     exit();
 }
 
-$prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount']);
+$prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount'], $server['preBlockName']);
 $wrapper = new PDOWrapper($server);
 $pdo = $wrapper->initPDO();
 
