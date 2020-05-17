@@ -252,7 +252,7 @@ $login.activate.click(function (ev) {
             }
         },
         error: function (xhr, status, thrown) {
-            let text = "";
+            let text;
 
             if (thrown)
                 text = thrown;
@@ -261,7 +261,7 @@ $login.activate.click(function (ev) {
             else
                 text = xhr.status + "";
 
-            $('#login-alert').html(getAlertElement(text, "danger"));
+            $login.alert.html(getAlertElement(text, "danger"));
         },
         complete: function () {
             $login.submit.prop('disabled', false);
@@ -830,5 +830,5 @@ function getAlertElement(text, level) {
 // Run functions
 login(loginUsername);
 if (loginRequired)
-    addAlert("You must login to make searches. <a href=\"#\" data-toggle=\"modal\" data-target=\"#login-modal\">Login</a>", false, "primary");
+    $login.modal.modal('show');
 }());

@@ -88,7 +88,8 @@
     'bootstrap' => '<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" rel="stylesheet" integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">',
     'darkInput' => true,
     'name'      => 'CoreProtect Lookup Web Interface',
-    'href'      => '/'
+    'href'      => '/',
+    'copyright' => 'Server'
 ],
 
 # Navigation Bar Customization

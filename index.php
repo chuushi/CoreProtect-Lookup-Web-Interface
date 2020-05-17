@@ -300,7 +300,7 @@ $session = new Session($config);
 
     <div class="container">
       <!-- Load More form -->
-      <div id="more-form" class="card">
+      <div id="more-form" class="card mb-3">
         <form class="card-body">
           <div class="row">
             <div class="col-md-6 col-12 form-group input-group">
@@ -316,14 +316,15 @@ $session = new Session($config);
       </div>
       <div id="more-alert">
       </div>
-
-      <p>If you encounter any issues, please open an issue on the <a href="https://github.com/SimonOrJ/CoreProtect-Lookup-Web-Interface">GitHub project page</a>.</p>
     </div>
 
-    <!-- Copyright Message -->
-    <div class="container-fluid">
-      <p>&copy; <?php echo str_replace("%year%", date("Y"),$config["copyright"]) ?>. <span class="">CoreProtect LWI v0.9.3-beta &ndash; Created by <a href="http://simonorj.com/">Simon Chuu</a>.</span></p>
-    </div>
+    <footer class="bg-dark py-5">
+      <div class="container text-muted">
+        <!-- Copyright Message -->
+        <div>&copy; <?php echo $config['page']['copyright'] ?></div>
+        <div class="faded">CoreProtect Lookup Web Interface by <a href="https://chuu.sh/">chuu.sh</a> &bull; <a href="https://github.com/chuushi/CoreProtect-Lookup-Web-Interface"><i class="fa fa-github"></i> GitHub page</a> &bull; <a href="https://github.com/chuushi/CoreProtect-Lookup-Web-Interface/issues">Submit an issue</a></div>
+      </div>
+    </footer>
 
     <script>
       // noinspection JSAnnotator
