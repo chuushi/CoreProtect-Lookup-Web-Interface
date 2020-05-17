@@ -1,10 +1,5 @@
 # For my test server
 noinclude/
-database.db
-notes.txt
-
-# Ignore configuration files (potential password leaks)
-config.php
 
 
 # Created by https://www.gitignore.io/api/phpstorm
