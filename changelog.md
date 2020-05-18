@@ -3,6 +3,9 @@ Changelog
 
 ## Development versions
 
+### v1.0.0-pre2 (2020.05.18)
+- Extend support down to CoreProtect 2.12.0 (Minecraft 1.8)
+
 ### v1.0.0-pre1 (2020.05.17)
 - First pre-release
 - Caveats:

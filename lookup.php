@@ -92,16 +92,15 @@ if (!$pdo) {
 }
 
 if (($flags & StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_DEFINED) === 0) {
-    if ($server['type'] === 'sqlite')
-        $query = "SELECT name FROM sqlite_master WHERE type='table' AND name='" . $server['prefix'] . "blockdata_map'";
-    else
-        $query = "SHOW TABLES LIKE '" . $server['prefix'] . "blockdata_map'";
-    if ($bdCheck = $pdo->query($query)) {
-        if ($bdCheck->rowCount() === 0)
+    try {
+        if ($pdo->query("SELECT 1 FROM " . $server['prefix'] . "blockdata_map LIMIT 1") === false)
             $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_NO;
         else
             $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_YES;
+    } catch (Exception $e) {
+        $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_NO;
     }
+
     $return[0]['flags'] = $flags;
 }
 
