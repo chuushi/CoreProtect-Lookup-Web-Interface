@@ -295,6 +295,7 @@ function logout() {
 let currentLookup = null;
 let currentCount = 0;
 let ajaxWaiting = false;
+let queryFlags = null;
 
 $lookup.form.submit(function (ev) {
     submit(ev, false);
@@ -403,6 +404,10 @@ function serializeLookup(actions) {
     if (time !== "") {
         currentLookup.t = getLookupTime();
     }
+
+    if (queryFlags !== null) {
+        currentLookup.flags = queryFlags;
+    }
 }
 
 function serializeMore() {
@@ -499,6 +504,10 @@ function populateTable(data, more) {
 
     if (data[0].mapHref)
         mapHref = data[0].mapHref;
+
+    if (queryFlags === null) {
+        queryFlags = currentLookup.flags = data[0].flags;
+    }
 
     if (!more) {
         $tableBody.empty();

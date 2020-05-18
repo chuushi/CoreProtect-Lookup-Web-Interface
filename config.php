@@ -40,8 +40,8 @@
 #                  {world} for world; {x} {y} {z} for xyz coordinates
 'database' => [
     'server' => [
-        'type'        => 'mysql',
-        'path'        => 'path/to/database.db',
+        'type'        => 'sqlite',//'mysql',
+        'path'        => 'noinclude/database.db',//'path/to/database.db',
         'host'        => 'localhost:3306',
         'database'    => 'minecraft',
         'username'    => 'username',

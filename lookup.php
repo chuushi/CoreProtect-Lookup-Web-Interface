@@ -80,7 +80,7 @@ if (!isset($server)) {
     exit();
 }
 
-$prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount'], $server['preBlockName']);
+$flags = isset($_REQUEST['flags']) ? $_REQUEST['flags'] : ($server['preBlockName'] ? 1 : 0);
 $wrapper = new PDOWrapper($server);
 $pdo = $wrapper->initPDO();
 
@@ -91,10 +91,26 @@ if (!$pdo) {
     exit();
 }
 
+if (($flags & StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_DEFINED) === 0) {
+    if ($server['type'] === 'sqlite')
+        $query = "SELECT name FROM sqlite_master WHERE type='table' AND name='" . $server['prefix'] . "blockdata_map'";
+    else
+        $query = "SHOW TABLES LIKE '" . $server['prefix'] . "blockdata_map'";
+    if ($bdCheck = $pdo->query($query)) {
+        if ($bdCheck->rowCount() === 0)
+            $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_NO;
+        else
+            $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_YES;
+    }
+    $return[0]['flags'] = $flags;
+}
+
+$prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount'], $flags);
+
+
 // Check if where parameters exist
 if ($checkInputQuery) {
     $checkStr = $prep->prepareCheck();
-    $return[0]["csql"] = $checkStr;
 
     if ($checkStr !== '') {
         $check = $pdo->prepare($checkStr);
