@@ -4,7 +4,9 @@
 
 ![Imgur](https://i.imgur.com/gre6LpC.png)
 
-**Version:** [v1.0.0-pre1](https://github.com/chuushi/CoreProtect-Lookup-Web-Interface/releases/latest)
+**Version:** [v1.0.0-pre2](https://github.com/chuushi/CoreProtect-Lookup-Web-Interface/releases/latest)
+
+*[Changelog](changelog.md) | [Contributing](contributing.md)*
 
 This is a _feature-packed_ web application that gives you the power to look up
 anything CoreProtect is capable of logging in the most efficient way.
@@ -33,8 +35,7 @@ In addition, this plugin makes it possible to:
 
 - A web server with **PHP 5.6** or above
     - Required extensions: PDO, PDO-SQLITE or PDO-MYSQL
-- A MySQL (or MariaDB) or SQLite database used by a Minecraft server running
-  CoreProtect 2.12 or above. (under testing)
+- A CoreProtect database used by **CoreProtect 2.12** or above.
     - If using SQLite in real-time, the web server must be on the same machine
       as the Minecraft server.
 
@@ -70,7 +71,7 @@ git stash pop
 - `git pull` downloads and updates the repository with the latest changes
 - `git stash pop` applies the stashed changes into the repository.
 
-If you see this error when running `git stash pop`:
+If you see this message after running `git stash pop`:
 ```
 CONFLICT (content): Merge conflict in config.php
 ```
@@ -83,10 +84,6 @@ git add config.php
 
 If you used the **option 2**, then you must re-download the `.zip` file and
 manually migrate the `config.php` file over.
-
-#[Changelog](changelog.md)
-
-#[Contributing](contributing.md)
 
 # Plugin Links
 
