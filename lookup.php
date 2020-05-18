@@ -80,7 +80,7 @@ if (!isset($server)) {
     exit();
 }
 
-$prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount'], $server['preBlockName']);
+$flags = isset($_REQUEST['flags']) ? $_REQUEST['flags'] : ($server['preBlockName'] ? 1 : 0);
 $wrapper = new PDOWrapper($server);
 $pdo = $wrapper->initPDO();
 
@@ -91,10 +91,25 @@ if (!$pdo) {
     exit();
 }
 
+if (($flags & StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_DEFINED) === 0) {
+    try {
+        if ($pdo->query("SELECT 1 FROM " . $server['prefix'] . "blockdata_map LIMIT 1") === false)
+            $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_NO;
+        else
+            $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_YES;
+    } catch (Exception $e) {
+        $flags |= StatementPreparer::FLAG_USE_BLOCKDATA_TABLE_NO;
+    }
+
+    $return[0]['flags'] = $flags;
+}
+
+$prep = new StatementPreparer($server['prefix'], $_REQUEST, $config['form']['count'], $config['form']['moreCount'], $flags);
+
+
 // Check if where parameters exist
 if ($checkInputQuery) {
     $checkStr = $prep->prepareCheck();
-    $return[0]["csql"] = $checkStr;
 
     if ($checkStr !== '') {
         $check = $pdo->prepare($checkStr);

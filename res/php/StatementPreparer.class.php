@@ -13,6 +13,12 @@
  */
 class StatementPreparer
 {
+    const FLAG_PRE_BLOCK_NAME = 0x01;
+    const FLAG_USE_BLOCKDATA_TABLE_YES = 0x02;
+    const FLAG_USE_BLOCKDATA_TABLE_NO = 0x04;
+
+    const FLAG_USE_BLOCKDATA_TABLE_DEFINED = self::FLAG_USE_BLOCKDATA_TABLE_YES | self::FLAG_USE_BLOCKDATA_TABLE_NO;
+
     const A_BLOCK_MINE = 0x0001;
     const A_BLOCK_PLACE = 0x0002;
     const A_CLICK = 0x0004;
@@ -96,6 +102,11 @@ class StatementPreparer
     const W_KEYWORD_USER = "c.user";
 
     /**
+     * Input booleans
+     * @var boolean
+     */
+    private $useBlockdata;
+    /**
      * Input integers
      * @var integer
      */
@@ -118,7 +129,7 @@ class StatementPreparer
     /** @var string */
     private $sqlOrder;
 
-    public function __construct($prefix, & $req, $count, $moreCount, $preBlockName = true) {
+    public function __construct($prefix, & $req, $count, $moreCount, $flag = 0) {
         $this->prefix = $prefix;
         $this->offset = self::nonnullInt($req['offset'], 0);
         $this->count = self::nonnullInt($req['count'], $this->offset == null ? $count : $moreCount);
@@ -135,12 +146,12 @@ class StatementPreparer
         $this->z = self::nonnullInt($req['z']);
         $this->z2 = self::nonnullInt($req['z2']);
         $this->keyword = self::nonnullArr($req['keyword'], false);
+        $this->useBlockdata = ($flag & self::FLAG_USE_BLOCKDATA_TABLE_YES) !== 0;
 
-        if ($preBlockName && $this->b !== null)
+        if ($flag & self::FLAG_PRE_BLOCK_NAME && $this->b !== null)
             foreach ($this->b as $k => $v)
                 if (strpos($v, ':') === false)
                     $this->b[$k] = 'minecraft:' . $v;
-
     }
 
     private function nonnullArr(& $in, $trimInner = true) {
@@ -287,6 +298,7 @@ class StatementPreparer
             case self::BLOCK:
                 $material = $this->a & self::A_BLOCK_MATERIAL;
                 $entity = $this->a & self::A_BLOCK_ENTITY;
+                $dmVar = $this->useBlockdata ? 'IFNULL(dm.data, c.data)' : 'c.data';
                 return "SELECT c.rowid, 'block' AS `table`, c.time, u.user, u.uuid, c.action, w.world, c.x, c.y, c.z, "
                     . (
                     $material && $entity
@@ -296,8 +308,8 @@ class StatementPreparer
                     . " AS `target`, "
                     . (
                     $material && $entity
-                        ? "CASE WHEN c.type=0 THEN um.uuid ELSE IFNULL(dm.data, c.data) END"
-                        : ($material ? "IFNULL(dm.data, c.data)" : "CASE WHEN c.type=0 THEN um.uuid ELSE c.data END")
+                        ? "CASE WHEN c.type=0 THEN um.uuid ELSE $dmVar END"
+                        : ($material ? $dmVar : "CASE WHEN c.type=0 THEN um.uuid ELSE c.data END")
                     )
                     . " AS `data`, NULL as `amount`, c.rolled_back";
             case self::CONTAINER:
@@ -351,12 +363,14 @@ class StatementPreparer
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user = u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid = w.rowid";
 
             if ($this->a & (self::A_BLOCK_MATERIAL)) {
-                $sql .= " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type=mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data=dm.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type=mm.rowid";
+                if ($this->useBlockdata)
+                    $sql .= " LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.data<>0 AND c.action<>3 AND c.data=dm.rowid";
                 $wheres[] = self::FILTER_MATERIAL;
             }
             if ($this->a & self::A_KILL) {
                 $sql .= " LEFT JOIN `" . $this->prefix . "entity_map` AS em ON c.action=3 AND c.type<>0 AND c.type=em.rowid";
-                $sql .= " LEFT JOIN `" . $this->prefix . "user` AS um ON c.action=3 AND c.type=0 AND c.data=um.rowid";
+                $sql .= " LEFT JOIN `" . $this->prefix . "user` AS um ON c.data<>0 AND c.action=3 AND c.type=0 AND c.data=um.rowid";
                 $wheres[] = self::FILTER_ENTITY;
             }
 
@@ -384,8 +398,7 @@ class StatementPreparer
             /** @var string $sql */
             $sql = "FROM `" . $this->prefix . "container` AS c"
                 . " LEFT JOIN `" . $this->prefix . "user` AS u ON c.user=u.rowid LEFT JOIN `" . $this->prefix . "world` AS w ON c.wid=w.rowid"
-                . " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type=mm.rowid LEFT JOIN `" . $this->prefix . "blockdata_map` AS dm ON c.action<>3 AND c.data=dm.rowid";
-
+                . " LEFT JOIN `" . $this->prefix . "material_map` AS mm ON c.action<>3 AND c.type=mm.rowid";
             $a = null;
             if (($this->a & self::A_CONTAINER_TABLE) != self::A_CONTAINER_TABLE) {
                 if ($this->a & self::A_CONTAINER_OUT)
