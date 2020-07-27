@@ -155,10 +155,10 @@ if ($checkInputQuery) {
             }
         }
 
-        $wSize = sizeof($w) !== 0;
-        $uSize = sizeof($u) !== 0;
-        $mSize = sizeof($m) !== 0;
-        $eSize = sizeof($e) !== 0;
+        $wSize = is_array($w) && sizeof($w) !== 0;
+        $uSize = is_array($u) && sizeof($u) !== 0;
+        $mSize = is_array($m) && sizeof($m) !== 0;
+        $eSize = is_array($e) && sizeof($e) !== 0;
 
         if ($wSize || $uSize || $mSize || $eSize) {
             $return[0]["status"] = 1;
